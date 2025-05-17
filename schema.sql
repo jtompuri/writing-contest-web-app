@@ -52,5 +52,6 @@ CREATE TABLE reviews (
 CREATE TABLE classes (
     id INTEGER PRIMARY KEY,
     contest_id INTEGER,
-    class TEXT
+    title TEXT,
+    value TEXT
 );
