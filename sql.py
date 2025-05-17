@@ -44,7 +44,7 @@ def get_contests_for_review():
     sql = """SELECT contests.id, contests.title, contests.short_description, contests.collection_end, contests.review_end, classes.value
             FROM contests
             JOIN classes ON contests.class_id = classes.id
-            WHERE contests.review_end >= DATE('now')
+            WHERE contests.review_end >= DATE('now') AND contests.public_reviews = 1
             ORDER BY contests.collection_end"""
     return db.query(sql)
 
@@ -52,7 +52,7 @@ def get_contests_for_results():
     sql = """SELECT contests.id, contests.title, contests.short_description, contests.collection_end, contests.review_end, classes.value
             FROM contests
             JOIN classes ON contests.class_id = classes.id
-            WHERE contests.review_end < DATE('now')
+            WHERE contests.review_end < DATE('now') AND contests.public_results = 1
             ORDER BY contests.collection_end"""
     return db.query(sql)
 

@@ -47,7 +47,7 @@ INSERT INTO contests (
     'Proosakilpailun kuvaus.',
     'Kirjoita lyhyt proosateksti, joka käsittelee kaupungistumista.',
     1,
-    1,
+    0,
     1,
     '2025-05-20',
     '2025-06-30'
@@ -60,7 +60,7 @@ INSERT INTO contests (
     'Kirjoita runo, joka käsittelee kevään tunnelmia ja muutosta.',
     1,
     1,
-    1,
+    0,
     '2024-08-15',
     '2024-08-30'
 ),
@@ -72,7 +72,7 @@ INSERT INTO contests (
     'Tarjoa kilpailuun aforismeja, joka teemana on juhla.',
     1,
     1,
-    1,
+    0,
     '2023-09-15',
     '2023-09-30'
 ),
