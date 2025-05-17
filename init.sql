@@ -18,9 +18,9 @@ INSERT INTO contests (
     anonymity, public_reviews, public_results,
     collection_end, review_end
 ) VALUES (
-    'Kevään runokilpailu',
+    'Kevään runokilpailu 2025',
     1,
-    'Runoja keväästä',
+    'Runoja keväästä.',
     'Kirjoita runo, joka käsittelee kevään tunnelmia ja muutosta.',
     1,
     1,
@@ -30,9 +30,9 @@ INSERT INTO contests (
 ),
 
 (
-    'Aforismikilpailu',
+    'Aforismikilpailu 2025',
     2,
-    'Aforismikilpailun lyhytkuvaus',
+    'Aforismikilpailun lyhytkuvaus.',
     'Tarjoa kilpailuun aforismeja, joka teemana on juhla.',
     1,
     1,
@@ -42,7 +42,7 @@ INSERT INTO contests (
 ),
 
 (
-    'Proosakilpailu',
+    'Proosakilpailu 2025',
     3,
     'Proosakilpailun kuvaus.',
     'Kirjoita lyhyt proosateksti, joka käsittelee kaupungistumista.',
@@ -54,31 +54,31 @@ INSERT INTO contests (
 ),
 
 (
-    'Syksyn runokilpailu',
+    'Syksyn runokilpailu 2024',
     1,
     'Runoja keväästä',
     'Kirjoita runo, joka käsittelee kevään tunnelmia ja muutosta.',
     1,
     1,
     1,
-    '2025-08-15',
-    '2025-08-30'
+    '2024-08-15',
+    '2024-08-30'
 ),
 
 (
-    'Syksyn aforismikilpailu',
+    'Syksyn aforismikilpailu 2023',
     2,
     'Aforismikilpailun lyhytkuvaus',
     'Tarjoa kilpailuun aforismeja, joka teemana on juhla.',
     1,
     1,
     1,
-    '2025-09-15',
-    '2025-09-30'
+    '2023-09-15',
+    '2023-09-30'
 ),
 
 (
-    'Syksyn proosakilpailu',
+    'Syksyn proosakilpailu 2025',
     3,
     'Proosakilpailun kuvaus.',
     'Kirjoita lyhyt proosateksti, joka käsittelee kaupungistumista.',
