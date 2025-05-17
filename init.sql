@@ -22,9 +22,9 @@ INSERT INTO contests (
     1,
     'Runoja keväästä',
     'Kirjoita runo, joka käsittelee kevään tunnelmia ja muutosta.',
-    1,  -- nimettömyys käytössä
-    1,  -- julkiset arvostelut sallittu
-    1,  -- tulokset julkistetaan
+    1,
+    1,
+    1,
     '2025-04-15',
     '2025-04-30'
 ),
@@ -34,9 +34,9 @@ INSERT INTO contests (
     2,
     'Aforismikilpailun lyhytkuvaus',
     'Tarjoa kilpailuun aforismeja, joka teemana on juhla.',
-    1,  -- nimettömyys käytössä
-    1,  -- julkiset arvostelut sallittu
-    1,  -- tulokset julkistetaan
+    1,
+    1,
+    1,
     '2025-03-15',
     '2025-03-30'
 ),
@@ -46,11 +46,47 @@ INSERT INTO contests (
     3,
     'Proosakilpailun kuvaus.',
     'Kirjoita lyhyt proosateksti, joka käsittelee kaupungistumista.',
-    1,  -- nimettömyys käytössä
-    1,  -- julkiset arvostelut sallittu
-    1,  -- tulokset julkistetaan
+    1,
+    1,
+    1,
     '2025-05-20',
     '2025-06-30'
+),
+
+(
+    'Syksyn runokilpailu',
+    1,
+    'Runoja keväästä',
+    'Kirjoita runo, joka käsittelee kevään tunnelmia ja muutosta.',
+    1,
+    1,
+    1,
+    '2025-08-15',
+    '2025-08-30'
+),
+
+(
+    'Syksyn aforismikilpailu',
+    2,
+    'Aforismikilpailun lyhytkuvaus',
+    'Tarjoa kilpailuun aforismeja, joka teemana on juhla.',
+    1,
+    1,
+    1,
+    '2025-09-15',
+    '2025-09-30'
+),
+
+(
+    'Syksyn proosakilpailu',
+    3,
+    'Proosakilpailun kuvaus.',
+    'Kirjoita lyhyt proosateksti, joka käsittelee kaupungistumista.',
+    1,
+    1,
+    1,
+    '2025-10-20',
+    '2025-10-30'
 );
 
 INSERT INTO entries (contest_id, user_id, entry) VALUES
