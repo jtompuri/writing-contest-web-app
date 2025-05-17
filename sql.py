@@ -31,22 +31,41 @@ def add_review(entry_id, user_id, points, review):
              VALUES (?, ?, ?)"""
     db.execute(sql, [entry_id, user_id, points, review])
 
-def get_active_contests_list():
-    sql = """SELECT contests.title, contests.short_description, contests.collection_end, contests.review_end, classes.value
+def get_contests_for_entry():
+    sql = """SELECT contests.id, contests.title, contests.short_description,
+            contests.collection_end, contests.review_end, classes.value
             FROM contests
             JOIN classes ON contests.class_id = classes.id
             WHERE contests.collection_end >= DATE('now')
             ORDER BY contests.collection_end"""
     return db.query(sql)
 
-
-def get_past_contests_list():
-    sql = """SELECT contests.title, contests.short_description, contests.collection_end, contests.review_end, classes.value
+def get_contests_for_review():
+    sql = """SELECT contests.id, contests.title, contests.short_description, contests.collection_end, contests.review_end, classes.value
             FROM contests
             JOIN classes ON contests.class_id = classes.id
-            WHERE contests.review_end > DATE('now')
+            WHERE contests.review_end >= DATE('now')
             ORDER BY contests.collection_end"""
     return db.query(sql)
+
+def get_contests_for_results():
+    sql = """SELECT contests.id, contests.title, contests.short_description, contests.collection_end, contests.review_end, classes.value
+            FROM contests
+            JOIN classes ON contests.class_id = classes.id
+            WHERE contests.review_end < DATE('now')
+            ORDER BY contests.collection_end"""
+    return db.query(sql)
+
+def get_contest_by_id(contest_id):
+    sql = """
+        SELECT contests.id, contests.title, contests.short_description, contests.long_description,
+               contests.collection_end, contests.review_end, classes.value AS class_value
+        FROM contests
+        JOIN classes ON contests.class_id = classes.id
+        WHERE contests.id = ?
+    """
+    result = db.query(sql, [contest_id])
+    return result[0] if result else None
 
 
 ##### KESKEN: jäin tähän #####

@@ -9,45 +9,55 @@
     <h2>Osallistu käynnissä olevaan kilpailuun</h2>
 
     <ul class="contest-list">
+      {% for contest in contests_for_entry %}
         <li>
-            <div class="contest-header">
-                <em><a href="#">Kevään runokilpailu</a></em>
-                <span class="contest-deadline">päättyy 4.6.2025</span>
-            </div>
-            Tähän tulee kevään runokilpailun lyhyt kuvaus. Kilpailun yksityiskohtaiset säännöt on kilpailun esittelysivulle.
+          <div class="contest-header">
+            <em>
+              <a href="{{ url_for('contest', contest_id=contest.id) }}">{{ contest.title }}</a>
+            </em>
+            <span class="contest-deadline">
+              päättyy {{ contest.collection_end | format_date }}
+            </span>
+          </div>
+          {{ contest.short_description }}
         </li>
+      {% endfor %}
     </ul>
 
     <h2>Vertaisarvioi kilpailuun tulleita tekstejä</h2>
 
     <ul class="contest-list">
+      {% for contest in contests_for_review %}
         <li>
-            <div class="contest-header">
-                <em><a href="#">Kevään runokilpailu</a></em>
-                <span class="contest-deadline">päättyy 4.6.2025</span>
-            </div>
-            Tähän tulee kevään runokilpailun lyhyt kuvaus. Kilpailun yksityiskohtaiset säännöt on kilpailun esittelysivulle.
+          <div class="contest-header">
+            <em>
+              <a href="{{ url_for('contest', contest_id=contest.id) }}">{{ contest.title }}</a>
+            </em>
+            <span class="contest-deadline">
+              päättyy {{ contest.review_end | format_date }}
+            </span>
+          </div>
+          {{ contest.short_description }}
         </li>
+      {% endfor %}
     </ul>
 
     <h2>Tutustu päättyneiden kilpailujen tuloksiin</h2>
 
-      <ul class="contest-list">
-          <li>
-              <div class="contest-header">
-                  <em><a href="#">Kevään aforismikilpailu</a></em>
-                  <span class="contest-deadline">päättyi 14.6.2024</span>
-              </div>
-              Tähän tulee kevään aforismikilpailun lyhyt kuvaus. Kilpailun yksityiskohtaiset säännöt on kilpailun esittelysivulle.
-          </li>
-          <li>
-            <div class="contest-header">
-                <em><a href="#">Kevään runokilpailu</a></em>
-                <span class="contest-deadline">päättyy 4.6.2025</span>
-            </div>
-            Tähän tulee kevään runokilpailun lyhyt kuvaus. Kilpailun yksityiskohtaiset säännöt on kilpailun esittelysivulle.
+    <ul class="contest-list">
+      {% for contest in contests_for_results %}
+        <li>
+          <div class="contest-header">
+            <em>
+              <a href="{{ url_for('contest', contest_id=contest.id) }}">{{ contest.title }}</a>
+            </em>
+            <span class="contest-deadline">
+              päättyi {{ contest.review_end | format_date }}
+            </span>
+          </div>
+          {{ contest.short_description }}
         </li>
-    </ul>
+      {% endfor %}
     </ul>
 
 
