@@ -27,17 +27,16 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 
 ## Tietokohteet
 
-### Pääkäyttäjä
-- käyttäjätunnus
-- salasana
-
 ### Käyttäjä
-- Nimi tai nimimerkki
-- Sähköpostiosoite (käyttäjätunnus)
-- Salsana
+- Nimi tai nimimerkki: teksi
+- Käyttäjätunnus (sähköpostiosoite): teksti
+- Salasana: teksti
+- Pääkäyttäjä: kyllä/ei
 
 ### Kilpailu
-- Nimi, kuvaus, säännöt
+- Nimi: teksti
+- Lyhyt kuvaus: teksti 
+- Säännöt: teksti
 - Luokka: runo/aforismi/proosa
 - Anonyymi: kyllä/ei
 - Arviointi: julkinen/piilotettu
