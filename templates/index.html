@@ -1,46 +1,7 @@
-<!DOCTYPE html>
-<html lang="fi">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kirjoituskilpailut</title>
-    <link rel="stylesheet" href="/static/styles.css" />
-</head>
-<body>
-  <div class="page-wrapper">
-    
-    <div class="logo-bar">
-      <div class="container">
-        Kirjoituskilpailut
-      </div>
-    </div>
+{% extends "base.html" %}
 
-    <nav>
-        <div class="container">
-        <ul class="nav">
-            <li class="active"><a href="#">Kirjaudu</a></li>
-            <li><a href="#">Kilpailut</a></li>
-            <li><a href="#">Omat tekstit</a></li>
-            <li><a href="#">Käyttöehdot</a></li>
-        </ul>
-        </div>
-    </nav>
+{% block title %}Kirjaudu{% endblock %}
 
-    <main class="content-box container">
-      <h1>Otsikko taso 1</h1>
-
-      <h2>Otsikko taso 2</h2>
-
-      <h3>Otsikko taso 3</h3>
-
-      <p>Leipäteksti näyttää tältä. Leipäteksti näyttää tältä. Leipäteksti näyttää tältä. Leipäteksti näyttää tältä. Leipäteksti näyttää tältä. Leipäteksti näyttää tältä. </p>
-    </main>
-
-    <footer>
-      <div class="container">
-        <p>&copy; 2025 Janne Tompuri</p>
-      </div>
-    </footer>
-  </div>
-</body>
-</html>
+{% block content %}
+  <p>Kirjaudu sisään tai rekisteröidy.</p>
+{% endblock %}
