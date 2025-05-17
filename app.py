@@ -1,11 +1,75 @@
+import sqlite3
 from flask import Flask
-from flask import render_template
+from flask import redirect, render_template, request, abort, session, flash
+from werkzeug.security import generate_password_hash, check_password_hash
+import db, config, users, secrets
 
 app = Flask(__name__)
+app.secret_key = config.secret_key
+app.teardown_appcontext(db.close_connection)
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/register")
+def register():
+    return render_template("register.html")
+
+@app.route("/create", methods=["POST"])
+def create():
+    name = request.form["name"]
+    username = request.form["username"]
+    password1 = request.form["password1"]
+    password2 = request.form["password2"]
+
+    if not username or len(username) > 50 or not name or len(name) > 50 or len(password1) > 50 or len(password2) > 50:
+        session["form_data"] = {"name": name, "username": username}
+        flash("Virhe: Tarkista syötteet.")
+        return redirect("/register")
+    if password1 != password2:
+        flash("Virhe: salasanat eivät ole samat.")
+        return redirect("/register")
+
+    password_hash = generate_password_hash(password1)
+
+    try:
+        sql = "INSERT INTO users (name, username, password_hash) VALUES (?, ?, ?)"
+        db.execute(sql, [name, username, password_hash])
+    except sqlite3.IntegrityError:
+        session["form_data"] = {"name": name, "username": username}
+        flash("Virhe: tunnus on jo varattu.")
+        return redirect("/register")
+
+    # session.pop("form_data", None)
+    session["form_data"] = {"username": username}
+    flash("Tunnus on luotu.")
+    return redirect("/login")
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "GET":
+        return render_template("login.html", next_page=request.referrer)
+
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        next_page = request.form["next_page"]
+
+        user_id = users.check_login(username, password)
+        if user_id:
+            session["user_id"] = user_id
+            session["csrf_token"] = secrets.token_hex(16)
+            return redirect("/")
+        else:
+            flash("Virhe: Väärä tunnus tai salasana.")
+            return render_template("login.html", next_page=next_page)
+
+@app.route("/logout")
+def logout():
+    del session["user_id"]
+    del session["csrf_token"]
+    return redirect("/")
 
 @app.route("/contests")
 def contests():

@@ -10,6 +10,21 @@ body {
     line-height: 1.6;
 }
 
+a {
+  color: #5c4033;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a:hover {
+  color: #3e2723;
+  text-decoration: underline;
+}
+
+a:visited {
+  color: #6d4c41;
+}
+
 .container {
     max-width: 768px;
     margin: 0 auto;
@@ -41,6 +56,7 @@ nav {
     margin: 0;
     padding: 0;
     height: 42px;
+    gap: 0.5rem;
 }
 
 .nav li {
@@ -62,13 +78,19 @@ nav {
 }
 
 .nav li a:hover {
-    background-color: #bb8d79;
+    background-color: #dcbaa5;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;    
+    transition: background-color 0.2s ease-in-out;
 }
 
 .nav li.active a {
     background-color: #ffede2;
     color: #000000;
     font-weight: bold;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    height: 100%;
 }
 
 .content-box {
@@ -76,6 +98,8 @@ nav {
     padding: 2rem;
     margin-top: 2rem;
     margin-bottom: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.05); 
 }
 
 h1 {
@@ -109,4 +133,160 @@ footer {
     text-align: center;
     padding: 2rem 1rem;
     font-size: 17px;
+}
+
+form {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  margin: 2rem 0;
+}
+
+form p {
+  margin-bottom: 1.5rem;
+}
+
+form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.4rem;
+  color: #3a3a3a;
+}
+
+form input[type="text"],
+form input[type="password"],
+form input[type="email"] {
+  width: 95%;
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 21px;
+  background-color: #fff;
+  color: #3a3a3a;
+  font-family: Georgia, serif;
+}
+
+form input[type="text"]:focus,
+form input[type="password"]:focus {
+  border-color: #9e7967;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(158, 121, 103, 0.05);
+}
+
+form input[type="submit"] {
+  background-color: #9e7967;
+  color: white;
+  font-weight: bold;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 21px;
+  cursor: pointer;
+  font-family: Georgia, serif;
+}
+
+form input[type="submit"]:hover {
+  background-color: #bb8d79;
+}
+
+.flash-message {
+  background-color: #ffede2;
+  color: #3a3a3a;
+  border-left: 5px solid #9e7967;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  font-family: Georgia, serif;
+  font-size: 20px;
+}
+
+.logo-bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo-title {
+  font-family: Georgia, serif;
+  font-size: 32px;
+  font-weight: bold;
+  color: white;
+}
+
+.login-button {
+  background-color: #dcbaa5;
+  color: #3a3a3a;
+  font-family: Georgia, serif;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.login-button:hover {
+  background-color: #ffede2;
+}
+
+.contest-list {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contest-list li {
+  background-color: #ffffff;
+  border-left: 5px solid #9e7967;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  font-family: Georgia, serif;
+  font-size: 20px;
+  line-height: 1.6;
+  color: #3a3a3a;
+}
+
+.contest-list li em {
+  font-style: normal;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.contest-list li a:hover {
+  text-decoration: underline;
+}
+
+.contest-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.3rem;
+}
+
+.contest-header em {
+  font-style: normal;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.contest-header a {
+  color: #5c4033;
+  text-decoration: none;
+}
+
+.contest-header a:hover {
+  text-decoration: underline;
+}
+
+.contest-deadline {
+  font-size: 16px;
+  color: #9e7967;
+  font-weight: bold;
+  margin-left: 1rem;
 }

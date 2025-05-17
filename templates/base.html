@@ -8,10 +8,15 @@
 </head>
 <body>
   <div class="page-wrapper">
-    
+        
     <div class="logo-bar">
-      <div class="container">
-        Kirjoituskilpailut
+      <div class="container logo-bar-inner">
+        <div class="logo-title">Kirjoituskilpailut</div>
+        {% if session.user_id %}
+          <a href="/logout" class="login-button">Kirjaudu ulos</a>
+        {% else %}
+          <a href="/login" class="login-button">Kirjaudu sisään</a>
+        {% endif %}
       </div>
     </div>
 
@@ -27,12 +32,11 @@
         <li class="{% if request.path.startswith('/results') %}active{% endif %}">
             <a href="/results">Tulokset</a>
         </li>
+        {% if session.user_id %}
         <li class="{% if request.path.startswith('/my_texts') %}active{% endif %}">
             <a href="/my_texts">Omat tekstit</a>
         </li>
-        <li class="{% if request.path.startswith('/terms_of_use') %}active{% endif %}">
-            <a href="/terms_of_use">Käyttöehdot</a>
-        </li>
+        {% endif %}
         </ul>
     </div>
     </nav>

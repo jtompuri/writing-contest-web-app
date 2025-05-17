@@ -6,6 +6,7 @@ DROP TABLE classes;
 
 CREATE TABLE users (
     id INTEGER PRIMARY KEY,
+    name TEXT,
     username TEXT UNIQUE,
     password_hash TEXT,
     super_user BOOLEAN,
@@ -21,9 +22,7 @@ CREATE TABLE contests (
     anonymity BOOLEAN,
     public_reviews BOOLEAN,
     public_results BOOLEAN,
-    collection_start DATE,
     collection_end DATE,
-    review_start DATE,
     review_end DATE,
     created DATETIME DEFAULT (DATETIME('now')),
     FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
@@ -51,6 +50,6 @@ CREATE TABLE reviews (
 
 CREATE TABLE classes (
     id INTEGER PRIMARY KEY,
-    title TEXT,
+    class TEXT,
     value TEXT
 );
