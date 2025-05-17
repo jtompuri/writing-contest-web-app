@@ -27,13 +27,16 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 
 ## Tietokohteet
 
-### Käyttäjä
+### Käyttäjät
+- Tunniste
 - Nimi tai nimimerkki: teksi
 - Käyttäjätunnus (sähköpostiosoite): teksti
 - Salasana: teksti
 - Pääkäyttäjä: kyllä/ei
-
-### Kilpailu
+- Luontiaika
+  
+### Kilpailut
+- Tunniste
 - Nimi: teksti
 - Lyhyt kuvaus: teksti 
 - Säännöt: teksti
@@ -41,18 +44,23 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 - Anonyymi: kyllä/ei
 - Arviointi: julkinen/piilotettu
 - Tulokset: julkinen/piilotettu
-- Keräyksen alkamis- ja päättymisaika
-- Arvioinnin alkamis- ja päättymisaika
-
-### Kilpailuteksti
+- Keräyksen päättymisaika
+- Arvioinnin päättymisaika
+- Luontiaika
+ 
+### Kilpailutyöt
+- Tunniste
 - Teksti
 - Linkittyy kilpailuun, käyttäjään (kirjoittaja)
-
+- Luontiaika
+ 
 ### Arvio
-- Pistemäärä
-- Perustelu
+- Tunniste
+- Pistemäärä: kokonaisluku
+- Palaute: teksti
 - Linkittyy tekstiin, käyttäjään (arvioija)
-
+- Luontiaika
+   
 ## Sovelluksen asennus
 
 Asenna `flask`-kirjasto:
