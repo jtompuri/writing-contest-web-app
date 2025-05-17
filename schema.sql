@@ -20,10 +20,10 @@ CREATE TABLE contests (
     anonymity BOOLEAN,
     public_reviews BOOLEAN,
     public_results BOOLEAN,
-    collection_start_date DATE,
-    collection_end_date DATE,
-    review_start_date DATE,
-    review_end_date DATE,
+    collection_start DATE,
+    collection_end DATE,
+    review_start DATE,
+    review_end DATE,
     created DATETIME DEFAULT (DATETIME('now'))
 );
 
