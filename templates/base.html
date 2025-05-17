@@ -16,20 +16,30 @@
     </div>
 
     <nav>
-        <div class="container">
+    <div class="container">
         <ul class="nav">
-            <li class="active"><a href="#">Kirjaudu</a></li>
-            <li><a href="#">Kilpailut</a></li>
-            <li><a href="#">Omat tekstit</a></li>
-            <li><a href="#">Käyttöehdot</a></li>
+        <li class="{% if request.path == '/' %}active{% endif %}">
+            <a href="/">Kirjaudu</a>
+        </li>
+        <li class="{% if request.path.startswith('/contests') %}active{% endif %}">
+            <a href="/contests">Kilpailut</a>
+        </li>
+        <li class="{% if request.path.startswith('/results') %}active{% endif %}">
+            <a href="/results">Tulokset</a>
+        </li>
+        <li class="{% if request.path.startswith('/my_texts') %}active{% endif %}">
+            <a href="/my_texts">Omat tekstit</a>
+        </li>
+        <li class="{% if request.path.startswith('/terms_of_use') %}active{% endif %}">
+            <a href="/terms_of_use">Käyttöehdot</a>
+        </li>
         </ul>
-        </div>
+    </div>
     </nav>
 
     <main class="content-box container">
-    </main>
-        {% block title %}Kirjoituskilpailut{% endblock %}
         {% block content %}{% endblock %}
+    </main>
     <footer>
       <div class="container">
         <p>&copy; 2025 Janne Tompuri</p>
