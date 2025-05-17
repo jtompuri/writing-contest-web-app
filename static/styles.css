@@ -1,0 +1,241 @@
+p{
+			margin:10px 0;
+			padding:0;
+		}
+
+		h1,h2,h3,h4,h5,h6{
+			display:block;
+			margin:0;
+			padding:0;
+		}
+		img,a img{
+			border:0;
+			height:auto;
+			outline:none;
+			text-decoration:none;
+		}
+		body,#bodyTable,#bodyCell{
+			height:100%;
+			margin:0;
+			padding:0;
+			width:100%;
+		}
+		a[x-apple-data-detectors]{
+			color:inherit !important;
+			text-decoration:none !important;
+			font-size:inherit !important;
+			font-family:inherit !important;
+			font-weight:inherit !important;
+			line-height:inherit !important;
+		}
+
+		h1{
+			color:#FFFFFF;
+			font-family:'Noticia Text', Georgia, 'Times New Roman', serif;
+			font-size:48px;
+			font-style:normal;
+			font-weight:bold;
+			line-height:150%;
+			letter-spacing:normal;
+			text-align:center;
+		}
+		h2{
+			color:#1F2F38;
+			font-family:'Noticia Text', Georgia, 'Times New Roman', serif;
+			font-size:48px;
+			font-style:normal;
+			font-weight:bold;
+			line-height:150%;
+			letter-spacing:normal;
+			text-align:center;
+		}
+		h3{
+			color:#1F2F38;
+			font-family:'Noticia Text', Georgia, 'Times New Roman', serif;
+			font-size:36px;
+			font-style:normal;
+			font-weight:bold;
+			line-height:150%;
+			letter-spacing:normal;
+			text-align:center;
+		}
+		h4{
+			color:#435864;
+			font-family:'Noticia Text', Georgia, 'Times New Roman', serif;
+			font-size:22px;
+			font-style:italic;
+			font-weight:normal;
+			line-height:125%;
+			letter-spacing:normal;
+			text-align:left;
+		}
+		#templateHeader{
+			background-color:#1d3b72;
+			background-image:none;
+			background-repeat:no-repeat;
+			background-position:50% 50%;
+			background-size:cover;
+			border-top:0;
+			border-bottom:0;
+			padding-top:0px;
+			padding-bottom:0px;
+		}
+		.headerContainer{
+			background-color:transparent;
+			background-image:none;
+			background-repeat:no-repeat;
+			background-position:center;
+			background-size:cover;
+			border-top:0;
+			border-bottom:0;
+			padding-top:0;
+			padding-bottom:0;
+		}
+		.headerContainer .mcnTextContent,.headerContainer .mcnTextContent p{
+			color:#FFFFFF;
+			font-family:'Noticia Text', Georgia, 'Times New Roman', serif;
+			font-size:18px;
+			line-height:150%;
+			text-align:left;
+		}
+		.headerContainer .mcnTextContent a,.headerContainer .mcnTextContent p a{
+			color:#FFFFFF;
+			font-weight:normal;
+			text-decoration:underline;
+		}
+		#templateBody{
+			background-color:#ffffff;
+			background-image:none;
+			background-repeat:no-repeat;
+			background-position:center;
+			background-size:cover;
+			border-top:0;
+			border-bottom:0;
+			padding-top:0px;
+			padding-bottom:0px;
+		}
+		.bodyContainer{
+			background-color:transparent;
+			background-image:none;
+			background-repeat:no-repeat;
+			background-position:center;
+			background-size:cover;
+			border-top:0;
+			border-bottom:0;
+			padding-top:0;
+			padding-bottom:0;
+		}
+		#templateUpperColumns{
+			background-color:#ffffff;
+			background-image:none;
+			background-repeat:no-repeat;
+			background-position:center;
+			background-size:cover;
+			border-top:0;
+			border-bottom:0;
+			padding-top:9px;
+			padding-bottom:90px;
+		}
+		#templateUpperColumns .columnContainer{
+			background-color:transparent;
+			background-image:none;
+			background-repeat:no-repeat;
+			background-position:center;
+			background-size:cover;
+			border-top:0;
+			border-bottom:0;
+			padding-top:0;
+			padding-bottom:0;
+		}
+		#templateUpperColumns .columnContainer .mcnTextContent,#templateUpperColumns .columnContainer .mcnTextContent p{
+			color:#202020;
+			font-family:'Noticia Text', Georgia, 'Times New Roman', serif;
+			font-size:16px;
+			line-height:150%;
+			text-align:left;
+		}
+		#templateUpperColumns .columnContainer .mcnTextContent a,#templateUpperColumns .columnContainer .mcnTextContent p a{
+			color:#DE5B49;
+			font-weight:normal;
+			text-decoration:underline;
+		}
+		#templateLowerColumns{
+			background-color:#CDDCE4;
+			background-image:none;
+			background-repeat:repeat;
+			background-position:0% 0%;
+			background-size:auto;
+			border-top:0;
+			border-bottom:0;
+			padding-top:63px;
+			padding-bottom:63px;
+		}
+		#templateLowerColumns .columnContainer{
+			background-color:transparent;
+			background-image:none;
+			background-repeat:no-repeat;
+			background-position:center;
+			background-size:cover;
+			border-top:0;
+			border-bottom:0;
+			padding-top:0;
+			padding-bottom:0;
+		}
+		.lowerColumnHeaderContainer .mcnTextContent,.lowerColumnHeaderContainer .mcnTextContent p{
+			color:#202020;
+			font-family:'Noticia Text', Georgia, 'Times New Roman', serif;
+			font-size:18px;
+			line-height:150%;
+			text-align:left;
+		}
+		.lowerColumnHeaderContainer .mcnTextContent a,.lowerColumnHeaderContainer .mcnTextContent p a{
+			color:#DE5B49;
+			font-weight:normal;
+			text-decoration:underline;
+		}
+		#templateLowerColumns .columnContainer .mcnTextContent,#templateLowerColumns .columnContainer .mcnTextContent p{
+			color:#202020;
+			font-family:'Noticia Text', Georgia, 'Times New Roman', serif;
+			font-size:18px;
+			line-height:150%;
+			text-align:left;
+		}
+		#templateLowerColumns .columnContainer .mcnTextContent a,#templateLowerColumns .columnContainer .mcnTextContent p a{
+			color:#DE5B49;
+			font-weight:normal;
+			text-decoration:underline;
+		}
+		#templateFooter{
+			background-color:#102140;
+			background-image:none;
+			background-repeat:no-repeat;
+			background-position:center;
+			background-size:cover;
+			border-top:0;
+			border-bottom:0;
+			padding-top:90px;
+			padding-bottom:90px;
+		}
+		.footerContainer{
+			background-color:transparent;
+			background-image:none;
+			background-repeat:no-repeat;
+			background-position:center;
+			background-size:cover;
+			border-top:0;
+			border-bottom:0;
+			padding-top:0;
+			padding-bottom:0;
+		}
+		.footerContainer .mcnTextContent,.footerContainer .mcnTextContent p{
+			color:#FFFFFF;
+			font-family:Helvetica;
+			font-size:12px;
+			line-height:150%;
+			text-align:center;
+		}
+		.footerContainer .mcnTextContent a,.footerContainer .mcnTextContent p a{
+			color:#FFFFFF;
+			font-weight:normal;
+			text-decoration:underline;
+		}
