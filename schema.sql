@@ -15,6 +15,7 @@ CREATE TABLE users (
 CREATE TABLE contests (
     id INTEGER PRIMARY KEY,
     title TEXT,
+    class_id INTEGER,
     short_description TEXT,
     long_description TEXT,
     anonymity BOOLEAN,
@@ -24,7 +25,8 @@ CREATE TABLE contests (
     collection_end DATE,
     review_start DATE,
     review_end DATE,
-    created DATETIME DEFAULT (DATETIME('now'))
+    created DATETIME DEFAULT (DATETIME('now')),
+    FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
 );
 
 CREATE TABLE entries (
