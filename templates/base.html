@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Kirjoituskilpailut{% endblock %}</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="page-wrapper">
+    
+    <div class="logo-bar">
+      <div class="container">
+        Kirjoituskilpailut
+      </div>
+    </div>
+
+    <nav>
+        <div class="container">
+        <ul class="nav">
+            <li class="active"><a href="#">Kirjaudu</a></li>
+            <li><a href="#">Kilpailut</a></li>
+            <li><a href="#">Omat tekstit</a></li>
+            <li><a href="#">Käyttöehdot</a></li>
+        </ul>
+        </div>
+    </nav>
+
+    <main class="content-box container">
+    </main>
+        {% block title %}Kirjoituskilpailut{% endblock %}
+        {% block content %}{% endblock %}
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 Janne Tompuri</p>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
