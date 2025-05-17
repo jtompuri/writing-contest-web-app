@@ -1,16 +1,37 @@
 import sqlite3
 from flask import Flask
 from flask import redirect, render_template, request, abort, session, flash
+from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
-import db, config, users, secrets
+import db, config, users, secrets, sql
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
 app.teardown_appcontext(db.close_connection)
 
+@app.template_filter("format_date")
+def format_date(value):
+    try:
+        dt = datetime.strptime(value, "%Y-%m-%d")
+        return dt.strftime("%-d.%m.%Y")
+    except ValueError:
+        return value
+
 @app.route("/")
 def index():
-    return render_template("index.html")
+    contests_for_entry = sql.get_contests_for_entry()
+    contests_for_review = sql.get_contests_for_review()
+    contests_for_results = sql.get_contests_for_results()
+    return render_template("index.html",  contests_for_entry=contests_for_entry, 
+                contests_for_review=contests_for_review, contests_for_results=contests_for_results)
+
+
+@app.route("/contest/<int:contest_id>")
+def contest(contest_id):
+    contest = sql.get_contest_by_id(contest_id)
+    if not contest:
+        abort(404)
+    return render_template("contest.html", contest=contest)
 
 @app.route("/register")
 def register():
@@ -41,7 +62,6 @@ def create():
         flash("Virhe: tunnus on jo varattu.")
         return redirect("/register")
 
-    # session.pop("form_data", None)
     session["form_data"] = {"username": username}
     flash("Tunnus on luotu.")
     return redirect("/login")
@@ -54,16 +74,18 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        next_page = request.form["next_page"]
+        next_page = request.form.get("next_page", "/")
 
         user_id = users.check_login(username, password)
         if user_id:
             session["user_id"] = user_id
             session["csrf_token"] = secrets.token_hex(16)
-            return redirect("/")
+            return redirect(next_page)
         else:
             flash("Virhe: Väärä tunnus tai salasana.")
             return render_template("login.html", next_page=next_page)
+
+    return redirect("/login")
 
 @app.route("/logout")
 def logout():
