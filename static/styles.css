@@ -6,7 +6,7 @@ body {
     background-color: #f2f2f2;
     margin: 0;
     padding: 0;
-    color: #1F2F38;
+    color: #3a3a3a;
     line-height: 1.6;
 }
 
@@ -17,8 +17,12 @@ body {
 }
 
 .logo-bar {
-    background-color: #1d3b72;
+    background-color: #9e7967;
     padding: 1rem 0;
+    color: white;
+    font-family: Georgia, serif;
+    font-size: 32px;
+    font-weight: bold;
 }
 
 .logo {
@@ -28,7 +32,7 @@ body {
 }
 
 nav {
-    background-color: #1d3b72;
+    background-color: #9e7967;
 }
 
 .nav {
@@ -49,7 +53,7 @@ nav {
     justify-content: center;
     height: 100%;
     padding: 0 1.5rem;
-    background-color: #1d3b72;
+    background-color: #9e7967;
     color: white;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 17px;
@@ -98,7 +102,7 @@ h3 {
 }
 
 footer {
-    background-color: #1d3b72;
+    background-color: #9e7967;
     font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
     color: white;
     text-align: center;
