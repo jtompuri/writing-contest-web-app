@@ -38,7 +38,7 @@
         </li>
         {% endif %}
         {% if session.super_user %}
-            <li class="{% if request.path == '/admin' %}active{% endif %}">
+            <li class="{% if request.path.startswith('/admin') %}active{% endif %}">
               <a href="/admin">Ylläpito</a>
             </li>
         {% endif %}
