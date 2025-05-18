@@ -26,7 +26,7 @@
     </ul>
     {% endif %}
 
-    {% if contests_for_review %}
+    {% if session.user_id and contests_for_review %}
     <h2>Vertaisarvioi kilpailuun tulleita tekstejä</h2>
 
     <ul class="contest-list">
@@ -65,5 +65,7 @@
       {% endfor %}
     </ul>
     {% endif %}
+
+    <p><em>Kaikki käynnissä olevat ja päättyneet kilpailut löytyvät <a href="/contests">Kilpailut-sivulla</a>.</em> </p>
 
 {% endblock %}
