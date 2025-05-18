@@ -96,6 +96,7 @@ def create():
         session["form_data"] = {"name": name, "username": username}
         flash("Virhe: Tarkista syötteet.")
         return redirect("/register")
+    
     if password1 != password2:
         flash("Virhe: salasanat eivät ole samat.")
         return redirect("/register")
@@ -103,12 +104,8 @@ def create():
     user_count = users.get_user_count()
     is_super = 1 if user_count == 0 else 0
 
-    password_hash = generate_password_hash(password1)
-
-    try:
-        query = "INSERT INTO users (name, username, password_hash, super_user) VALUES (?, ?, ?, ?)"
-        db.execute(query, [name, username, password_hash, is_super])
-    except sqlite3.IntegrityError:
+    success = users.create_user(name, username, password1, is_super)
+    if not success:
         session["form_data"] = {"name": name, "username": username}
         flash("Virhe: tunnus on jo varattu.")
         return redirect("/register")
@@ -152,6 +149,12 @@ def login():
             return render_template("login.html", next_page=next_page, username=username)
 
     return redirect("/login")
+
+@app.route("/admin")
+def admin():
+    if not session.get("super_user"):
+        abort(403)
+    return render_template("admin.html")
 
 
 @app.route("/logout")
