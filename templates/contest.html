@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <h1>{{ contest.title }}</h1>
+
+    <div class="contest-summary-box">
+        {% if not collection_ended %}
+            <span class="contest-status open">Kilpailu on käynnissä</span>
+        {% elif collection_ended and not review_ended and contest.public_reviews %}
+            <span class="contest-status review">Arviointivaihe</span>
+        {% else %}
+            <span class="contest-status closed">Kilpailu on päättynyt</span>
+        {% endif %}
+
+        <p><strong>Laji:</strong> {{ contest.class_value }}</p>
+
+        <p>
+            <strong>Jättöaika:</strong> {{ contest.collection_end | format_date }}
+            {% if collection_ended %}<span class="status-note"> (päättynyt)</span>{% endif %}
+        </p>
+
+        <p>
+            <strong>Arviointiaika:</strong> {{ contest.review_end | format_date }}
+            {% if review_ended %}<span class="status-note"> (päättynyt)</span>{% endif %}
+        </p>
+
+        {% if collection_ended %}
+            <div class="contest-stats">
+                <div><strong>Työt:</strong> {{ stats.entry_count }}</div>
+                <div><strong>Arviot:</strong> {{ stats.review_count }}</div>
+            </div>
+        {% endif %}
+    </div>
+
+    <p><strong>{{ contest.short_description }}</strong></p>
+
+    <p>{{ contest.long_description | richtext }}</p>
+
+    {% if review_ended and contest.public_results %}
+        <div style="margin-top: 2rem;">
+            <a href="{{ url_for('add_entry', contest_id=contest.id) }}" class="action-button">
+                Näytä kilpailun tulokset
+            </a>
+        </div>
+
+    {% elif collection_ended and session.user_id and contest.public_reviews %}
+        <div style="margin-top: 2rem;">
+            <a href="{{ url_for('add_entry', contest_id=contest.id) }}" class="action-button">
+                Vertaisarvioi kilpailutöitä
+            </a>
+        </div>
+
+    {% elif not collection_ended and session.user_id %}
+        <div style="margin-top: 2rem;">
+            <a href="{{ url_for('add_entry', contest_id=contest.id) }}" class="action-button">
+                Osallistu kilpailuun
+            </a>
+        </div>
+    {% elif not collection_ended or not review_ended %}
+        <p style="margin-top: 2rem; font-style: italic;">
+            <a href="/login">Kirjaudu sisään</a> osallistuaksesi.
+        </p>
+    {% endif %}
+
+
+{% endblock %}
