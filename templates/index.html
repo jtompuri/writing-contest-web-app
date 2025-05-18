@@ -4,8 +4,9 @@
 
 {% block content %}
     <h1>Tervetuloa!</h1>
-    <p>Kirjoitatko runoja, aforismeja tai lyhyttä proosaa? Tutustu käynnissä oleviin kirjoituskilpailuihin ja osallistu! Aloita tutustumalla päättyneiden kilpailujen tuloksiin. <a href="/register"></href>Rekisteröidy</a> ja <a href="/login">kirjaudu sisään</a> osallistuaksesi kilpailuun.</p>
+    <p>Kirjoitatko runoja, aforismeja tai lyhyttä proosaa? Tutustu käynnissä oleviin kirjoituskilpailuihin ja osallistu! Aloita tutustumalla päättyneiden kilpailujen tuloksiin. <a href="/register"></href>Rekisteröidy</a> ja <a href="/login">kirjaudu sisään</a> osallistuaksesi.</p>
 
+    {% if contests_for_entry %}
     <h2>Osallistu käynnissä olevaan kilpailuun</h2>
 
     <ul class="contest-list">
@@ -23,7 +24,9 @@
         </li>
       {% endfor %}
     </ul>
+    {% endif %}
 
+    {% if contests_for_review %}
     <h2>Vertaisarvioi kilpailuun tulleita tekstejä</h2>
 
     <ul class="contest-list">
@@ -41,7 +44,9 @@
         </li>
       {% endfor %}
     </ul>
+    {% endif %}
 
+    {% if contests_for_results %}
     <h2>Tutustu päättyneiden kilpailujen tuloksiin</h2>
 
     <ul class="contest-list">
@@ -59,6 +64,6 @@
         </li>
       {% endfor %}
     </ul>
-
+    {% endif %}
 
 {% endblock %}
