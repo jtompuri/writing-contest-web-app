@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form action="{{ url_for('admin_create_contest') }}" method="post" class="form-box">
+
+<h1>Luo uusi kilpailu</h1>
+
+      <p>
+        <label for="title">Otsikko:</label>
+        <input type="text" name="title" id="title" maxlength="100" required>
+    </p>
+
+    <p>
+        <label for="class_id">Laji:</label>
+        <select name="class_id" id="class_id" required>
+              <option value="" disabled selected hidden>Valitse kirjallisuuslaji</option>
+          {% for cl in classes %}
+              <option value="{{ cl.id }}">{{ cl.value }}</option>
+          {% endfor %}
+        </select>
+    </p>
+
+    <p>
+        <label for="short_description">Lyhyt kuvaus:</label>
+        <input type="text" name="short_description" id="short_description" maxlength="200" required>
+    </p>
+
+    <p>
+        <label for="long_description">Pitkä kuvaus:</label>
+        <textarea name="long_description" id="long_description" rows="10"  maxlength="2000" required></textarea>
+    </p>
+
+    <p>
+        <label><input type="checkbox" name="anonymity" class="large-checkbox">Anonyymi arviointi</label>
+        <label><input type="checkbox" name="public_reviews" class="large-checkbox">Arviot ovat julkisia</label>
+        <label><input type="checkbox" name="public_results" class="large-checkbox">Tulokset ovat julkisia</label>
+    </p>
+
+    <p>
+        <label for="collection_end">Jättöaika päättyy:</label>
+        <input type="date" name="collection_end" id="collection_end" required>
+    </p>
+
+    <p>
+        <label for="review_end">Arviointiaika päättyy:</label>
+        <input type="date" name="review_end" id="review_end" required>
+    </p>
+
+      <input type="submit" value="Luo kilpailu">
+</form>
+
+{% endblock %}
