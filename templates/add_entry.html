@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="contest-summary-box">
+    {% if not collection_ended %}
+        <span class="contest-status open">Kilpailu on käynnissä</span>
+    {% elif collection_ended and not review_ended and contest.public_reviews %}
+        <span class="contest-status review">Arviointivaihe</span>
+    {% else %}
+        <span class="contest-status closed">Kilpailu on päättynyt</span>
+    {% endif %}
+
+    <p><strong>Laji:</strong> {{ contest.class_value }}</p>
+
+    <p>
+        <strong>Keräys päättyy:</strong> {{ contest.collection_end | format_date }}
+        {% if collection_ended %}<span class="status-note"> (päättynyt)</span>{% endif %}
+    </p>
+
+    <p>
+        <strong>Arviointi päättyy:</strong> {{ contest.review_end | format_date }}
+        {% if review_ended %}<span class="status-note"> (päättynyt)</span>{% endif %}
+    </p>
+
+    {% if collection_ended %}
+        <div class="contest-stats">
+            <div><strong>Jätetyt työt:</strong> {{ stats.entry_count }}</div>
+            <div><strong>Annetut arviot:</strong> {{ stats.review_count }}</div>
+    </div>
+    {% endif %}
+</div>
+
+<form action="" method="post" class="form-box">
+
+    <h1>Osallistu kilpailuun</h1>
+
+    <p>{{ contest.short_description }}</p>
+
+    <p>
+        <label for="entry">Kilpailutyö:</label>
+        <textarea name="entry" id="entry" rows="15" maxlength="5000" required>{{ entry or '' }}</textarea>
+        <small>Enintään 5000 merkkiä. Sallitut muotoilut: *lihavointi* ja _kursivointi_.</small>
+    </p>
+    <p style="margin-top: 1.5rem;">
+    <button type="submit" name="action" value="preview" class="action-button">
+        Esikatsele
+    </button>
+    <button type="submit" name="action" value="submit" class="action-button" style="margin-left: 1rem;">
+        Lähetä kilpailutyö
+    </button>
+    </p>
+</form>
+
+{% endblock %}
