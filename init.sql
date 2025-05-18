@@ -4,14 +4,9 @@ DELETE FROM contests;
 DELETE FROM entries;
 DELETE FROM reviews;
 
-INSERT INTO classes (class, value) VALUES ('Laji', 'Runous');
-INSERT INTO classes (class, value) VALUES ('Laji', 'Aforistiikka');
-INSERT INTO classes (class, value) VALUES ('Laji', 'Muu lyhyt proosa');
-
-INSERT INTO users (name, username, password_hash, super_user) VALUES
-('Administrator', 'admin', 'hash_admin', 1),
-('Laura', 'laura', 'hash_laura', 0),
-('Salanimi', 'mikko', 'hash_mikko', 0);
+INSERT INTO classes (title, value) VALUES ('Laji', 'Runous');
+INSERT INTO classes (title, value) VALUES ('Laji', 'Aforistiikka');
+INSERT INTO classes (title, value) VALUES ('Laji', 'Muu lyhyt proosa');
 
 INSERT INTO contests (
     title, class_id, short_description, long_description,
@@ -30,7 +25,7 @@ INSERT INTO contests (
 ),
 
 (
-    'Aforismikilpailu 2025',
+    'Aforismikilpailu, jolla on ihan liian pitkä otsikko, 2025',
     2,
     'Aforismikilpailun lyhytkuvaus.',
     'Tarjoa kilpailuun aforismeja, joka teemana on juhla.',
