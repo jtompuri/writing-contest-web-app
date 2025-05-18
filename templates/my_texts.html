@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
+{% for message in get_flashed_messages() %}
+  <div class="flash-message">{{ message }}</div>
+{% endfor %}
+
 {% block title %}Omat tekstit{% endblock %}
 
 {% block content %}
