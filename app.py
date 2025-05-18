@@ -19,6 +19,10 @@ def format_date(value):
         return value
 
 
+def is_valid_email(email):
+    return re.match(r"^[^@]+@[^@]+\.[^@]+$", email)
+
+
 def format_text(text):
     text = text.replace('\n', '<br />')
     text = re.sub(r' {2,}', lambda m: '&nbsp;' * len(m.group()), text)
@@ -96,9 +100,20 @@ def create():
         session["form_data"] = {"name": name, "username": username}
         flash("Virhe: Tarkista syötteet.")
         return redirect("/register")
-    
+
     if password1 != password2:
+        session["form_data"] = {"name": name, "username": username}
         flash("Virhe: salasanat eivät ole samat.")
+        return redirect("/register")
+
+    if len(password1) < 8:
+        session["form_data"] = {"name": name, "username": username}
+        flash("Virhe: salasanan on oltava vähintään 6 merkkiä pitkä.")
+        return redirect("/register")
+
+    if not is_valid_email(username):
+        session["form_data"] = {"name": name, "username": username}
+        flash("Virhe: Sähköpostiosoite ei ole kelvollinen.")
         return redirect("/register")
 
     user_count = users.get_user_count()
@@ -150,11 +165,249 @@ def login():
 
     return redirect("/login")
 
+
 @app.route("/admin")
 def admin():
     if not session.get("super_user"):
         abort(403)
-    return render_template("admin.html")
+
+    contest_count = sql.get_contest_count()
+    user_count = users.get_user_count()
+    entry_count = sql.get_entry_count()
+
+    return render_template("admin/index.html", 
+        contest_count=contest_count,
+        user_count=user_count,
+        entry_count=entry_count
+    )
+
+
+@app.route("/admin/contests")
+def admin_contests():
+    if not session.get("super_user"):
+        abort(403)
+
+    contests = sql.get_all_contests()
+    return render_template("admin/contests.html", contests=contests)
+
+
+@app.route("/admin/contests/new")
+def admin_new_contest():
+    if not session.get("super_user"):
+        abort(403)
+
+    classes = sql.get_all_classes()
+    return render_template("admin/new_contest.html", classes=classes)
+
+
+@app.route("/admin/contests/create", methods=["POST"])
+def admin_create_contest():
+    if not session.get("super_user"):
+        abort(403)
+
+    form = request.form
+    title = form["title"]
+    class_id = form["class_id"]
+    short_description = form["short_description"]
+    long_description = form["long_description"]
+    collection_end = form["collection_end"]
+    review_end = form["review_end"]
+
+    if not title or not class_id or not collection_end or not review_end or not short_description or not long_description:
+        flash("Kaikki pakolliset kentät on täytettävä.")
+        return redirect(url_for("admin_new_contest"))
+
+    anonymity = 1 if form.get("anonymity") == "on" else 0
+    public_reviews = 1 if form.get("public_reviews") == "on" else 0
+    public_results = 1 if form.get("public_results") == "on" else 0
+
+    try:
+        sql.create_contest(title, class_id, short_description, long_description,
+                           anonymity, public_reviews, public_results,
+                           collection_end, review_end)
+        flash("Kilpailu on luotu.")
+        return redirect(url_for("admin_contests"))
+    except Exception as e:
+        print("Virhe kilpailun luomisessa:", e)
+        flash("Kilpailua ei voitu luoda.")
+        return redirect(url_for("admin_new_contest"))
+
+
+@app.route("/admin/contests/delete/<int:contest_id>", methods=["POST"])
+def delete_contest(contest_id):
+    if not session.get("super_user"):
+        abort(403)
+    
+    sql.delete_contest(contest_id)
+    flash("Kilpailu on poistettu.")
+    return redirect(url_for("admin_contests"))
+
+
+@app.route("/admin/users")
+def admin_users():
+    if not session.get("super_user"):
+        abort(403)
+    users_list = users.get_all_users()
+    return render_template("admin/users.html", users=users_list)
+
+
+@app.route("/admin/users/delete/<int:user_id>", methods=["POST"])
+def delete_user(user_id):
+    if not session.get("super_user"):
+        abort(403)
+
+    if int(user_id) == int(session.get("user_id", -1)):
+        flash("Et voi poistaa omaa tunnustasi.")
+        return redirect(url_for("admin_users"))
+
+    if users.is_super_user(user_id):
+        flash("Pääkäyttäjiä ei voi poistaa.")
+        return redirect(url_for("admin_users"))
+
+    users.delete_user(user_id)
+    flash("Käyttäjä on poistettu.")
+    return redirect(url_for("admin_users"))
+
+
+@app.route("/admin/users/new")
+def admin_new_user():
+    if not session.get("super_user"):
+        abort(403)
+    return render_template("admin/new_user.html")
+
+
+@app.route("/admin/users/create", methods=["POST"])
+def admin_create_user():
+    if not session.get("super_user"):
+        abort(403)
+
+    name = request.form["name"]
+    username = request.form["username"]
+    password = request.form["password"]
+    is_super = 1 if request.form.get("is_super") == "on" else 0
+
+    session["form_data"] = {
+        "name": name,
+        "username": username,
+        "is_super": is_super
+    }
+
+    if not name or not username or not password:
+        flash("Kaikki kentät ovat pakollisia.")
+        return redirect(url_for("admin_new_user"))
+    
+    if not is_valid_email(username):
+        session["form_data"] = {"name": name, "username": username}
+        flash("Virhe: Sähköpostiosoite ei ole kelvollinen.")
+        return redirect(url_for("admin_new_user"))
+
+    success = users.create_user(name, username, password, is_super)
+    if not success:
+        flash("Käyttäjänimi on jo käytössä.")
+        return redirect(url_for("admin_new_user"))
+
+    session.pop("form_data", None)
+    flash("Uusi käyttäjä on luotu.")
+    return redirect(url_for("admin_users"))
+    
+
+@app.route("/admin/users/edit/<int:user_id>")
+def admin_edit_user(user_id):
+    if not session.get("super_user"):
+        abort(403)
+
+    user = users.get_user(user_id)
+    if not user:
+        flash("Käyttäjää ei löytynyt.")
+        return redirect(url_for("admin_users"))
+
+    return render_template("admin/edit_user.html", user=user)
+
+
+@app.route("/admin/users/update/<int:user_id>", methods=["POST"])
+def admin_update_user(user_id):
+    if not session.get("super_user"):
+        abort(403)
+
+    name = request.form["name"]
+    username = request.form["username"]
+    is_super = 1 if request.form.get("is_super") == "on" else 0
+    password = request.form.get("password", "").strip()
+
+    if not name or not username:
+        flash("Nimi ja käyttäjätunnus ovat pakollisia.")
+        return redirect(url_for("admin_edit_user", user_id=user_id))
+
+    if not is_valid_email(username):
+        session["form_data"] = {"name": name, "username": username}
+        flash("Virhe: Sähköpostiosoite ei ole kelvollinen.")
+        return redirect(url_for("admin_edit_user", user_id=user_id))
+
+    try:
+        users.update_user(user_id, name, username, is_super)
+
+        if password:
+            if len(password) < 8:
+                flash("Salasanan on oltava vähintään 6 merkkiä pitkä.")
+                return redirect(url_for("admin_edit_user", user_id=user_id))
+            users.update_password(user_id, password)
+
+        flash("Käyttäjän tiedot päivitetty.")
+        return redirect(url_for("admin_users"))
+    except sqlite3.IntegrityError:
+        flash("Käyttäjätunnus on jo käytössä.")
+        return redirect(url_for("admin_edit_user", user_id=user_id))
+
+
+@app.route("/admin/entries")
+def admin_entries():
+    if not session.get("super_user"):
+        abort(403)
+    entries = sql.get_all_entries()
+    return render_template("admin/entries.html", entries=entries)
+
+
+@app.route("/admin/contests/edit/<int:contest_id>")
+def edit_contest(contest_id):
+    if not session.get("super_user"):
+        abort(403)
+
+    contest = sql.get_contest_by_id(contest_id)
+    classes = sql.get_all_classes()
+
+    if not contest:
+        abort(404)
+
+    return render_template("admin/edit_contest.html", contest=contest, classes=classes)
+
+
+@app.route("/admin/contests/update/<int:contest_id>", methods=["POST"])
+def admin_update_contest(contest_id):
+    if not session.get("super_user"):
+        abort(403)
+
+    form = request.form
+    title = form["title"]
+    class_id = form["class_id"]
+    short_description = form["short_description"]
+    long_description = form["long_description"]
+    collection_end = form["collection_end"]
+    review_end = form["review_end"]
+
+    if not title or not class_id or not collection_end or not review_end or not short_description or not long_description:
+        flash("Kaikki pakolliset kentät on täytettävä.")
+        return redirect(url_for("edit_contest", contest_id=contest_id))
+
+    anonymity = 1 if form.get("anonymity") == "on" else 0
+    public_reviews = 1 if form.get("public_reviews") == "on" else 0
+    public_results = 1 if form.get("public_results") == "on" else 0
+
+    sql.update_contest(contest_id, title, class_id, short_description, long_description,
+                       anonymity, public_reviews, public_results,
+                       collection_end, review_end)
+
+    flash("Kilpailun tiedot päivitetty.")
+    return redirect(url_for("admin_contests"))
 
 
 @app.route("/logout")
