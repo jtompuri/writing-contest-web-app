@@ -50,6 +50,6 @@ CREATE TABLE reviews (
 
 CREATE TABLE classes (
     id INTEGER PRIMARY KEY,
-    class TEXT,
+    title TEXT,
     value TEXT
 );
