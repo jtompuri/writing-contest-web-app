@@ -83,7 +83,7 @@ INSERT INTO contests (
     'Proosakilpailun kuvaus.',
     'Kirjoita lyhyt proosateksti, joka käsittelee kaupungistumista.',
     1,
-    1,
+    0,
     1,
     '2025-10-20',
     '2025-10-30'
