@@ -76,7 +76,7 @@ Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 - [ ] Tavoitteena on, että sovelluksessa on ainakin seuraavat toiminnot:
 	- [x] Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
 	- [ ] Käyttäjä pystyy lisäämään, muokkaamaan ja poistamaan tietokohteita.
-	- [ ] Käyttäjä näkee sovellukseen lisätyt tietokohteet.
+	- [x] Käyttäjä näkee sovellukseen lisätyt tietokohteet.
 	- [ ] Käyttäjä pystyy etsimään tietokohteita hakusanalla tai muulla perusteella.
 - [ ] README.md-tiedoston tulee kuvata, mikä on sovelluksen nykyinen tilanne.
 
