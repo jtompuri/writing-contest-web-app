@@ -135,7 +135,7 @@ footer {
     font-size: 17px;
 }
 
-form {
+form.form-box {
   background-color: white;
   padding: 2rem;
   border-radius: 8px;
@@ -143,20 +143,20 @@ form {
   margin: 2rem 0;
 }
 
-form p {
+form.form-box p {
     margin-bottom: 1.5rem;
 }
 
-form label {
+form.form-box label {
     display: block;
     font-weight: bold;
     margin-bottom: 0.4rem;
     color: #3a3a3a;
 }
 
-form input[type="text"],
-form input[type="password"],
-form input[type="email"] {
+form.form-box input[type="text"],
+form.form-box input[type="password"],
+form.form-box input[type="email"] {
     width: 95%;
     padding: 0.6rem;
     border: 1px solid #ccc;
@@ -167,14 +167,14 @@ form input[type="email"] {
     font-family: Georgia, serif;
 }
 
-form input[type="text"]:focus,
-form input[type="password"]:focus {
+form.form-box input[type="text"]:focus,
+form.form-box input[type="password"]:focus {
     border-color: #9e7967;
     outline: none;
     box-shadow: 0 0 0 2px rgba(158, 121, 103, 0.05);
 }
 
-form input[type="submit"] {
+form.form-box input[type="submit"] {
     background-color: #9e7967;
     color: white;
     font-weight: bold;
@@ -186,8 +186,17 @@ form input[type="submit"] {
     font-family: Georgia, serif;
 }
 
-form input[type="submit"]:hover {
+form.form-box input[type="submit"]:hover {
     background-color: #bb8d79;
+}
+
+form.form-box input[disabled],
+form.form-box textarea[disabled] {
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  color: #777;
+  cursor: not-allowed;
+  font-style: italic;
 }
 
 .flash-message {
@@ -365,4 +374,58 @@ position: relative;
   color: #888;
   font-style: italic;
   font-size: 90%;
+}
+
+.admin-table {
+  font-size: 15px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th, .admin-table td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #ccc;
+  vertical-align: top;
+}
+
+.small-button {
+  background-color: #e0e0e0;
+  color: #333;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+  font-family: 'Segoe UI', sans-serif;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.small-button:hover {
+  background-color: #d6d6d6;
+}
+
+input[type="checkbox"].large-checkbox {
+  width: 1.1em;
+  height: 1.1em;
+  transform: translateY(0.2em);
+  margin-right: 0.5em;
+}
+
+form select,
+form textarea,
+form input[type="date"] {
+    width: 95%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 21px;
+    background-color: #fff;
+    color: #3a3a3a;
+    font-family: Georgia, serif;
+    box-sizing: border-box;
+}
+
+form textarea {
+    resize: vertical;
 }
