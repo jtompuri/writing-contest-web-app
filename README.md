@@ -65,13 +65,13 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 
 Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 
-### Välipalautus 1
+### Välipalautus 1 (18.5.2025)
 - [x] Luo GitHubiin julkinen repositorio harjoitustyötä varten. Nimeä repositoriosi kuvaavasti.
 - [x] Valitse projektille aihe ja kirjoita README.md-tiedostoon kuvaus, joka esittelee sovelluksen keskeiset toiminnot. 
 - [x] Kirjoita kuvaus samassa muodossa kuin aloitussivun esimerkkiaiheissa ja esimerkkisovelluksessa.
 - [x] Kirjaudu Labtooliin ja ilmoita siellä projektisi GitHub-osoite.
 
-### Välipalautus 2
+### Välipalautus 2 (1.6.2025)
 
 - [ ] Tavoitteena on, että sovelluksessa on ainakin seuraavat toiminnot:
 	- [x] Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
@@ -80,7 +80,7 @@ Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 	- [ ] Käyttäjä pystyy etsimään tietokohteita hakusanalla tai muulla perusteella.
 - [ ] README.md-tiedoston tulee kuvata, mikä on sovelluksen nykyinen tilanne.
 
-### Välipalautus 3
+### Välipalautus 3 (15.6.2025)
 
 - [ ] Tavoitteena on, että sovelluksessa on ainakin seuraavat toiminnot:
 	- [ ] Sovelluksessa on käyttäjäsivut, jotka näyttävät tilastoja ja käyttäjän lisäämät tietokohteet.
