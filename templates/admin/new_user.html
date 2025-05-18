@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form action="{{ url_for('admin_create_user') }}" method="post" class="form-box">
+
+<h1>Luo uusi käyttäjä</h1>
+
+{% for message in get_flashed_messages() %}
+  <div class="flash-message">{{ message }}</div>
+{% endfor %}
+    <p>
+        <label for="name">Nimi:</label>
+        <input type="text" name="name" id="name" maxlength="50"
+            value="{{ session.get('form_data', {}).get('name', '') }}" required>
+    </p>
+
+    <p>
+        <label for="username">Sähköposti (käyttäjätunnus):</label>
+        <input type="email" name="username" id="username" maxlength="50"
+            value="{{ session.get('form_data', {}).get('username', '') }}" required>
+    </p>
+
+    <p>
+        <label for="password">Salasana:</label>
+        <input type="password" name="password" id="password" maxlength="50" minlength="8" required>
+        <small style="font-size: 0.9em; color: #777;">
+            Vähintään 8 merkkiä pitkä
+        </small>
+    </p>
+
+    <p>
+        <label for="is_super">
+        <input type="checkbox" name="is_super" id="is_super" class="large-checkbox"
+                {% if session.get('form_data', {}).get('is_super') %}checked{% endif %}>
+        Pääkäyttäjä
+        </label>
+  </p>
+
+  <input type="submit" value="Luo käyttäjä">
+</form>
+
+{% endblock %}
