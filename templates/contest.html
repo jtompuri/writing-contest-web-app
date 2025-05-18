@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
+{% for message in get_flashed_messages() %}
+  <div class="flash-message">{{ message }}</div>
+{% endfor %}
+
     <h1>{{ contest.title }}</h1>
 
     <div class="contest-summary-box">
