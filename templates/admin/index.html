@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Ylläpito</h1>
+
+<ul>
+    <li><a href="{{ url_for('admin_contests') }}">Kilpailujen hallinta</a></li>
+    <li><a href="{{ url_for('admin_users') }}">Käyttäjien hallinta</a></li>
+    <li><a href="{{ url_for('admin_entries') }}">Kilpailutöiden hallinta</a></li>
+</ul>
+
+<h2>Yhteenveto</h2>
+<ul>
+    <li>Kilpailuja: {{ contest_count }}</li>
+    <li>Käyttäjiä: {{ user_count }}</li>
+    <li>Kilpailutöitä: {{ entry_count }}</li>
+</ul>
+{% endblock %}
