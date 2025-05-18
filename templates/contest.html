@@ -15,19 +15,19 @@
         <p><strong>Laji:</strong> {{ contest.class_value }}</p>
 
         <p>
-            <strong>Jättöaika:</strong> {{ contest.collection_end | format_date }}
+            <strong>Keräys päättyy:</strong> {{ contest.collection_end | format_date }}
             {% if collection_ended %}<span class="status-note"> (päättynyt)</span>{% endif %}
         </p>
 
         <p>
-            <strong>Arviointiaika:</strong> {{ contest.review_end | format_date }}
+            <strong>Arviointi päättyy:</strong> {{ contest.review_end | format_date }}
             {% if review_ended %}<span class="status-note"> (päättynyt)</span>{% endif %}
         </p>
 
         {% if collection_ended %}
             <div class="contest-stats">
-                <div><strong>Työt:</strong> {{ stats.entry_count }}</div>
-                <div><strong>Arviot:</strong> {{ stats.review_count }}</div>
+                <div><strong>Jätetyt työt:</strong> {{ stats.entry_count }}</div>
+                <div><strong>Annetut arviot:</strong> {{ stats.review_count }}</div>
             </div>
         {% endif %}
     </div>
