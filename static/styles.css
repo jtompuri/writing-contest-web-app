@@ -239,16 +239,25 @@ form.form-box textarea[disabled] {
     background-color: #ffede2;
 }
 
+a.action-button,
+a.action-button:visited,
+a.action-button:hover,
+a.action-button:active {
+    color: white;
+}
+
 .action-button {
-    display: inline-block;
-    padding: 0.6rem 1.2rem;
-    font-size: 18px;
-    font-family: Georgia, serif;
-    font-weight: bold;
-    color: #ffffff;
     background-color: #9e7967;
+    color: white;
+    font-weight: bold;
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 21px;
+    cursor: pointer;
+    font-family: Georgia, serif;
     text-decoration: none;
-    border-radius: 8px;
+    display: inline-block;
     transition: background-color 0.2s ease-in-out;
 }
 
@@ -428,4 +437,20 @@ form input[type="date"] {
 
 form textarea {
     resize: vertical;
+}
+
+form small {
+    display: block;
+    margin-top: 0.4rem;
+    color: #555;
+    font-size: 0.9em;
+    font-style: italic;
+}
+
+.button-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
