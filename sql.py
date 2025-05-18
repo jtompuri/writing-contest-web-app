@@ -168,6 +168,28 @@ def update_contest(contest_id, title, class_id, short_description, long_descript
                        collection_end, review_end, contest_id])
     
 
+def create_entry(contest_id, user_id, entry_text):
+    query = """
+        INSERT INTO entries (contest_id, user_id, entry)
+        VALUES (?, ?, ?)
+    """
+    db.execute(query, [contest_id, user_id, entry_text])
+
+
+def get_class_by_id(class_id):
+    query = "SELECT value FROM classes WHERE id = ?"
+    result = db.query(query, [class_id])
+    return result[0] if result else None
+
+
+def save_entry(contest_id, user_id, entry):
+    query = """
+        INSERT INTO entries (contest_id, user_id, entry)
+        VALUES (?, ?, ?)
+    """
+    db.execute(query, [contest_id, user_id, entry])
+
+
 ##### I HAVE PROGRESSED THIS FAR. BELOW IS COPY OF ORGINAL FILE #####
 
 
