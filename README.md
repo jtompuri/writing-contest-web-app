@@ -61,6 +61,13 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 - Linkittyy tekstiin, käyttäjään (arvioija)
 - Luontiaika
    
+## Työn eteneminen
+
+Työn etenemistä voi seurata alla olevasta tehtävälistasta.
+
+### Välipalautus 1
+- [x] Lue julkinen Githup repositorio ja nimeä se kuvaavasti.  
+
 ## Sovelluksen asennus
 
 Asenna `flask`-kirjasto:
