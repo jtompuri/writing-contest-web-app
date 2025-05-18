@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+<div class="flash-message">
+  {{ message }}
+</div>
+{% endfor %}
+
+<h1>Käyttäjien hallinta</h1>
+
+<a href="{{ url_for('admin_new_user') }}" class="small-button" style="display:inline-block; margin-bottom: 1rem;">
+  Luo uusi käyttäjä
+</a>
+
+<table class="admin-table">
+    <thead>
+        <tr>
+        <th>ID</th>
+        <th>Nimi</th>
+        <th>Käyttäjänimi</th>
+        <th>Pääkäyttäjä</th>
+        <th>Toiminnot</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr>
+        <td>{{ user.id }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.username }}</td>
+        <td>{{ 'Kyllä' if user.super_user else 'Ei' }}</td>
+        <td>
+            <a href="{{ url_for('admin_edit_user', user_id=user.id) }}" class="small-button">Muokkaa</a>
+            <form action="{{ url_for('delete_user', user_id=user.id) }}" method="post" style="display:inline;">
+            <button type="submit" class="small-button" onclick="return confirm('Poistetaanko käyttäjä?')">Poista</button>
+            </form>
+        </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
