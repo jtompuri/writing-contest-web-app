@@ -73,12 +73,12 @@ Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 
 ### Välipalautus 2
 
-- [] Tavoitteena on, että sovelluksessa on ainakin seuraavat toiminnot:
-	- [] Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
-	- [] Käyttäjä pystyy lisäämään, muokkaamaan ja poistamaan tietokohteita.
-	- [] Käyttäjä näkee sovellukseen lisätyt tietokohteet.
-	- [] Käyttäjä pystyy etsimään tietokohteita hakusanalla tai muulla perusteella.
-- [] README.md-tiedoston tulee kuvata, mikä on sovelluksen nykyinen tilanne.
+- [ ] Tavoitteena on, että sovelluksessa on ainakin seuraavat toiminnot:
+	- [ ] Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
+	- [ ] Käyttäjä pystyy lisäämään, muokkaamaan ja poistamaan tietokohteita.
+	- [ ] Käyttäjä näkee sovellukseen lisätyt tietokohteet.
+	- [ ] Käyttäjä pystyy etsimään tietokohteita hakusanalla tai muulla perusteella.
+- [ ] README.md-tiedoston tulee kuvata, mikä on sovelluksen nykyinen tilanne.
 
 ### Välipalautus 3
 
