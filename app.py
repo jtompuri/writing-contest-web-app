@@ -76,12 +76,7 @@ def contest(contest_id):
         contest=contest,
         collection_ended=collection_ended,
         review_ended=review_ended,
-        stats=stats
-    )
-
-@app.route("/contests/contest/<int:contest_id>/add_entry")
-def add_entry(contest_id):
-    return render_template("add_entry.html", contest_id=contest_id)
+        stats=stats)
 
 
 @app.route("/register")
@@ -408,6 +403,56 @@ def admin_update_contest(contest_id):
 
     flash("Kilpailun tiedot päivitetty.")
     return redirect(url_for("admin_contests"))
+
+
+@app.route("/contests/contest/<int:contest_id>/add_entry", methods=["GET", "POST"])
+def add_entry(contest_id):
+    if not session.get("user_id"):
+        flash("Kirjaudu sisään osallistuaksesi kilpailuun.")
+        return redirect(url_for("login", next_page=request.path))
+
+    contest = sql.get_contest_by_id(contest_id)
+    if not contest:
+        abort(404)
+
+    today = datetime.now().date()
+    collection_end = datetime.strptime(contest["collection_end"], "%Y-%m-%d").date()
+    review_end = datetime.strptime(contest["review_end"], "%Y-%m-%d").date()
+    collection_ended = collection_end <= today
+    review_ended = review_end <= today
+
+    stats = {}
+    if collection_ended:
+        stats["entry_count"] = sql.get_entry_count(contest_id)
+        stats["review_count"] = sql.get_review_count(contest_id)
+
+    if request.method == "GET":
+        entry = request.args.get("entry", "")
+        return render_template("add_entry.html", contest=contest,
+                               collection_ended=collection_ended,
+                               review_ended=review_ended,
+                               stats=stats, entry=entry)
+
+    if request.method == "POST":
+        action = request.form.get("action")
+        entry = request.form.get("entry", "").strip()
+
+        if not entry:
+            flash("Kilpailutyö ei saa olla tyhjä.")
+            return redirect(url_for("add_entry", contest_id=contest_id))
+
+        if action == "preview":
+            return render_template("preview_entry.html", contest=contest,
+                                   entry=entry, collection_ended=collection_ended,
+                                   review_ended=review_ended, stats=stats)
+
+        if action == "submit":
+            user_id = session["user_id"]
+            sql.save_entry(contest_id, user_id, entry)
+            flash("Kilpailutyö on tallennettu.")
+            return redirect(url_for("contest", contest_id=contest_id))
+
+    return redirect(url_for("index"))
 
 
 @app.route("/logout")
