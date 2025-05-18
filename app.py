@@ -1,8 +1,9 @@
-import sqlite3
+import sqlite3, re
 from flask import Flask
-from flask import redirect, render_template, request, abort, session, flash
+from flask import redirect, render_template, request, abort, session, flash, url_for
+from werkzeug.security import generate_password_hash
+from markupsafe import Markup
 from datetime import datetime
-from werkzeug.security import generate_password_hash, check_password_hash
 import db, config, users, secrets, sql
 
 app = Flask(__name__)
@@ -17,25 +18,72 @@ def format_date(value):
     except ValueError:
         return value
 
+
+def format_text(text):
+    text = text.replace('\n', '<br />')
+    text = re.sub(r' {2,}', lambda m: '&nbsp;' * len(m.group()), text)
+    text = re.sub(r'\*(.*?)\*', r'<strong>\1</strong>', text)
+    text = re.sub(r'_(.*?)_', r'<em>\1</em>', text)
+    email_regex = r'([\w\.-]+@[\w\.-]+\.\w+)'
+    text = re.sub(email_regex, r'<a href="mailto:\1">\1</a>', text)
+    return Markup(text)
+
+
+@app.template_filter('richtext')
+def richtext_filter(s):
+    return format_text(s)
+
+
 @app.route("/")
 def index():
-    contests_for_entry = sql.get_contests_for_entry()
-    contests_for_review = sql.get_contests_for_review()
-    contests_for_results = sql.get_contests_for_results()
+    contests_for_entry = sql.get_contests_for_entry(3)
+    contests_for_review = sql.get_contests_for_review(3)
+    contests_for_results = sql.get_contests_for_results(3)
     return render_template("index.html",  contests_for_entry=contests_for_entry, 
                 contests_for_review=contests_for_review, contests_for_results=contests_for_results)
 
 
-@app.route("/contest/<int:contest_id>")
+@app.route("/contests/contest/<int:contest_id>")
 def contest(contest_id):
     contest = sql.get_contest_by_id(contest_id)
     if not contest:
         abort(404)
-    return render_template("contest.html", contest=contest)
+
+    today = datetime.now().date()
+
+    collection_end = datetime.strptime(contest["collection_end"], "%Y-%m-%d").date()
+    review_end = datetime.strptime(contest["review_end"], "%Y-%m-%d").date()
+
+    collection_ended = collection_end <= today
+    review_ended = review_end <= today
+
+    stats = {}
+    if collection_ended:
+        stats["entry_count"] = sql.get_entry_count(contest_id)
+        stats["review_count"] = sql.get_review_count(contest_id)
+
+    print("TODAY:", today)
+    print("REVIEW_END:", review_end)
+    print("REVIEW_ENDED:", review_ended)
+    print("PUBLIC REVIEWS:", contest["public_reviews"])
+
+    return render_template(
+        "contest.html",
+        contest=contest,
+        collection_ended=collection_ended,
+        review_ended=review_ended,
+        stats=stats
+    )
+
+@app.route("/contests/contest/<int:contest_id>/add_entry")
+def add_entry(contest_id):
+    return render_template("add_entry.html", contest_id=contest_id)
+
 
 @app.route("/register")
 def register():
     return render_template("register.html")
+
 
 @app.route("/create", methods=["POST"])
 def create():
@@ -52,24 +100,34 @@ def create():
         flash("Virhe: salasanat eivät ole samat.")
         return redirect("/register")
 
+    user_count = users.get_user_count()
+    is_super = 1 if user_count == 0 else 0
+
     password_hash = generate_password_hash(password1)
 
     try:
-        sql = "INSERT INTO users (name, username, password_hash) VALUES (?, ?, ?)"
-        db.execute(sql, [name, username, password_hash])
+        query = "INSERT INTO users (name, username, password_hash, super_user) VALUES (?, ?, ?, ?)"
+        db.execute(query, [name, username, password_hash, is_super])
     except sqlite3.IntegrityError:
         session["form_data"] = {"name": name, "username": username}
         flash("Virhe: tunnus on jo varattu.")
         return redirect("/register")
 
     session["form_data"] = {"username": username}
-    flash("Tunnus on luotu.")
-    return redirect("/login")
+    if is_super:
+        flash("Pääkäyttäjän tunnus on luotu. Tällä tunnuksella on täydet käyttöoikeudet.")
+    else:
+        flash("Tunnus on luotu.")
+    
+    return redirect(url_for("login", next_page="/"))
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html", next_page=request.referrer)
+        username = session.pop("form_data", {}).get("username", "")
+        next_page = request.args.get("next_page", "/")
+        return render_template("login.html", next_page=next_page, username=username)
 
     if request.method == "POST":
         username = request.form["username"]
@@ -78,32 +136,44 @@ def login():
 
         user_id = users.check_login(username, password)
         if user_id:
-            session["user_id"] = user_id
+            user = users.get_user(user_id)
+            if user is None:
+                flash("Virheellinen käyttäjätunnus.")
+                return redirect("/login")
+
+            session["user_id"] = user["id"]
+            session["username"] = user["username"]
+            session["super_user"] = bool(user["super_user"])
             session["csrf_token"] = secrets.token_hex(16)
+
             return redirect(next_page)
         else:
             flash("Virhe: Väärä tunnus tai salasana.")
-            return render_template("login.html", next_page=next_page)
+            return render_template("login.html", next_page=next_page, username=username)
 
     return redirect("/login")
 
+
 @app.route("/logout")
 def logout():
-    del session["user_id"]
-    del session["csrf_token"]
+    session.clear()
     return redirect("/")
+
 
 @app.route("/contests")
 def contests():
     return render_template("contests.html")
 
+
 @app.route("/results")
 def results():
     return render_template("results.html")
 
+
 @app.route("/my_texts")
 def my_texts():
     return render_template("my_texts.html")
+
 
 @app.route("/terms_of_use")
 def terms_of_use():
