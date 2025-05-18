@@ -4,9 +4,9 @@ DELETE FROM contests;
 DELETE FROM entries;
 DELETE FROM reviews;
 
-INSERT INTO classes (class, value) VALUES ('Laji', 'Runo');
-INSERT INTO classes (class, value) VALUES ('Laji', 'Aforismi');
-INSERT INTO classes (class, value) VALUES ('Laji', 'Proosa');
+INSERT INTO classes (class, value) VALUES ('Laji', 'Runous');
+INSERT INTO classes (class, value) VALUES ('Laji', 'Aforistiikka');
+INSERT INTO classes (class, value) VALUES ('Laji', 'Muu lyhyt proosa');
 
 INSERT INTO users (name, username, password_hash, super_user) VALUES
 ('Administrator', 'admin', 'hash_admin', 1),
@@ -44,12 +44,20 @@ INSERT INTO contests (
 (
     'Proosakilpailu 2025',
     3,
-    'Proosakilpailun kuvaus.',
-    'Kirjoita lyhyt proosateksti, joka käsittelee kaupungistumista.',
+    'Suomen aforismiyhdistyksen ja HSL:n yhteinen Ajatus kulkee -kampanja kutsuu taas kirjoittajia.',
+    """Millainen aforismi syntyy, kun aiheena on _juhla_? Iloinen, railakas tai harras? Konkreettinen, kuvaannollinen? Kuvaako aforismi henkilökohtaista juhlan aihetta, yleistä juhlapäivää vai jotakin ihan muuta? Suhtautuuko se juhlimiseen ironisesti tai kriittisesti?
+
+*Suomen aforismiyhdistyksen* ja HSL:n yhteinen Ajatus kulkee -kampanja kutsuu taas kirjoittajia. Aforismiyhdistys viettää tänä vuonna juhlavuottaan. Yhdistyksen 20-vuotisen taipaleen kunniaksi kampanjan aiheena on tällä kertaa juhla.
+
+Jo perinteeksi muodostunut kampanja tarjoaa laajaa näkyvyyttä niin aforistiikalle kuin myös aforismien kirjoittajille. Kampanjaan etsitään suomen- ja ruotsinkielisiä uusia, laadukkaita aforismeja. Mukaan valitaan aforismeja 20–25 henkilöltä. Aforismit ovat esillä HSL:n liikennevälineissä huhti-toukokuun vaihteessa kahden viikon ajan.
+
+Jos haluat tarjota omia aforismejasi Ajatus kulkee -kampanjaan, lähetä 1–3 aforismia sähköpostilla osoitteeseen kampanja@aforismiyhdistys.fi. Aforismien on oltava perillä viimeistään perjantaina 4.4.2025. Otsikoi sähköpostiviestisi “Ajatus kulkee -kampanja”. Aforismit valitsee aforismiyhdistyksen hallituksen raati. Kampanjaan valittujen aforismien kirjoittajille ilmoitetaan henkilökohtaisesti.
+
+Lähettämällä aforismejasi kampanjaan annat luvan aforismien esittämiseen HSL:n liikennevälineissä sekä julkaisuun HSL:n ja Suomen aforismiyhdistyksen digitaalisissa kanavissa.""",
     1,
-    0,
     1,
-    '2025-05-20',
+    1,
+    '2025-03-20',
     '2025-06-30'
 ),
 
@@ -83,7 +91,7 @@ INSERT INTO contests (
     'Proosakilpailun kuvaus.',
     'Kirjoita lyhyt proosateksti, joka käsittelee kaupungistumista.',
     1,
-    0,
+    1,
     1,
     '2025-10-20',
     '2025-10-30'
