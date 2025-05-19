@@ -19,23 +19,52 @@ def format_date(value):
         return value
 
 
+def check_csrf():
+    token = request.form.get("csrf_token")
+    if not token or token != session.get("csrf_token"):
+        abort(403)
+
+
+def sanitize_input(text):
+    if not isinstance(text, str):
+        return ""
+
+    text = text.strip()
+    text = re.sub(r'<.*?>', '', text)
+    text = re.sub(r'on\w+=".*?"', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'(javascript:|data:|vbscript:)', '', text, flags=re.IGNORECASE)
+
+    return text
+
+
 def is_valid_email(email):
     return re.match(r"^[^@]+@[^@]+\.[^@]+$", email)
 
 
-def format_text(text):
+def format_text(text, links_allowed=False):
     text = text.replace('\n', '<br />')
     text = re.sub(r' {2,}', lambda m: '&nbsp;' * len(m.group()), text)
-    text = re.sub(r'\*(.*?)\*', r'<strong>\1</strong>', text)
-    text = re.sub(r'_(.*?)_', r'<em>\1</em>', text)
-    email_regex = r'([\w\.-]+@[\w\.-]+\.\w+)'
-    text = re.sub(email_regex, r'<a href="mailto:\1">\1</a>', text)
+    text = re.sub(r'\*(\S(?:.*?\S)?)\*', r'<strong>\1</strong>', text)
+    text = re.sub(r'_(\S(?:.*?\S)?)_', r'<em>\1</em>', text)
+
+    if links_allowed:
+        email_regex = r'([\w\.-]+@[\w\.-]+\.\w+)'
+        text = re.sub(email_regex, r'<a href="mailto:\1">\1</a>', text)
+
+        url_regex = r'(?<!href=")(https?://[^\s<>"]+)'
+        text = re.sub(url_regex, r'<a href="\1" target="_blank" rel="noopener">\1</a>', text)
+
     return Markup(text)
 
 
 @app.template_filter('richtext')
 def richtext_filter(s):
-    return format_text(s)
+    return format_text(s, links_allowed=False)
+
+
+@app.template_filter('richtext_with_links')
+def richtext_with_links_filter(s):
+    return format_text(s, links_allowed=True)
 
 
 @app.route("/")
@@ -86,8 +115,8 @@ def register():
 
 @app.route("/create", methods=["POST"])
 def create():
-    name = request.form["name"]
-    username = request.form["username"]
+    name = sanitize_input(request.form["name"])
+    username = sanitize_input(request.form["username"])
     password1 = request.form["password1"]
     password2 = request.form["password2"]
 
@@ -137,7 +166,7 @@ def login():
         return render_template("login.html", next_page=next_page, username=username)
 
     if request.method == "POST":
-        username = request.form["username"]
+        username = sanitize_input(request.form["username"])
         password = request.form["password"]
         next_page = request.form.get("next_page", "/")
 
@@ -201,10 +230,10 @@ def admin_create_contest():
         abort(403)
 
     form = request.form
-    title = form["title"]
+    title = sanitize_input(form["title"])
     class_id = form["class_id"]
-    short_description = form["short_description"]
-    long_description = form["long_description"]
+    short_description = sanitize_input(form["short_description"])
+    long_description = sanitize_input(form["long_description"])
     collection_end = form["collection_end"]
     review_end = form["review_end"]
 
@@ -276,8 +305,8 @@ def admin_create_user():
     if not session.get("super_user"):
         abort(403)
 
-    name = request.form["name"]
-    username = request.form["username"]
+    name = sanitize_input(request.form["name"])
+    username = sanitize_input(request.form["username"])
     password = request.form["password"]
     is_super = 1 if request.form.get("is_super") == "on" else 0
 
@@ -324,10 +353,10 @@ def admin_update_user(user_id):
     if not session.get("super_user"):
         abort(403)
 
-    name = request.form["name"]
-    username = request.form["username"]
+    name = sanitize_input(request.form["name"])
+    username = sanitize_input(request.form["username"])
     is_super = 1 if request.form.get("is_super") == "on" else 0
-    password = request.form.get("password", "").strip()
+    password = sanitize_input(request.form.get("password", ""))
 
     if not name or not username:
         flash("Nimi ja käyttäjätunnus ovat pakollisia.")
@@ -382,10 +411,10 @@ def admin_update_contest(contest_id):
         abort(403)
 
     form = request.form
-    title = form["title"]
+    title = sanitize_input(form["title"])
     class_id = form["class_id"]
-    short_description = form["short_description"]
-    long_description = form["long_description"]
+    short_description = sanitize_input(form["short_description"])
+    long_description = sanitize_input(form["long_description"])
     collection_end = form["collection_end"]
     review_end = form["review_end"]
 
@@ -435,7 +464,7 @@ def add_entry(contest_id):
 
     if request.method == "POST":
         action = request.form.get("action")
-        entry = request.form.get("entry", "").strip()
+        entry = sanitize_input(request.form.get("entry", ""))
 
         if not entry:
             flash("Kilpailutyö ei saa olla tyhjä.")
@@ -443,11 +472,16 @@ def add_entry(contest_id):
 
         if action == "preview":
             return render_template("preview_entry.html", contest=contest,
-                                   entry=entry, collection_ended=collection_ended,
-                                   review_ended=review_ended, stats=stats)
+                                entry=entry, collection_ended=collection_ended,
+                                review_ended=review_ended, stats=stats)
 
         if action == "submit":
             user_id = session["user_id"]
+
+            if sql.entry_exists(contest_id, user_id):
+                flash("Olet jo osallistunut tähän kilpailuun.")
+                return redirect(url_for("contest", contest_id=contest_id))
+
             sql.save_entry(contest_id, user_id, entry)
             flash("Kilpailutyö on tallennettu.")
             return redirect(url_for("contest", contest_id=contest_id))
