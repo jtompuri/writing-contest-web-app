@@ -29,9 +29,9 @@
         </div>
     </header>
 
-    <nav role="navigation" aria-label="Päävalikko">
+    <nav role="navigation" aria-label="Päävalikko" class="main-nav">
       <div class="container">
-        <ul class="nav">
+        <ul  class="main-nav-list">
           <li class="{% if request.path == '/' %}active{% endif %}">
               <a href="/" {% if request.path == '/' %}aria-current="page"{% endif %}>Etusivu</a>
           </li>
@@ -43,7 +43,7 @@
           </li>
           {% if session.user_id %}
           <li class="{% if request.path.startswith('/my_texts') %}active{% endif %}">
-              <a href="/my_texts" {% if request.path.startswith('/my_texts') %}aria-current="page"{% endif %}>Omat tekstit</a>
+              <a href="/my_texts" {% if request.path.startswith('/my_texts') %}aria-current="page"{% endif %}>Tekstini</a>
           </li>
           {% endif %}
           {% if session.super_user %}
