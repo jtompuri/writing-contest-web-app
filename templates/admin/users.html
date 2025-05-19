@@ -3,41 +3,55 @@
 {% block content %}
 
 {% for message in get_flashed_messages() %}
-<div class="flash-message">
+<div class="flash-message" role="alert" aria-live="polite">
   {{ message }}
 </div>
 {% endfor %}
 
 <h1>Käyttäjien hallinta</h1>
 
-<a href="{{ url_for('admin_new_user') }}" class="small-button" style="display:inline-block; margin-bottom: 1rem;">
+<a href="{{ url_for('admin_new_user') }}"
+   class="small-button"
+   style="display:inline-block; margin-bottom: 1rem;"
+   aria-label="Luo uusi käyttäjä">
   Luo uusi käyttäjä
 </a>
 
-<table class="admin-table">
+<table class="admin-table" role="table" aria-label="Käyttäjälista">
     <thead>
         <tr>
-        <th>ID</th>
-        <th>Nimi</th>
-        <th>Käyttäjänimi</th>
-        <th>Pääkäyttäjä</th>
-        <th>Toiminnot</th>
+            <th scope="col">ID</th>
+            <th scope="col">Nimi</th>
+            <th scope="col">Käyttäjänimi</th>
+            <th scope="col">Pääkäyttäjä</th>
+            <th scope="col">Toiminnot</th>
         </tr>
     </thead>
     <tbody>
         {% for user in users %}
         <tr>
-        <td>{{ user.id }}</td>
-        <td>{{ user.name }}</td>
-        <td>{{ user.username }}</td>
-        <td>{{ 'Kyllä' if user.super_user else 'Ei' }}</td>
-        <td>
-            <a href="{{ url_for('admin_edit_user', user_id=user.id) }}" class="small-button">Muokkaa</a>
-            <form action="{{ url_for('delete_user', user_id=user.id) }}" method="post" style="display:inline;">
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            <button type="submit" class="small-button" onclick="return confirm('Poistetaanko käyttäjä?')">Poista</button>
-            </form>
-        </td>
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ 'Kyllä' if user.super_user else 'Ei' }}</td>
+            <td>
+                <a href="{{ url_for('admin_edit_user', user_id=user.id) }}"
+                   class="small-button"
+                   aria-label="Muokkaa käyttäjää {{ user.username }}">
+                   Muokkaa
+                </a>
+                <form action="{{ url_for('delete_user', user_id=user.id) }}"
+                      method="post"
+                      style="display:inline;">
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    <button type="submit"
+                            class="small-button"
+                            onclick="return confirm('Poistetaanko käyttäjä?')"
+                            aria-label="Poista käyttäjä {{ user.username }}">
+                        Poista
+                    </button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

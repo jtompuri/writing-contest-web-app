@@ -2,54 +2,74 @@
 {% block content %}
 
 <form action="{{ url_for('admin_update_contest', contest_id=contest.id) }}" method="post" class="form-box">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+  <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
-    <h1>Muokkaa kilpailua</h1>
+  <h1>Muokkaa kilpailua</h1>
 
+  <p>
+    <label for="title">Otsikko:</label>
+    <input type="text" name="title" id="title" maxlength="100" required value="{{ contest.title }}">
+  </p>
+
+  <p>
+    <label for="class_id">Laji:</label>
+    <select name="class_id" id="class_id" required>
+      <option value="" disabled hidden>Valitse kirjallisuuslaji</option>
+      {% for cl in classes %}
+        <option value="{{ cl.id }}" {% if cl.id == contest.class_id %}selected{% endif %}>
+          {{ cl.value }}
+        </option>
+      {% endfor %}
+    </select>
+  </p>
+
+  <p>
+    <label for="short_description">Lyhyt kuvaus:</label>
+    <input type="text" name="short_description" id="short_description" maxlength="200" value="{{ contest.short_description }}" required>
+  </p>
+
+  <p>
+    <label for="long_description">Pitkä kuvaus:</label>
+    <textarea name="long_description" id="long_description" rows="10" maxlength="2000" required>{{ contest.long_description }}</textarea>
+  </p>
+
+  <fieldset>
+    <legend class="sr-only">Kilpailun asetukset</legend>
     <p>
-        <label for="title">Otsikko:</label>
-        <input type="text" name="title" id="title" maxlength="100" required value="{{ contest.title }}">
+      <label>
+        <input type="checkbox" name="anonymity" class="large-checkbox" {% if contest.anonymity %}checked{% endif %}>
+        Anonyymi arviointi
+      </label>
     </p>
-
     <p>
-        <label for="class_id">Laji:</label>
-        <select name="class_id" id="class_id" required>
-        <option value="" disabled hidden>Valitse kirjallisuuslaji</option>
-        {% for cl in classes %}
-            <option value="{{ cl.id }}" {% if cl.id == contest.class_id %}selected{% endif %}>
-            {{ cl.value }}
-            </option>
-        {% endfor %}
-        </select>
+      <label>
+        <input type="checkbox" name="public_reviews" class="large-checkbox" {% if contest.public_reviews %}checked{% endif %}>
+        Arviot ovat julkisia
+      </label>
     </p>
-
     <p>
-        <label for="short_description">Lyhyt kuvaus:</label>
-        <input type="text" name="short_description" id="short_description" maxlength="200" value="{{ contest.short_description }}" required>
+      <label>
+        <input type="checkbox" name="public_results" class="large-checkbox" {% if contest.public_results %}checked{% endif %}>
+        Tulokset ovat julkisia
+      </label>
     </p>
+  </fieldset>
 
-    <p>
-        <label for="long_description">Pitkä kuvaus:</label>
-        <textarea name="long_description" id="long_description" rows="10" maxlength="2000" required>{{ contest.long_description }}</textarea>
-    </p>
+  <p>
+    <label for="collection_end">Jättöaika päättyy:</label>
+    <input type="date" name="collection_end" id="collection_end" required value="{{ contest.collection_end }}">
+  </p>
 
-    <p>
-        <label><input type="checkbox" name="anonymity" class="large-checkbox" {% if contest.anonymity %}checked{% endif %}> Anonyymi arviointi</label><br>
-        <label><input type="checkbox" name="public_reviews" class="large-checkbox" {% if contest.public_reviews %}checked{% endif %}> Arviot ovat julkisia</label><br>
-        <label><input type="checkbox" name="public_results" class="large-checkbox" {% if contest.public_results %}checked{% endif %}> Tulokset ovat julkisia</label>
-    </p>
+  <p>
+    <label for="review_end">Arviointiaika päättyy:</label>
+    <input type="date" name="review_end" id="review_end" required value="{{ contest.review_end }}">
+  </p>
 
-    <p>
-        <label for="collection_end">Jättöaika päättyy:</label>
-        <input type="date" name="collection_end" id="collection_end" required value="{{ contest.collection_end }}">
-    </p>
-
-    <p>
-        <label for="review_end">Arviointiaika päättyy:</label>
-        <input type="date" name="review_end" id="review_end" required value="{{ contest.review_end }}">
-    </p>
-
-    <input type="submit" value="Tallenna muutokset">
+  <p>
+    <button type="submit" class="action-button" aria-label="Tallenna muutokset kilpailuun">
+      Tallenna muutokset
+    </button>
+  </p>
 </form>
 
 {% endblock %}

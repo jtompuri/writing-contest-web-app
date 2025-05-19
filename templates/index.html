@@ -3,69 +3,90 @@
 {% block title %}Etusivu{% endblock %}
 
 {% block content %}
-    <h1>Tervetuloa!</h1>
-    <p>Kirjoitatko runoja, aforismeja tai lyhyttä proosaa? Tutustu käynnissä oleviin kirjoituskilpailuihin ja osallistu! Aloita tutustumalla päättyneiden kilpailujen tuloksiin. <a href="/register"></href>Rekisteröidy</a> ja <a href="/login">kirjaudu sisään</a> osallistuaksesi.</p>
 
-    {% if contests_for_entry %}
-    <h2>Osallistu käynnissä olevaan kilpailuun</h2>
+<h1>Tervetuloa!</h1>
 
+<p>
+  Kirjoitatko runoja, aforismeja tai lyhyttä proosaa? Tutustu käynnissä oleviin kirjoituskilpailuihin ja osallistu!
+  Aloita tutustumalla päättyneiden kilpailujen tuloksiin.
+  <a href="{{ url_for('register') }}">Rekisteröidy</a> ja
+  <a href="{{ url_for('login') }}">kirjaudu sisään</a> osallistuaksesi.
+</p>
+
+{% if contests_for_entry %}
+  <section aria-labelledby="entry-heading">
+    <h2 id="entry-heading">Osallistu käynnissä olevaan kilpailuun</h2>
     <ul class="contest-list">
       {% for contest in contests_for_entry %}
         <li>
           <div class="contest-header">
             <em>
-              <a href="{{ url_for('contest', contest_id=contest.id) }}">{{ contest.title }}</a>
+              <a href="{{ url_for('contest', contest_id=contest.id) }}">
+                {{ contest.title }}
+              </a>
             </em>
-            <span class="contest-deadline">
+            <span class="contest-deadline" aria-label="Kilpailun jättöaika">
               päättyy {{ contest.collection_end | format_date }}
             </span>
           </div>
-          {{ contest.short_description }}
+          <p>{{ contest.short_description }}</p>
         </li>
       {% endfor %}
     </ul>
-    {% endif %}
+  </section>
+{% endif %}
 
-    {% if session.user_id and contests_for_review %}
-    <h2>Vertaisarvioi kilpailuun tulleita tekstejä</h2>
-
+{% if session.user_id and contests_for_review %}
+  <section aria-labelledby="review-heading">
+    <h2 id="review-heading">Vertaisarvioi kilpailuun tulleita tekstejä</h2>
     <ul class="contest-list">
       {% for contest in contests_for_review %}
         <li>
           <div class="contest-header">
             <em>
-              <a href="{{ url_for('contest', contest_id=contest.id) }}">{{ contest.title }}</a>
+              <a href="{{ url_for('contest', contest_id=contest.id) }}">
+                {{ contest.title }}
+              </a>
             </em>
-            <span class="contest-deadline">
+            <span class="contest-deadline" aria-label="Arviointiajan päättymispäivä">
               päättyy {{ contest.review_end | format_date }}
             </span>
           </div>
-          {{ contest.short_description }}
+          <p>{{ contest.short_description }}</p>
         </li>
       {% endfor %}
     </ul>
-    {% endif %}
+  </section>
+{% endif %}
 
-    {% if contests_for_results %}
-    <h2>Tutustu päättyneiden kilpailujen tuloksiin</h2>
-
+{% if contests_for_results %}
+  <section aria-labelledby="results-heading">
+    <h2 id="results-heading">Tutustu päättyneiden kilpailujen tuloksiin</h2>
     <ul class="contest-list">
       {% for contest in contests_for_results %}
         <li>
           <div class="contest-header">
             <em>
-              <a href="{{ url_for('contest', contest_id=contest.id) }}">{{ contest.title }}</a>
+              <a href="{{ url_for('contest', contest_id=contest.id) }}">
+                {{ contest.title }}
+              </a>
             </em>
-            <span class="contest-deadline">
+            <span class="contest-deadline" aria-label="Kilpailun arviointiaika päättyi">
               päättyi {{ contest.review_end | format_date }}
             </span>
           </div>
-          {{ contest.short_description }}
+          <p>{{ contest.short_description }}</p>
         </li>
       {% endfor %}
     </ul>
-    {% endif %}
+  </section>
+{% endif %}
 
-    <p><em>Kaikki käynnissä olevat ja päättyneet kilpailut löytyvät <a href="/contests">Kilpailut-sivulla</a>.</em> </p>
+<p>
+  <em>
+    Kaikki käynnissä olevat ja päättyneet kilpailut löytyvät
+    <a href="{{ url_for('contests') }}">Kilpailut-sivulla</a>.
+  </em>
+</p>
 
 {% endblock %}

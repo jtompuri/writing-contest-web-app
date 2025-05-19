@@ -9,60 +9,62 @@
 <body>
   <div class="page-wrapper">
         
-    <div class="logo-bar">
+    <header class="logo-bar" role="banner">
         <div class="container logo-bar-inner">
             {% if request.path != '/' %}
-            <a href="{{ url_for('index') }}" class="logo-title">Kirjoituskilpailut</a>
+            <a href="{{ url_for('index') }}" class="logo-title" aria-label="Palaa etusivulle">Kirjoituskilpailut</a>
             {% else %}
-            <div class="logo">Kirjoituskilpailut</div>
+            <div class="logo" aria-hidden="true">Kirjoituskilpailut</div>
             {% endif %}
             {% if session.user_id %}
                 <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
                     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                    <button type="submit" class="login-button">Kirjaudu ulos</button>
+                    <button type="submit" class="login-button" aria-label="Kirjaudu ulos">Kirjaudu ulos</button>
                 </form>
-              {% else %}
+            {% else %}
                 <form action="{{ url_for('login') }}" method="get" style="display:inline;">
-                    <button type="submit" class="login-button">Kirjaudu sisään</button>
+                    <button type="submit" class="login-button" aria-label="Kirjaudu sisään">Kirjaudu sisään</button>
                 </form>
-          {% endif %}
+            {% endif %}
         </div>
-    </div>
+    </header>
 
-    <nav>
-    <div class="container">
+    <nav role="navigation" aria-label="Päävalikko">
+      <div class="container">
         <ul class="nav">
-        <li class="{% if request.path == '/' %}active{% endif %}">
-            <a href="/">Etusivu</a>
-        </li>
-        <li class="{% if request.path.startswith('/contests') %}active{% endif %}">
-            <a href="/contests">Kilpailut</a>
-        </li>
-        <li class="{% if request.path.startswith('/results') %}active{% endif %}">
-            <a href="/results">Tulokset</a>
-        </li>
-        {% if session.user_id %}
-        <li class="{% if request.path.startswith('/my_texts') %}active{% endif %}">
-            <a href="/my_texts">Omat tekstit</a>
-        </li>
-        {% endif %}
-        {% if session.super_user %}
-            <li class="{% if request.path.startswith('/admin') %}active{% endif %}">
-              <a href="/admin">Ylläpito</a>
-            </li>
-        {% endif %}
+          <li class="{% if request.path == '/' %}active{% endif %}">
+              <a href="/" {% if request.path == '/' %}aria-current="page"{% endif %}>Etusivu</a>
+          </li>
+          <li class="{% if request.path.startswith('/contests') %}active{% endif %}">
+              <a href="/contests" {% if request.path.startswith('/contests') %}aria-current="page"{% endif %}>Kilpailut</a>
+          </li>
+          <li class="{% if request.path.startswith('/results') %}active{% endif %}">
+              <a href="/results" {% if request.path.startswith('/results') %}aria-current="page"{% endif %}>Tulokset</a>
+          </li>
+          {% if session.user_id %}
+          <li class="{% if request.path.startswith('/my_texts') %}active{% endif %}">
+              <a href="/my_texts" {% if request.path.startswith('/my_texts') %}aria-current="page"{% endif %}>Omat tekstit</a>
+          </li>
+          {% endif %}
+          {% if session.super_user %}
+          <li class="{% if request.path.startswith('/admin') %}active{% endif %}">
+              <a href="/admin" {% if request.path.startswith('/admin') %}aria-current="page"{% endif %}>Ylläpito</a>
+          </li>
+          {% endif %}
         </ul>
-    </div>
+      </div>
     </nav>
 
-    <main class="content-box container">
+    <main class="content-box container" role="main">
         {% block content %}{% endblock %}
     </main>
-    <footer>
+
+    <footer role="contentinfo">
       <div class="container">
         <p>&copy; 2025 Janne Tompuri</p>
       </div>
     </footer>
+
   </div>
 </body>
 </html>

@@ -3,7 +3,7 @@
 {% block content %}
 
 {% for message in get_flashed_messages() %}
-<div class="flash-message">
+<div class="flash-message" role="alert" aria-live="polite">
      {{ message }}
 </div>
 {% endfor %}
@@ -17,35 +17,35 @@
 <table class="admin-table">
     <thead>
         <tr>
-        <th>Otsikko</th>
-        <th>Laji</th>
-        <th>Keräys päättyy</th>
-        <th>Arviointi päättyy</th>
-        <th>Toiminnot</th>
+            <th scope="col">Otsikko</th>
+            <th scope="col">Keräys</th>
+            <th scope="col">Arviointi</th>
+            <th scope="col">Toiminnot</th>
         </tr>
     </thead>
     <tbody>
         {% for c in contests %}
         <tr>
-        <td>
-            <a href="{{ url_for('contest', contest_id=c.id) }}" title="{{ c.title }}">
-        {% if c.title|length > 33 %}
-            {{ c.title[:25] }}...{{ c.title[-5:] }}
-        {% else %}
-            {{ c.title }}
-        {% endif %}
-        </a>
-        </td>
-        <td>{{ c.class_value }}</td>
-        <td>{{ c.collection_end | format_date }}</td>
-        <td>{{ c.review_end | format_date }}</td>
-        <td>
-            <a href="{{ url_for('edit_contest', contest_id=c.id) }}" class="small-button">Muokkaa</a>
-            <form action="{{ url_for('delete_contest', contest_id=c.id) }}" method="post" style="display:inline;">
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            <button type="submit" class="small-button" onclick="return confirm('Poistetaanko kilpailu?')">Poista</button>
-            </form>
-        </td>
+            <td>
+                <a href="{{ url_for('contest', contest_id=c.id) }}" title="{{ c.title }}">
+                {% if c.title|length > 33 %}
+                    {{ c.title[:25] }}...{{ c.title[-5:] }}
+                {% else %}
+                    {{ c.title }}
+                {% endif %}
+                </a>
+            </td>
+            <td>{{ c.collection_end | format_date }}</td>
+            <td>{{ c.review_end | format_date }}</td>
+            <td>
+                <a href="{{ url_for('edit_contest', contest_id=c.id) }}" class="small-button">Muokkaa</a>
+                <form action="{{ url_for('delete_contest', contest_id=c.id) }}" method="post" style="display:inline;">
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    <button type="submit" class="small-button" onclick="return confirm('Poistetaanko kilpailu?')" aria-label="Poista kilpailu {{ c.title }}">
+                        Poista
+                    </button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

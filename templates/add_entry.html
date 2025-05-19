@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="contest-summary-box">
+<section class="contest-summary-box" aria-label="Kilpailun yhteenveto">
     {% if not collection_ended %}
         <span class="contest-status open">Kilpailu on käynnissä</span>
     {% elif collection_ended and not review_ended and contest.public_reviews %}
@@ -26,11 +26,11 @@
         <div class="contest-stats">
             <div><strong>Jätetyt työt:</strong> {{ stats.entry_count }}</div>
             <div><strong>Annetut arviot:</strong> {{ stats.review_count }}</div>
-    </div>
+        </div>
     {% endif %}
-</div>
+</section>
 
-<form action="" method="post" class="form-box">
+<form action="" method="post" class="form-box" aria-label="Kilpailutyön lähetyslomake">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
     <h1>Osallistu kilpailuun</h1>
@@ -39,17 +39,20 @@
 
     <p>
         <label for="entry">Kilpailutyö:</label>
-        <textarea name="entry" id="entry" rows="15" maxlength="5000" required>{{ entry or '' }}</textarea>
-        <small>Enintään 5000 merkkiä. Sallitut muotoilut: *lihavointi* ja _kursivointi_.</small>
+        <textarea name="entry" id="entry" rows="15" maxlength="5000" required aria-describedby="entry-help">{{ entry or '' }}</textarea>
+        <small id="entry-help">
+            Enintään 5000 merkkiä. Sallitut muotoilut: <strong>*lihavointi*</strong> ja <em>_kursivointi_</em>.
+        </small>
     </p>
-    <p style="margin-top: 1.5rem;">
-    <button type="submit" name="action" value="preview" class="action-button">
-        Esikatsele
-    </button>
-    <button type="submit" name="action" value="submit" class="action-button" style="margin-left: 1rem;">
-        Lähetä kilpailutyö
-    </button>
-    </p>
+
+    <div class="button-row" role="group" aria-label="Kilpailutyön lähetyspainikkeet" style="margin-top: 1.5rem;">
+        <button type="submit" name="action" value="preview" class="action-button" aria-label="Esikatsele kilpailutyö ennen lähettämistä">
+            Esikatsele
+        </button>
+        <button type="submit" name="action" value="submit" class="action-button" style="margin-left: 1rem;" aria-label="Lähetä kilpailutyö">
+            Lähetä kilpailutyö
+        </button>
+    </div>
 </form>
 
 {% endblock %}

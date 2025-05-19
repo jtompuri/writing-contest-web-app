@@ -3,20 +3,25 @@
 
 <h1>Esikatselu</h1>
 
-<div class="content-box">
+<div class="content-box" role="region" aria-label="Kilpailutyön esikatselu">
     {{ entry | richtext }}
 </div>
 
-<div class="button-row">
+<div class="button-row" role="group" aria-label="Esikatselutoiminnot">
     <form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="get" style="margin: 0;">
         <input type="hidden" name="entry" value="{{ entry | e }}">
-        <button type="submit" class="action-button">Palaa takaisin</button>
+        <button type="submit" class="action-button" aria-label="Palaa takaisin muokkaamaan kilpailutyötä">
+            Palaa takaisin
+        </button>
     </form>
     <form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="post" style="margin: 0;">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <input type="hidden" name="entry" value="{{ entry | e }}">
         <input type="hidden" name="action" value="submit">
-        <button type="submit" class="action-button">Lähetä kilpailutyö</button>
+        <button type="submit" class="action-button" aria-label="Lähetä kilpailutyö">
+            Lähetä kilpailutyö
+        </button>
     </form>
 </div>
+
 {% endblock %}

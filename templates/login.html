@@ -4,32 +4,37 @@
 
 {% block content %}
 
-    <form action="/login" method="post" class="form-box">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+<form action="{{ url_for('login') }}" method="post" class="form-box" aria-labelledby="login-heading">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
-    <h1>Kirjaudu sisään</h1>
+    <h1 id="login-heading">Kirjaudu sisään</h1>
 
-    <p>Kirjaudu sisään tai <a href="/register">rekisteröidy</a>, jos sinulla ei ole tunnusta.</p>
+    <p>
+        Kirjaudu sisään tai 
+        <a href="{{ url_for('register') }}">rekisteröidy</a>, jos sinulla ei ole tunnusta.
+    </p>
 
     {% for message in get_flashed_messages() %}
-    <div class="flash-message">
+    <div class="flash-message" role="alert" aria-live="polite">
         {{ message }}
     </div>
     {% endfor %}
     
     <p>
         <label for="username">Sähköposti:</label>
-        <input type="text" name="username" id="username" value="{{ username or '' }}" maxlength="50" required />
+        <input type="text" name="username" id="username" value="{{ username or '' }}" maxlength="50" required autocomplete="username" />
     </p>
+
     <p>
-        <label for="password1">Salasana:</label>
-        <input type="password" name="password" id="password" maxlength="50" required />
+        <label for="password">Salasana:</label>
+        <input type="password" name="password" id="password" maxlength="50" required autocomplete="current-password" />
     </p>
-    {% if next_page %}
-    <input type="hidden" name="next_page" value="{{ next_page }}" />
-    {% else %}
-    <input type="hidden" name="next_page" value="/" />
-  {% endif %}
-    <input type="submit" value="Kirjaudu" />
-    </form>
+
+    <input type="hidden" name="next_page" value="{{ next_page or '/' }}" />
+
+    <p>
+        <button type="submit" class="action-button">Kirjaudu</button>
+    </p>
+</form>
+
 {% endblock %}

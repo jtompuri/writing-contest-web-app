@@ -414,7 +414,8 @@ position: relative;
   color: #333;
   border: 1px solid #bbb;
   border-radius: 4px;
-  font-size: 0.8rem;
+  font-size: 16px;
+  margin: 4px;
   padding: 0.2rem 0.6rem;
   cursor: pointer;
   font-family: 'Segoe UI', sans-serif;
@@ -464,4 +465,35 @@ form small {
   margin-top: 2rem;
   flex-wrap: wrap;
   align-items: center;
+}
+
+form.form-box fieldset {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  width: 95%;
+  box-sizing: border-box;
+}
+
+form.form-box fieldset legend {
+  font-weight: bold;
+  font-size: 1rem;
+  font-family: Georgia, serif;
+  color: #3a3a3a;
+  padding: 0 0.5rem;
+}
+
+form.form-box fieldset label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: Georgia, serif;
+  font-size: 16px;
+  color: #3a3a3a;
+}
+
+form.form-box .large-checkbox {
+  transform: scale(1.2);
+  margin-right: 0.5rem;
+  vertical-align: middle;
 }

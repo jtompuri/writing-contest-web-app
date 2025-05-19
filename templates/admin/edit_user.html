@@ -4,43 +4,44 @@
 <form action="{{ url_for('admin_update_user', user_id=user.id) }}" method="post" class="form-box">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
-<h1>Muokkaa käyttäjää</h1>
+    <h1>Muokkaa käyttäjää</h1>
 
-{% for message in get_flashed_messages() %}
-  <div class="flash-message">{{ message }}</div>
-{% endfor %}
+    {% for message in get_flashed_messages() %}
+      <div class="flash-message" role="alert" aria-live="polite">{{ message }}</div>
+    {% endfor %}
+
     <p>
-        <label for="user_id">Tunniste:</label>
-        <input type="text" id="user_id" value="{{ user.id }}" disabled>
+      <label for="user_id">Tunniste:</label>
+      <input type="text" id="user_id" value="{{ user.id }}" disabled aria-disabled="true">
     </p>
 
     <p>
-        <label for="name">Nimi:</label>
-        <input type="text" name="name" id="name" value="{{ user.name }}" required>
+      <label for="name">Nimi:</label>
+      <input type="text" name="name" id="name" value="{{ user.name }}" maxlength="50" required>
     </p>
 
     <p>
-        <label for="username">Sähköposti (käyttäjätunnus):</label>
-        <input type="email" name="username" id="username" value="{{ user.username }}" required>
+      <label for="username">Sähköposti (käyttäjätunnus):</label>
+      <input type="email" name="username" id="username" value="{{ user.username }}" maxlength="50" required>
     </p>
 
     <p>
-        <label for="password">Uusi salasana (valinnainen):</label>
-        <input type="password" name="password" id="password" maxlength="50">
-        <small>
-          Vähintään 8 merkkiä. Jos jätät tyhjäksi, salasana ei muutu.
-      </small>
+      <label for="password">Uusi salasana (valinnainen):</label>
+      <input type="password" name="password" id="password" maxlength="50" aria-describedby="password-help">
+      <small id="password-help">Vähintään 8 merkkiä. Jos jätät tyhjäksi, salasana ei muutu.</small>
     </p>
 
     <p>
-        <label>
-          <input type="checkbox" name="is_super" class="large-checkbox"
-                  {% if user.super_user %}checked{% endif %}>
-          Pääkäyttäjä
-        </label>
+      <label>
+        <input type="checkbox" name="is_super" class="large-checkbox"
+                {% if user.super_user %}checked{% endif %}>
+        Pääkäyttäjä
+      </label>
     </p>
 
-    <input type="submit" value="Tallenna muutokset">
-    </form>
+    <button type="submit" class="action-button" aria-label="Tallenna muutokset">
+      Tallenna muutokset
+    </button>
+</form>
 
 {% endblock %}

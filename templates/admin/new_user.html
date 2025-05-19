@@ -4,11 +4,12 @@
 <form action="{{ url_for('admin_create_user') }}" method="post" class="form-box">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
-<h1>Luo uusi käyttäjä</h1>
+    <h1>Luo uusi käyttäjä</h1>
 
-{% for message in get_flashed_messages() %}
-  <div class="flash-message">{{ message }}</div>
-{% endfor %}
+    {% for message in get_flashed_messages() %}
+      <div class="flash-message" role="alert" aria-live="polite">{{ message }}</div>
+    {% endfor %}
+
     <p>
         <label for="name">Nimi:</label>
         <input type="text" name="name" id="name" maxlength="50"
@@ -24,20 +25,20 @@
     <p>
         <label for="password">Salasana:</label>
         <input type="password" name="password" id="password" maxlength="50" minlength="8" required>
-        <small>
-            Vähintään 8 merkkiä pitkä.
-        </small>
+        <small>Vähintään 8 merkkiä pitkä.</small>
     </p>
 
     <p>
         <label for="is_super">
-        <input type="checkbox" name="is_super" id="is_super" class="large-checkbox"
+            <input type="checkbox" name="is_super" id="is_super" class="large-checkbox"
                 {% if session.get('form_data', {}).get('is_super') %}checked{% endif %}>
-        Pääkäyttäjä
+            Pääkäyttäjä
         </label>
-  </p>
+    </p>
 
-  <input type="submit" value="Luo käyttäjä">
+    <p>
+        <button type="submit" class="action-button">Luo käyttäjä</button>
+    </p>
 </form>
 
 {% endblock %}

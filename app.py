@@ -449,7 +449,6 @@ def admin_update_contest(contest_id):
 
 @app.route("/contests/contest/<int:contest_id>/add_entry", methods=["GET", "POST"])
 def add_entry(contest_id):
-    check_csrf()
     if not session.get("user_id"):
         flash("Kirjaudu sisään osallistuaksesi kilpailuun.")
         return redirect(url_for("login", next_page=request.path))
@@ -477,6 +476,7 @@ def add_entry(contest_id):
                                stats=stats, entry=entry)
 
     if request.method == "POST":
+        check_csrf()
         action = request.form.get("action")
         entry = sanitize_input(request.form.get("entry", ""))
 

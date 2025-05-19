@@ -2,16 +2,20 @@
 {% block content %}
 <h1>Ylläpito</h1>
 
-<ul>
-    <li><a href="{{ url_for('admin_contests') }}">Kilpailujen hallinta</a></li>
-    <li><a href="{{ url_for('admin_users') }}">Käyttäjien hallinta</a></li>
-    <li><a href="{{ url_for('admin_entries') }}">Kilpailutöiden hallinta</a></li>
-</ul>
+<section role="navigation" aria-label="Ylläpidon hallintalinkit">
+    <ul>
+        <li><a href="{{ url_for('admin_contests') }}">Hallinnoi kilpailuja</a></li>
+        <li><a href="{{ url_for('admin_users') }}">Hallinnoi käyttäjiä</a></li>
+        <li><a href="{{ url_for('admin_entries') }}">Hallinnoi kilpailutöitä</a></li>
+    </ul>
+</section>
 
-<h2>Yhteenveto</h2>
-<ul>
-    <li>Kilpailuja: {{ contest_count }}</li>
-    <li>Käyttäjiä: {{ user_count }}</li>
-    <li>Kilpailutöitä: {{ entry_count }}</li>
-</ul>
+<section aria-label="Ylläpidon yhteenveto" style="margin-top: 2rem;">
+    <h2>Yhteenveto</h2>
+    <ul>
+        <li><strong>Kilpailuja:</strong> {{ contest_count }}</li>
+        <li><strong>Käyttäjiä:</strong> {{ user_count }}</li>
+        <li><strong>Kilpailutöitä:</strong> {{ entry_count }}</li>
+    </ul>
+</section>
 {% endblock %}
