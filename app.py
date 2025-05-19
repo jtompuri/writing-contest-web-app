@@ -11,19 +11,19 @@ app.secret_key = config.secret_key
 app.teardown_appcontext(db.close_connection)
 
 
-@app.before_request
-def ensure_csrf_token():
-    if "csrf_token" not in session:
-        session["csrf_token"] = secrets.token_hex(16)
-
-
 @app.template_filter("format_date")
 def format_date(value):
     try:
         dt = datetime.strptime(value, "%Y-%m-%d")
-        return dt.strftime("%-d.%m.%Y")
+        return f"{dt.day}.{dt.month}.{dt.year}"
     except ValueError:
         return value
+    
+
+@app.before_request
+def ensure_csrf_token():
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_hex(16)
 
 
 def check_csrf():
@@ -62,6 +62,10 @@ def format_text(text, links_allowed=False):
         text = re.sub(url_regex, r'<a href="\1" target="_blank" rel="noopener">\1</a>', text)
 
     return Markup(text)
+
+
+def total_pages(total_items, per_page):
+    return (total_items + per_page - 1) // per_page
 
 
 @app.template_filter('richtext')
@@ -512,7 +516,40 @@ def logout():
 
 @app.route("/contests")
 def contests():
-    return render_template("contests.html")
+    per_page = 3
+
+    entry_page = request.args.get("entry_page", 1, type=int)
+    total_entry = sql.get_entry_contest_count()
+    total_pages_entry = max((total_entry + per_page - 1) // per_page, 1)
+    entry_page = min(entry_page, total_pages_entry)
+    offset_entry = (entry_page - 1) * per_page
+    contests_for_entry = sql.get_contests_for_entry(per_page, offset_entry)
+
+    review_page = request.args.get("review_page", 1, type=int)
+    total_review = sql.get_review_contest_count()
+    total_pages_review = max((total_review + per_page - 1) // per_page, 1)
+    review_page = min(review_page, total_pages_review)
+    offset_review = (review_page - 1) * per_page
+    contests_for_review = sql.get_contests_for_review(per_page, offset_review)
+
+    closed_page = request.args.get("closed_page", 1, type=int)
+    total_closed = sql.get_results_contest_count()
+    total_pages_closed = max((total_closed + per_page - 1) // per_page, 1)
+    closed_page = min(closed_page, total_pages_closed)
+    offset_closed = (closed_page - 1) * per_page
+    contests_for_closed = sql.get_contests_for_results(per_page, offset_closed)
+
+    return render_template("contests.html",
+        contests_open=contests_for_entry,
+        contests_review=contests_for_review,
+        contests_closed=contests_for_closed,
+        page_open=entry_page,
+        page_review=review_page,
+        page_closed=closed_page,
+        total_open=total_pages_entry,
+        total_review=total_pages_review,
+        total_closed=total_pages_closed
+    )
 
 
 @app.route("/results")
