@@ -62,11 +62,11 @@ a:visited {
   text-decoration: none;
 }
 
-nav {
+.main-nav {
     background-color: #9e7967;
 }
 
-.nav {
+.main-nav-list {
     list-style: none;
     display: flex;
     margin: 0;
@@ -75,11 +75,11 @@ nav {
     gap: 0.5rem;
 }
 
-.nav li {
+.main-nav-list li {
     margin: 0;
 }
 
-.nav li a {
+.main-nav-list li a {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -93,14 +93,14 @@ nav {
     text-decoration: none;
 }
 
-.nav li a:hover {
+.main-nav-list li a:hover {
     background-color: #dcbaa5;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;    
     transition: background-color 0.2s ease-in-out;
 }
 
-.nav li.active a {
+.main-nav-list li.active a {
     background-color: #ffede2;
     color: #000000;
     font-weight: bold;
@@ -496,4 +496,17 @@ form.form-box .large-checkbox {
   transform: scale(1.2);
   margin-right: 0.5rem;
   vertical-align: middle;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+}
+
+.pagination-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 1rem;
 }
