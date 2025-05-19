@@ -13,6 +13,7 @@
         <button type="submit" class="action-button">Palaa takaisin</button>
     </form>
     <form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="post" style="margin: 0;">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <input type="hidden" name="entry" value="{{ entry | e }}">
         <input type="hidden" name="action" value="submit">
         <button type="submit" class="action-button">Lähetä kilpailutyö</button>

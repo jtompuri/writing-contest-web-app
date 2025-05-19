@@ -34,6 +34,7 @@
         <td>
             <a href="{{ url_for('admin_edit_user', user_id=user.id) }}" class="small-button">Muokkaa</a>
             <form action="{{ url_for('delete_user', user_id=user.id) }}" method="post" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <button type="submit" class="small-button" onclick="return confirm('Poistetaanko käyttäjä?')">Poista</button>
             </form>
         </td>

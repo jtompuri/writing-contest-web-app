@@ -115,6 +115,7 @@ def register():
 
 @app.route("/create", methods=["POST"])
 def create():
+    check_csrf()
     name = sanitize_input(request.form["name"])
     username = sanitize_input(request.form["username"])
     password1 = request.form["password1"]
@@ -160,6 +161,7 @@ def create():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    check_csrf()
     if request.method == "GET":
         username = session.pop("form_data", {}).get("username", "")
         next_page = request.args.get("next_page", "/")
@@ -226,6 +228,7 @@ def admin_new_contest():
 
 @app.route("/admin/contests/create", methods=["POST"])
 def admin_create_contest():
+    check_csrf()
     if not session.get("super_user"):
         abort(403)
 
@@ -259,6 +262,7 @@ def admin_create_contest():
 
 @app.route("/admin/contests/delete/<int:contest_id>", methods=["POST"])
 def delete_contest(contest_id):
+    check_csrf()
     if not session.get("super_user"):
         abort(403)
     
@@ -277,6 +281,7 @@ def admin_users():
 
 @app.route("/admin/users/delete/<int:user_id>", methods=["POST"])
 def delete_user(user_id):
+    check_csrf()
     if not session.get("super_user"):
         abort(403)
 
@@ -302,6 +307,7 @@ def admin_new_user():
 
 @app.route("/admin/users/create", methods=["POST"])
 def admin_create_user():
+    check_csrf()
     if not session.get("super_user"):
         abort(403)
 
@@ -407,6 +413,7 @@ def edit_contest(contest_id):
 
 @app.route("/admin/contests/update/<int:contest_id>", methods=["POST"])
 def admin_update_contest(contest_id):
+    check_csrf()
     if not session.get("super_user"):
         abort(403)
 
@@ -436,6 +443,7 @@ def admin_update_contest(contest_id):
 
 @app.route("/contests/contest/<int:contest_id>/add_entry", methods=["GET", "POST"])
 def add_entry(contest_id):
+    check_csrf()
     if not session.get("user_id"):
         flash("Kirjaudu sisään osallistuaksesi kilpailuun.")
         return redirect(url_for("login", next_page=request.path))
@@ -491,6 +499,7 @@ def add_entry(contest_id):
 
 @app.route("/logout")
 def logout():
+    check_csrf()
     session.clear()
     return redirect("/")
 

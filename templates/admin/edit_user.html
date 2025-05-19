@@ -2,6 +2,7 @@
 {% block content %}
 
 <form action="{{ url_for('admin_update_user', user_id=user.id) }}" method="post" class="form-box">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
 <h1>Muokkaa käyttäjää</h1>
 

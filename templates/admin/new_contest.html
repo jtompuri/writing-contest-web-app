@@ -2,10 +2,11 @@
 {% block content %}
 
 <form action="{{ url_for('admin_create_contest') }}" method="post" class="form-box">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
 <h1>Luo uusi kilpailu</h1>
 
-      <p>
+    <p>
         <label for="title">Otsikko:</label>
         <input type="text" name="title" id="title" maxlength="100" required>
     </p>

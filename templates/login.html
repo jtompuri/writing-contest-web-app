@@ -5,6 +5,7 @@
 {% block content %}
 
     <form action="/login" method="post" class="form-box">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
     <h1>Kirjaudu sisään</h1>
 
