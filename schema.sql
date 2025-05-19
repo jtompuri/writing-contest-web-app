@@ -34,7 +34,9 @@ CREATE TABLE entries (
     user_id INTEGER,
     entry TEXT,
     created DATETIME DEFAULT (DATETIME('now')),
-    FOREIGN KEY (contest_id) REFERENCES contests(id) ON DELETE CASCADE
+    FOREIGN KEY (contest_id) REFERENCES contests(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE (contest_id, user_id)
 );
 
 CREATE TABLE reviews (
