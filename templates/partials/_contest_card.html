@@ -1,0 +1,19 @@
+<li>
+  <div class="contest-header">
+    <em>
+      <a href="{{ url_for('contest', contest_id=contest.id) }}">
+        {{ contest.title }}
+      </a>
+    </em>
+    <span class="contest-deadline" aria-label="Kilpailun päättymispäivä">
+      {% if not contest.collection_ended %}
+        päättyy {{ contest.collection_end | format_date }}
+      {% elif contest.collection_ended and not contest.review_ended and contest.public_reviews %}
+        arviointi päättyy {{ contest.review_end | format_date }}
+      {% else %}
+        päättyi {{ contest.review_end | format_date }}
+      {% endif %}
+    </span>
+  </div>
+  <p>{{ contest.short_description }}</p>
+</li>
