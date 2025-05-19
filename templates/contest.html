@@ -38,7 +38,7 @@
 
     <p><strong>{{ contest.short_description }}</strong></p>
 
-    <p>{{ contest.long_description | richtext }}</p>
+    <p>{{ contest.long_description | richtext_with_links }}</p>
 
     {% if review_ended and contest.public_results %}
         <div style="margin-top: 2rem;">
