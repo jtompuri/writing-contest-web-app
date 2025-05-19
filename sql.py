@@ -1,6 +1,6 @@
 
 import db
-
+from datetime import datetime
 
 def get_all_classes():
     query = "SELECT id, value FROM classes ORDER BY value"
@@ -196,75 +196,31 @@ def entry_exists(contest_id, user_id):
     return bool(result)
 
 
-##### I HAVE PROGRESSED THIS FAR. BELOW IS COPY OF ORGINAL FILE #####
+def get_entry_contest_count():
+    query = """
+        SELECT COUNT(*) FROM contests
+        WHERE collection_end >= DATE('now')
+    """
+    result = db.query(query)
+    return result[0][0] if result else 0
 
 
-def get_minimum_bid(item_id):
-    query = "SELECT start_price FROM items WHERE id = ?"
-    minimum_bid = int(db.query(query, [item_id])[0][0])
-
-    query = "SELECT MAX(price) FROM bids WHERE item_id = ?"
-    max_price = db.query(query, [item_id])[0][0]
-    if max_price:
-        minimum_bid = max_price + 1
-
-    return minimum_bid
-
-def get_classes(item_id):
-    query = "SELECT title, value FROM item_classes WHERE item_id = ?"
-    return db.query(query, [item_id])
-
-def get_items():
-    query = """SELECT items.id, items.title, users.id user_id, users.username,
-                    COUNT(bids.id) bid_count
-             FROM items JOIN users ON items.user_id = users.id
-                        LEFT JOIN bids ON items.id = bids.item_id
-             GROUP BY items.id
-             ORDER BY items.id DESC"""
-    return db.query(query)
-
-def get_item(item_id):
-    query = """SELECT items.id,
-                    items.title,
-                    items.description,
-                    items.start_price,
-                    users.id user_id,
-                    users.username
-             FROM items, users
-             WHERE items.user_id = users.id AND
-                   items.id = ?"""
-    result = db.query(query, [item_id])
-    return result[0] if result else None
-
-def update_item(item_id, title, description, classes):
-    query = """UPDATE items SET title = ?,
-                              description = ?
-                          WHERE id = ?"""
-    db.execute(query, [title, description, item_id])
-
-    query = "DELETE FROM item_classes WHERE item_id = ?"
-    db.execute(query, [item_id])
-
-    query = "INSERT INTO item_classes (item_id, title, value) VALUES (?, ?, ?)"
-    for class_title, class_value in classes:
-        db.execute(query, [item_id, class_title, class_value])
+def get_review_contest_count():
+    query = """
+        SELECT COUNT(*) FROM contests
+        WHERE review_end >= DATE('now')
+          AND collection_end <= DATE('now')
+          AND public_reviews = 1
+    """
+    result = db.query(query)
+    return result[0][0] if result else 0
 
 
-def remove_item(item_id):
-    query = "DELETE FROM bids WHERE item_id = ?"
-    db.execute(query, [item_id])
-    query = "DELETE FROM images WHERE item_id = ?"
-    db.execute(query, [item_id])
-    query = "DELETE FROM item_classes WHERE item_id = ?"
-    db.execute(query, [item_id])
-    query = "DELETE FROM items WHERE id = ?"
-    db.execute(query, [item_id])
-
-def find_items(query):
-    query = """SELECT id, title
-             FROM items
-             WHERE title LIKE ? OR description LIKE ?
-             ORDER BY id DESC"""
-    like = "%" + query + "%"
-    return db.query(query, [like, like])
-
+def get_results_contest_count():
+    query = """
+        SELECT COUNT(*) FROM contests
+        WHERE review_end < DATE('now')
+          AND public_results = 1
+    """
+    result = db.query(query)
+    return result[0][0] if result else 0
