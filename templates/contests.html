@@ -3,57 +3,24 @@
 
 {% block content %}
 
-<h1>Kilpailut</h1>
+<h1>Osallistu kilpailuun</h1>
+
+<p>Käynnissä olevat kilpailut, joihin voit osallistua.</p>
 
 <section aria-label="Käynnissä olevat kilpailut" style="margin-bottom: 2rem;">
-  <h2>Osallistu kilpailuun</h2>
-  {% if contests_open %}
-    <ul class="contest-list">
-      {% for contest in contests_open %}
-        {% include "partials/_contest_card.html" %}
-      {% endfor %}
-    </ul>
-    {% set page = page_open %}
-    {% set total = total_open %}
-    {% set base_url = '/contests?entry_page=' %}
-    {% include "partials/_pagination.html" %}
-  {% else %}
-    <p>Ei käynnissä olevia kilpailuja.</p>
-  {% endif %}
-</section>
-
-<section aria-label="Arviointivaiheessa olevat kilpailut" style="margin-bottom: 2rem;">
-  <h2>Vertaisarvioi kilpailutöitä</h2>
-  {% if contests_review %}
-    <ul class="contest-list">
-      {% for contest in contests_review %}
-        {% include "partials/_contest_card.html" %}
-      {% endfor %}
-    </ul>
-    {% set page = page_review %}
-    {% set total = total_review %}
-    {% set base_url = '/contests?review_page=' %}
-    {% include "partials/_pagination.html" %}
-  {% else %}
-    <p>Ei kilpailuja arviointivaiheessa.</p>
-  {% endif %}
-</section>
-
-<section aria-label="Päättyneet kilpailut">
-  <h2>Tulokset</h2>
-  {% if contests_closed %}
-    <ul class="contest-list">
-      {% for contest in contests_closed %}
-        {% include "partials/_contest_card.html" %}
-      {% endfor %}
-    </ul>
-    {% set page = page_closed %}
-    {% set total = total_closed %}
-    {% set base_url = '/contests?closed_page=' %}
-    {% include "partials/_pagination.html" %}
-  {% else %}
-    <p>Ei päättyneitä kilpailuja.</p>
-  {% endif %}
+    {% if contests %}
+        <ul class="contest-list">
+        {% for contest in contests %}
+            {% include "partials/_contest_card.html" %}
+        {% endfor %}
+        </ul>
+        {% set page = page %}
+        {% set total_pages = (total // per_page) + (1 if total % per_page > 0 else 0) %}
+        {% set base_url = '/contests?page=' %}
+        {% include "partials/_pagination.html" %}
+    {% else %}
+        <p>Ei käynnissä olevia kilpailuja.</p>
+    {% endif %}
 </section>
 
 {% endblock %}

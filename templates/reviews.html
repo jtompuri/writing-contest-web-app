@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Arvioi kilpailutöitä{% endblock %}
+
+{% block content %}
+
+<h1>Arvioi kilpailutöitä</h1>
+
+<p>Voit arvioida kilpailutöitä kilpailuissa, joissa on avoin arviointi.</p>
+
+<section aria-label="Arviointivaiheessa olevat kilpailut" style="margin-bottom: 2rem;">
+     {% if contests %}
+        <ul class="contest-list">
+        {% for contest in contests %}
+        {% include "partials/_contest_card.html" %}
+        {% endfor %}
+        </ul>
+        {% set page = page %}
+        {% set total_pages = (total // per_page) + (1 if total % per_page > 0 else 0) %}
+        {% set base_url = '/reviews?page=' %}
+        {% include "partials/_pagination.html" %}
+    {% else %}
+    <p>Ei kilpailuja arviointivaiheessa.</p>
+    {% endif %}
+</section>
+
+{% endblock %}

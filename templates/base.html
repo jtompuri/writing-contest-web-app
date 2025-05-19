@@ -42,8 +42,13 @@
               <a href="/results" {% if request.path.startswith('/results') %}aria-current="page"{% endif %}>Tulokset</a>
           </li>
           {% if session.user_id %}
+          <li class="{% if request.path.startswith('/reviews') %}active{% endif %}">
+              <a href="/reviews" {% if request.path.startswith('/reviews') %}aria-current="page"{% endif %}>Arvioi</a>
+          </li>
+          {% endif %}
+          {% if session.user_id %}
           <li class="{% if request.path.startswith('/my_texts') %}active{% endif %}">
-              <a href="/my_texts" {% if request.path.startswith('/my_texts') %}aria-current="page"{% endif %}>Tekstini</a>
+              <a href="/my_texts" {% if request.path.startswith('/my_texts') %}aria-current="page"{% endif %}>Tekstisi</a>
           </li>
           {% endif %}
           {% if session.super_user %}
