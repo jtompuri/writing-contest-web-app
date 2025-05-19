@@ -10,6 +10,13 @@ app = Flask(__name__)
 app.secret_key = config.secret_key
 app.teardown_appcontext(db.close_connection)
 
+
+@app.before_request
+def ensure_csrf_token():
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_hex(16)
+
+
 @app.template_filter("format_date")
 def format_date(value):
     try:
@@ -161,13 +168,13 @@ def create():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    check_csrf()
     if request.method == "GET":
         username = session.pop("form_data", {}).get("username", "")
         next_page = request.args.get("next_page", "/")
         return render_template("login.html", next_page=next_page, username=username)
 
     if request.method == "POST":
+        check_csrf()
         username = sanitize_input(request.form["username"])
         password = request.form["password"]
         next_page = request.form.get("next_page", "/")
@@ -182,7 +189,6 @@ def login():
             session["user_id"] = user["id"]
             session["username"] = user["username"]
             session["super_user"] = bool(user["super_user"])
-            session["csrf_token"] = secrets.token_hex(16)
 
             return redirect(next_page)
         else:
@@ -497,7 +503,7 @@ def add_entry(contest_id):
     return redirect(url_for("index"))
 
 
-@app.route("/logout")
+@app.route("/logout", methods=["POST"])
 def logout():
     check_csrf()
     session.clear()
