@@ -10,14 +10,23 @@
   <div class="page-wrapper">
         
     <div class="logo-bar">
-      <div class="container logo-bar-inner">
-        <div class="logo-title">Kirjoituskilpailut</div>
-        {% if session.user_id %}
-          <a href="/logout" class="login-button">Kirjaudu ulos</a>
-        {% else %}
-          <a href="/login" class="login-button">Kirjaudu sisään</a>
-        {% endif %}
-      </div>
+        <div class="container logo-bar-inner">
+            {% if request.path != '/' %}
+            <a href="{{ url_for('index') }}" class="logo-title">Kirjoituskilpailut</a>
+            {% else %}
+            <div class="logo">Kirjoituskilpailut</div>
+            {% endif %}
+            {% if session.user_id %}
+                <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    <button type="submit" class="login-button">Kirjaudu ulos</button>
+                </form>
+              {% else %}
+                <form action="{{ url_for('login') }}" method="get" style="display:inline;">
+                    <button type="submit" class="login-button">Kirjaudu sisään</button>
+                </form>
+          {% endif %}
+        </div>
     </div>
 
     <nav>
