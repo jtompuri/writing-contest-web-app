@@ -190,6 +190,12 @@ def save_entry(contest_id, user_id, entry):
     db.execute(query, [contest_id, user_id, entry])
 
 
+def entry_exists(contest_id, user_id):
+    query = "SELECT 1 FROM entries WHERE contest_id = ? AND user_id = ? LIMIT 1"
+    result = db.query(query, [contest_id, user_id])
+    return bool(result)
+
+
 ##### I HAVE PROGRESSED THIS FAR. BELOW IS COPY OF ORGINAL FILE #####
 
 
