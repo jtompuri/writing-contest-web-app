@@ -1,8 +1,8 @@
-DROP TABLE users;
-DROP TABLE contests;
-DROP TABLE entries;
-DROP TABLE reviews;
-DROP TABLE classes;
+DROP TABLE IF EXISTS reviews;
+DROP TABLE IF EXISTS entries;
+DROP TABLE IF EXISTS contests;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS classes;
 
 CREATE TABLE users (
     id INTEGER PRIMARY KEY,
@@ -55,3 +55,12 @@ CREATE TABLE classes (
     title TEXT,
     value TEXT
 );
+
+-- Indexes for performance. Comment out when benchmarking indexes.
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
+CREATE INDEX IF NOT EXISTS idx_entries_contest_user ON entries(contest_id, user_id);
+CREATE INDEX IF NOT EXISTS idx_entries_user_id ON entries(user_id);
+CREATE INDEX IF NOT EXISTS idx_entries_contest_id ON entries(contest_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_entry_id ON reviews(entry_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON reviews(user_id);
+CREATE INDEX IF NOT EXISTS idx_contests_class_id ON contests(class_id);
