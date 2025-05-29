@@ -409,6 +409,13 @@ position: relative;
   vertical-align: top;
 }
 
+.admin-table select,
+.admin-table input[type="text"] {
+    font-family: Georgia, serif;
+    font-size: 18px;
+    color: #3a3a3a;
+}
+
 .small-button {
   background-color: #e0e0e0;
   color: #333;
@@ -509,4 +516,71 @@ form.form-box .large-checkbox {
   margin: 0;
   display: flex;
   gap: 1rem;
+}
+
+/* Consistent filter styling for admin table filter row */
+.filter-input {
+    width: 95%;
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 20px;
+    background-color: #fff;
+    color: #3a3a3a;
+    font-family: Georgia, serif;
+    box-sizing: border-box;
+}
+
+.filter-input:focus {
+    border-color: #9e7967;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(158, 121, 103, 0.05);
+}
+
+/* Base styles for mobile first (default) */
+
+/* Tablet: 768px and up */
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+/* Desktop: 1024px and up */
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+/* Example: make .main-nav-list horizontal only on wider screens */
+@media (max-width: 767px) {
+  .main-nav-list {
+    flex-direction: column;
+    height: auto;
+  }
+  .main-nav-list li a {
+    padding: 0.7rem 1rem;
+    font-size: 18px;
+  }
+}
+
+/* Example: stack table columns on small screens */
+@media (max-width: 600px) {
+  .admin-table, .admin-table thead, .admin-table tbody, .admin-table th, .admin-table td, .admin-table tr {
+    display: block;
+    width: 100%;
+  }
+  .admin-table th, .admin-table td {
+    box-sizing: border-box;
+    padding: 0.5rem 0.8rem;
+    text-align: left;
+  }
+  .admin-table tr {
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #eee;
+  }
+  .admin-table thead {
+    display: none;
+  }
 }
