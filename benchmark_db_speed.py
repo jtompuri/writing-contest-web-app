@@ -21,9 +21,9 @@ SCHEMA = "schema.sql"
 
 # --- CONFIGURABLE TEST DATA SIZES ---
 USER_COUNT = 100
-CONTEST_COUNT = 100
-ENTRY_COUNT = 100 * 100
-REVIEW_COUNT = 100 * 100 * 100
+CONTEST_COUNT = 1000
+ENTRY_COUNT = 10000
+REVIEW_COUNT = 100000
 CLASS_COUNT = 5
 
 # --- INDEX DEFINITIONS ---
@@ -106,16 +106,38 @@ def populate_db():
         name = f"User {i+1}"
         username = f"user{i+1}@example.com"
         password_hash = random_string(60)
-        super_user = 1 if i == 0 else 0
+        super_user = 0
         cur.execute(
             "INSERT INTO users (name, username, password_hash, super_user) "
             "VALUES (?, ?, ?, ?)",
             (name, username, password_hash, super_user)
         )
 
-    # Contests
     today = datetime.now()
-    for i in range(CONTEST_COUNT):
+    finished_count = int(CONTEST_COUNT * 0.3)  # 30% finished contests
+
+    # Finished contests (collection_end and review_end in the past, public_results=1)
+    for i in range(finished_count):
+        title = f"Contest {i+1}"
+        class_id = random.randint(1, CLASS_COUNT)
+        short_description = random_lorem(100)
+        long_description = random_lorem(500)
+        anonymity = random.randint(0, 1)
+        public_reviews = random.randint(0, 1)
+        public_results = 1  # Results are public
+        # Ended in the past
+        collection_end = (today - timedelta(days=random.randint(30, 365))).strftime("%Y-%m-%d")
+        review_end = (today - timedelta(days=random.randint(1, 29))).strftime("%Y-%m-%d")
+        cur.execute(
+            "INSERT INTO contests (title, class_id, short_description, "
+            "long_description, anonymity, public_reviews, public_results, "
+            "collection_end, review_end) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (title, class_id, short_description, long_description, anonymity,
+             public_reviews, public_results, collection_end, review_end)
+        )
+
+    # Ongoing/future contests (collection_end/review_end in future or ongoing)
+    for i in range(finished_count, CONTEST_COUNT):
         title = f"Contest {i+1}"
         class_id = random.randint(1, CLASS_COUNT)
         short_description = random_lorem(100)
@@ -123,10 +145,9 @@ def populate_db():
         anonymity = random.randint(0, 1)
         public_reviews = random.randint(0, 1)
         public_results = random.randint(0, 1)
-        collection_end = random_date(
-            today - timedelta(days=365), today + timedelta(days=365)
-        )
-        review_end = random_date(today, today + timedelta(days=730))
+        # Some ongoing, some in future
+        collection_end = (today + timedelta(days=random.randint(-10, 365))).strftime("%Y-%m-%d")
+        review_end = (today + timedelta(days=random.randint(1, 730))).strftime("%Y-%m-%d")
         cur.execute(
             "INSERT INTO contests (title, class_id, short_description, "
             "long_description, anonymity, public_reviews, public_results, "
