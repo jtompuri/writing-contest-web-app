@@ -2,6 +2,29 @@
 
 Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestää kirjoituskilpailuja, joissa kerätään ja arvioidaan lyhyitä tekstejä, kuten runoja, aforismeja tai esseitä.
 
+## Sovelluksen asennus
+
+Asenna `flask`-kirjasto:
+
+```
+$ pip install flask
+```
+
+Luo tietokannan taulut ja lisää alkutiedot:
+
+```
+$ sqlite3 database.db < schema.sql
+$ sqlite3 database.db < init.sql
+```
+
+Voit käynnistää sovelluksen näin:
+
+```
+$ flask run
+```
+
+Kirjaudu demoon käyttäjätunnuksella `admin` ja salasanalla `admin`.
+
 ## Sovelluksen toiminnot (✅ = toteutettu)
 
 ### Pääkäyttäjä
@@ -86,26 +109,3 @@ Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 	- [ ] Käyttäjä pystyy valitsemaan tietokohteelle yhden tai useamman luokittelun. Mahdolliset luokat ovat tietokannassa.
 	- [ ] Käyttäjä pystyy lähettämään toisen käyttäjän tietokohteeseen liittyen jotain lisätietoa, joka tulee näkyviin sovelluksessa.
 - [ ] README.md-tiedoston tulee kuvata, mikä on sovelluksen nykyinen tilanne.
-
-## Sovelluksen asennus
-
-Asenna `flask`-kirjasto:
-
-```
-$ pip install flask
-```
-
-Luo tietokannan taulut ja lisää alkutiedot:
-
-```
-$ sqlite3 database.db < schema.sql
-$ sqlite3 database.db < init.sql
-```
-
-Voit käynnistää sovelluksen näin:
-
-```
-$ flask run
-```
-
-Kirjaudu demoon käyttäjätunnuksella `admin` ja salasanalla `admin`.
