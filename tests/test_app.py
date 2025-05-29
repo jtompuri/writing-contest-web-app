@@ -1,6 +1,8 @@
 import pytest
-from app import (app, sanitize_input, is_valid_email, format_date,
-                 format_text, total_pages)
+from app import (
+    app, sanitize_input, is_valid_email, format_date,
+    format_text, total_pages
+)
 
 
 @pytest.fixture
@@ -195,7 +197,10 @@ def test_admin_contests_create_post(client):
     with client.session_transaction() as session:
         session['super_user'] = True
         session['csrf_token'] = 'test_token'
-    response = client.post('/admin/contests/create', data={'csrf_token': 'test_token', 'name': 'Test Contest'})
+    response = client.post(
+        '/admin/contests/create',
+        data={'csrf_token': 'test_token', 'name': 'Test Contest'}
+    )
     assert response.status_code in (302, 200, 400)  # Adjust as per your logic
 
 
@@ -203,7 +208,10 @@ def test_admin_contests_delete_post(client):
     with client.session_transaction() as session:
         session['super_user'] = True
         session['csrf_token'] = 'test_token'
-    response = client.post('/admin/contests/delete/1', data={'csrf_token': 'test_token'})
+    response = client.post(
+        '/admin/contests/delete/1',
+        data={'csrf_token': 'test_token'}
+    )
     assert response.status_code in (302, 200, 404)
 
 
@@ -230,11 +238,14 @@ def test_admin_users_update_with_super_user(client):
     with client.session_transaction() as session:
         session['super_user'] = True
         session['csrf_token'] = 'test_token'
-    response = client.post('/admin/users/update/1', data={
-        'csrf_token': 'test_token',
-        'username': 'newname',
-        'name': 'New Name'  # Add this line
-    })
+    response = client.post(
+        '/admin/users/update/1',
+        data={
+            'csrf_token': 'test_token',
+            'username': 'newname',
+            'name': 'New Name'
+        }
+    )
     assert response.status_code in (302, 200, 404)
 
 
@@ -243,12 +254,15 @@ def test_admin_create_entry_post(client):
         session['super_user'] = True
         session['csrf_token'] = 'test_token'
     # You may need to mock sql.create_entry for this test
-    response = client.post('/admin/entries/create', data={
-        'csrf_token': 'test_token',
-        'contest_id': 1,
-        'user_id': 1,
-        'content': 'Test Content'
-    })
+    response = client.post(
+        '/admin/entries/create',
+        data={
+            'csrf_token': 'test_token',
+            'contest_id': 1,
+            'user_id': 1,
+            'content': 'Test Content'
+        }
+    )
     assert response.status_code in (302, 200, 400)
 
 
@@ -280,24 +294,30 @@ def test_admin_update_entry_with_super_user(client):
         session['super_user'] = True
         session['csrf_token'] = 'test_token'
     # Assuming entry with id=1 exists or will 404
-    response = client.post('/admin/entries/update/1', data={
-        'csrf_token': 'test_token',
-        'contest_id': 1,
-        'user_id': 1,
-        'title': 'Muokattu otsikko',
-        'content': 'Muokattu sisältö'
-    })
+    response = client.post(
+        '/admin/entries/update/1',
+        data={
+            'csrf_token': 'test_token',
+            'contest_id': 1,
+            'user_id': 1,
+            'title': 'Muokattu otsikko',
+            'content': 'Muokattu sisältö'
+        }
+    )
     assert response.status_code in (302, 200, 404)
 
 
 def test_admin_update_entry_without_super_user(client):
-    response = client.post('/admin/entries/update/1', data={
-        'csrf_token': 'test_token',
-        'contest_id': 1,
-        'user_id': 1,
-        'title': 'Muokattu otsikko',
-        'content': 'Muokattu sisältö'
-    })
+    response = client.post(
+        '/admin/entries/update/1',
+        data={
+            'csrf_token': 'test_token',
+            'contest_id': 1,
+            'user_id': 1,
+            'title': 'Muokattu otsikko',
+            'content': 'Muokattu sisältö'
+        }
+    )
     assert response.status_code == 403
 
 
@@ -306,12 +326,18 @@ def test_admin_delete_entry_with_super_user(client):
         session['super_user'] = True
         session['csrf_token'] = 'test_token'
     # Assuming entry with id=1 exists or will 404
-    response = client.post('/admin/entries/delete/1', data={'csrf_token': 'test_token'})
+    response = client.post(
+        '/admin/entries/delete/1',
+        data={'csrf_token': 'test_token'}
+    )
     assert response.status_code in (302, 200, 404)
 
 
 def test_admin_delete_entry_without_super_user(client):
-    response = client.post('/admin/entries/delete/1', data={'csrf_token': 'test_token'})
+    response = client.post(
+        '/admin/entries/delete/1',
+        data={'csrf_token': 'test_token'}
+    )
     assert response.status_code == 403
 
 
@@ -320,11 +346,14 @@ def test_admin_create_entry_missing_fields(client):
         session['super_user'] = True
         session['csrf_token'] = 'test_token'
     # Missing title and content
-    response = client.post('/admin/entries/create', data={
-        'csrf_token': 'test_token',
-        'contest_id': 1,
-        'user_id': 1
-    })
+    response = client.post(
+        '/admin/entries/create',
+        data={
+            'csrf_token': 'test_token',
+            'contest_id': 1,
+            'user_id': 1
+        }
+    )
     assert response.status_code in (302, 200, 400)
 
 
@@ -333,17 +362,24 @@ def test_duplicate_entry_prevention(client):
         session['super_user'] = True
         session['csrf_token'] = 'test_token'
     # First entry should succeed
-    response1 = client.post('/admin/entries/create', data={
-        'csrf_token': 'test_token',
-        'contest_id': 1,
-        'user_id': 1,
-        'entry': 'First entry'
-    })
-    # Second entry for same user/contest should fail or update, depending on logic
-    response2 = client.post('/admin/entries/create', data={
-        'csrf_token': 'test_token',
-        'contest_id': 1,
-        'user_id': 1,
-        'entry': 'Duplicate entry'
-    })
+    response1 = client.post(
+        '/admin/entries/create',
+        data={
+            'csrf_token': 'test_token',
+            'contest_id': 1,
+            'user_id': 1,
+            'entry': 'First entry'
+        }
+    )
+    assert response1.status_code in (200, 302)
+
+    response2 = client.post(
+        '/admin/entries/create',
+        data={
+            'csrf_token': 'test_token',
+            'contest_id': 1,
+            'user_id': 1,
+            'entry': 'Duplicate entry'
+        }
+    )
     assert response2.status_code in (400, 302, 409)
