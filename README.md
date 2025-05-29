@@ -73,12 +73,12 @@ Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 
 ### Välipalautus 2 (1.6.2025)
 
-- [ ] Tavoitteena on, että sovelluksessa on ainakin seuraavat toiminnot:
+- [x] Tavoitteena on, että sovelluksessa on ainakin seuraavat toiminnot:
 	- [x] Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen.
-	- [ ] Käyttäjä pystyy lisäämään, muokkaamaan ja poistamaan tietokohteita.
+	- [x] Käyttäjä pystyy lisäämään, muokkaamaan ja poistamaan tietokohteita.
 	- [x] Käyttäjä näkee sovellukseen lisätyt tietokohteet.
-	- [ ] Käyttäjä pystyy etsimään tietokohteita hakusanalla tai muulla perusteella.
-- [ ] README.md-tiedoston tulee kuvata, mikä on sovelluksen nykyinen tilanne.
+	- [x] Käyttäjä pystyy etsimään tietokohteita hakusanalla tai muulla perusteella.
+- [x] README.md-tiedoston tulee kuvata, mikä on sovelluksen nykyinen tilanne.
 
 ### Välipalautus 3 (15.6.2025)
 
@@ -108,3 +108,5 @@ Voit käynnistää sovelluksen näin:
 ```
 $ flask run
 ```
+
+Kirjaudu demoon käyttäjätunnuksella `admin` ja salasanalla `admin`.
