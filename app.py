@@ -710,7 +710,7 @@ def admin_entries():
         per_page=per_page,
         total=total,
         total_pages=total_pages(total, per_page),
-        base_url="/admin/entries?"
+        base_url="/admin/entries?page="
     )
 
 
