@@ -43,7 +43,7 @@ def get_all_users(limit=None, offset=None):
 
     Args:
         limit (int, optional): The maximum number of users to return.
-        offset (int, optional): The number of users to skip before starting to 
+        offset (int, optional): The number of users to skip before starting to
                                 return results.
 
     Returns:
@@ -70,7 +70,8 @@ def get_entries(user_id):
     Returns:
         list: A list of entries for the user.
     """
-    sql = "SELECT id, contest_id, entry FROM entries WHERE user_id = ? ORDER BY id DESC"
+    sql = """SELECT id, contest_id, entry FROM entries WHERE user_id = ?
+            ORDER BY id DESC"""
     return db.query(sql, [user_id])
 
 
@@ -88,7 +89,8 @@ def create_user(name, username, password, is_super):
         bool: True if user was created, False if username already exists.
     """
     password_hash = generate_password_hash(password)
-    query = "INSERT INTO users (name, username, password_hash, super_user) VALUES (?, ?, ?, ?)"
+    query = """INSERT INTO users (name, username, password_hash, super_user)
+                VALUES (?, ?, ?, ?)"""
     try:
         db.execute(query, [name, username, password_hash, is_super])
         return True
@@ -106,7 +108,8 @@ def update_user(user_id, name, username, is_super):
         username (str): The new username.
         is_super (bool or int): Whether the user is a super user.
     """
-    query = "UPDATE users SET name = ?, username = ?, super_user = ? WHERE id = ?"
+    query = """UPDATE users SET name = ?, username = ?, super_user = ?
+                WHERE id = ?"""
     db.execute(query, [name, username, is_super, user_id])
 
 
