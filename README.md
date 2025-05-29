@@ -10,7 +10,7 @@ Asenna `flask`-kirjasto:
 $ pip install flask
 ```
 
-Luo tietokannan taulut ja lisää alkutiedot:
+Luo tietokannan taulut ja lisää demo-sisältö:
 
 ```
 $ sqlite3 database.db < schema.sql
