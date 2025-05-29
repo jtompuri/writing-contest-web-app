@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+<div class="flash-message" role="alert" aria-live="polite">
+     {{ message }}
+</div>
+{% endfor %}
+
+<h1>Tekstien hallinta</h1>
+
+<a href="{{ url_for('admin_new_entry') }}" class="small-button" style="display:inline-block; margin-bottom: 1rem;">
+  Lisää uusi teksti
+</a>
+
+<table class="admin-table">
+    <thead>
+        <tr>
+            <th scope="col">Kilpailun nimi</th>
+            <th scope="col">Nimi (käyttäjätunnus)</th>
+            <th scope="col">Toiminnot</th>
+        </tr>
+        <tr>
+            <form method="get" action="{{ url_for('admin_entries') }}">
+                <td>
+                    <select name="contest_id" id="contest_id" class="filter-input">
+                        <option value="">Kaikki kilpailut</option>
+                        {% for contest in contests %}
+                            <option value="{{ contest.id }}" {% if contest.id == selected_contest_id %}selected{% endif %}>
+                                {% if contest.title|length > 33 %}
+                                    {{ contest.title[:25] }}...{{ contest.title[-5:] }}
+                                {% else %}
+                                    {{ contest.title }}
+                                {% endif %}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <input 
+                        type="text" 
+                        class="filter-input"
+                        name="user_search" 
+                        id="user_search" 
+                        placeholder="Etsi nimellä tai käyttäjätunnuksella" 
+                        value="{{ user_search or '' }}" 
+                        maxlength="50"
+                        class="form-box"
+                        title="Käyttäjän nimi tai käyttäjätunnus"
+                    >
+                </td>
+                <td>
+                    <button type="submit" class="small-button">Suodata</button>
+                </td>
+            </form>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in entries %}
+            <tr>
+                <td>
+                    {% if entry.contest_title|length > 33 %}
+                        {{ entry.contest_title[:25] }}...{{ entry.contest_title[-5:] }}
+                    {% else %}
+                        {{ entry.contest_title }}
+                    {% endif %}
+                </td>
+                <td>{{ entry.author_name }} ({{ entry.username }})</td>
+                <td>
+                    <a href="{{ url_for('admin_edit_entry', entry_id=entry.id) }}" class="small-button">Muokkaa</a>
+                    <form action="{{ url_for('admin_delete_entry', entry_id=entry.id) }}" method="post" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        <button type="submit" class="small-button" onclick="return confirm('Poistetaanko teksti?')">
+                            Poista
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Ei tekstejä.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include "partials/_pagination.html" %}
+{% endblock %}
