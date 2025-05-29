@@ -14,7 +14,10 @@ def get_all_classes():
 
 
 def get_all_contests(limit=None, offset=None):
-    """Retrieve all contests from the database, including their class information, ordered by collection end date."""
+    """
+    Retrieve all contests from the database, including their class information,
+    ordered by collection end date.
+    """
     query = """
         SELECT contests.id, contests.title, contests.collection_end,
                contests.review_end, classes.value AS class_value
@@ -209,10 +212,12 @@ def delete_contest(contest_id):
     db.execute(query, [contest_id])
 
 
-def get_all_entries(limit=None, offset=None, contest_id=None, user_search=None):
+def get_all_entries(limit=None, offset=None, contest_id=None,
+                    user_search=None):
     """
     Retrieve all entries from the database, including user and contest
-        information, ordered by creation date."""
+    information, ordered by creation date.
+    """
     query = """
         SELECT entries.id, contests.title AS contest_title,
                users.name AS author_name, users.username
