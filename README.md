@@ -25,7 +25,9 @@ $ flask run
 
 Kirjaudu demoon käyttäjätunnuksella `admin` ja salasanalla `admin`.
 
-## Sovelluksen toiminnot (✅ = toteutettu)
+## Sovelluksen toiminnot
+
+✅ = toteutettu
 
 ### Pääkäyttäjä
 - Pääkäyttäjä luodaan automaattisesti. ✅
