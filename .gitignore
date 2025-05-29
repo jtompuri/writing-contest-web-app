@@ -4,3 +4,4 @@ database.db
 .DS_Store
 pytest.ini
 .env
+.coverage
