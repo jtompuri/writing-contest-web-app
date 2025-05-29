@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+<div class="flash-message" role="alert" aria-live="polite">
+    {{ message }}
+</div>
+{% endfor %}
+
+<form action="{{ url_for('admin_new_entry') }}" method="post" class="form-box" aria-label="Kilpailutyön luontilomake">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+    <h1>Luo uusi kilpailutyö</h1>
+
+    <div class="form-group">
+        <label for="contest_id">Kilpailu:</label>
+        <select name="contest_id" id="contest_id" required>
+            <option value="">Valitse kilpailu</option>
+            {% for contest in contests %}
+                <option value="{{ contest.id }}" {% if contest.id == selected_contest_id %}selected{% endif %}>
+                    {{ contest.title }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="user_id">Kirjoittaja:</label>
+        <select name="user_id" id="user_id" required>
+            <option value="">Valitse käyttäjä</option>
+            {% for user in users %}
+                <option value="{{ user.id }}" {% if user.id == selected_user_id %}selected{% endif %}>
+                    {{ user.name }} ({{ user.username }})
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <p>
+        <label for="entry">Kilpailutyö:</label>
+        <textarea name="entry" id="entry" rows="15" maxlength="5000" required aria-describedby="entry-help">{{ entry or '' }}</textarea>
+        <small id="entry-help">
+            Enintään 5000 merkkiä. Sallitut muotoilut: <strong>*lihavointi*</strong> ja <em>_kursivointi_</em>.
+        </small>
+    </p>
+
+    <div class="button-row" role="group" aria-label="Kilpailutyön luontipainikkeet">
+        <button type="submit" class="action-button" aria-label="Luo kilpailutyö">
+            Luo kilpailutyö
+        </button>
+        <a href="{{ url_for('admin_entries') }}" class="action-button button-secondary" aria-label="Peruuta">
+            Peruuta
+        </a>
+    </div>
+</form>
+
+{% endblock %}
