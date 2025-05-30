@@ -22,12 +22,12 @@
     
     <p>
         <label for="username">Sähköposti:</label>
-        <input type="text" name="username" class="input-medium" id="username" value="{{ username or '' }}" maxlength="50" required autocomplete="username" />
+        <input type="text" name="username" class="input-chars-40" id="username" value="{{ username or '' }}" maxlength="50" required autocomplete="username" />
     </p>
 
     <p>
         <label for="password">Salasana:</label>
-        <input type="password" name="password" class="input-small" id="password" maxlength="50" required autocomplete="current-password" />
+        <input type="password" name="password" class="input-chars-30" id="password" maxlength="50" required autocomplete="current-password" />
     </p>
 
     <input type="hidden" name="next_page" value="{{ next_page or '/' }}" />

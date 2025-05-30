@@ -319,6 +319,21 @@ form.form-box input.input-medium {
     max-width: 100%;
     box-sizing: border-box;
 }
+form.form-box input.input-chars-30 {
+    width: 30ch;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+form.form-box input.input-chars-40 {
+    width: 40ch;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+form.form-box input.input-chars-50 {
+    width: 50ch;
+    max-width: 100%;
+    box-sizing: border-box;
+}
 
 /* =========================
    Tables
