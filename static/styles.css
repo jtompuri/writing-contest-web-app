@@ -1,3 +1,37 @@
+/* ==========================================================================
+   Writing Contest Web App - Main Stylesheet
+   --------------------------------------------------------------------------
+   Structure:
+   - Base & Typography
+   - Layout & Containers
+   - Logo & Navigation
+   - Flash Messages
+   - Buttons
+   - Forms
+   - Tables
+   - Lists & Contest Components
+   - Filters & Pagination
+   - Responsive Design
+
+   Naming conventions:
+   - .btn, .btn-primary, .btn-secondary, .btn-small: Button styles
+   - .input-chars-XX: Input width for XX characters (e.g., .input-chars-30)
+   - .form-box: Main form container
+   - .form-group: Spacing for label+input pairs
+   - .admin-table: Admin tables
+   - .filter-input: Filter/search fields
+
+   Guidelines:
+   - Use semantic HTML and ARIA attributes for accessibility.
+   - Use .btn classes for all buttons and button-like links.
+   - Use .input-chars-XX for input sizing, not inline styles.
+   - Use .form-group for consistent form spacing.
+   - Keep section comments for easy navigation.
+   - Remove unused styles regularly.
+
+   For accessibility and responsive design, see section comments below.
+   ========================================================================== */
+
 /* =========================
    Base & Typography
    ========================= */
@@ -308,16 +342,6 @@ input[type="checkbox"].large-checkbox {
   height: 1.1em;
   transform: translateY(0.2em);
   margin-right: 0.5em;
-}
-form.form-box input.input-small {
-    width: 30ch;
-    max-width: 100%;
-    box-sizing: border-box;
-}
-form.form-box input.input-medium {
-    width: 40ch;
-    max-width: 100%;
-    box-sizing: border-box;
 }
 form.form-box input.input-chars-30 {
     width: 30ch;
