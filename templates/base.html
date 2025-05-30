@@ -19,11 +19,11 @@
             {% if session.user_id %}
                 <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
                     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                    <button type="submit" class="login-button" aria-label="Kirjaudu ulos">Kirjaudu ulos</button>
+                    <button type="submit" class="btn btn-primary btn-small" aria-label="Kirjaudu ulos">Kirjaudu ulos</button>
                 </form>
             {% else %}
                 <form action="{{ url_for('login') }}" method="get" style="display:inline;">
-                    <button type="submit" class="login-button" aria-label="Kirjaudu sisään">Kirjaudu sisään</button>
+                    <button type="submit" class="btn btn-primary btn-small" aria-label="Kirjaudu sisään">Kirjaudu sisään</button>
                 </form>
             {% endif %}
         </div>

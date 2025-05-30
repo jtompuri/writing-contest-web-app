@@ -22,18 +22,18 @@
     
     <p>
         <label for="username">Sähköposti:</label>
-        <input type="text" name="username" id="username" value="{{ username or '' }}" maxlength="50" required autocomplete="username" />
+        <input type="text" name="username" class="medium" id="username" value="{{ username or '' }}" maxlength="50" required autocomplete="username" />
     </p>
 
     <p>
         <label for="password">Salasana:</label>
-        <input type="password" name="password" id="password" maxlength="50" required autocomplete="current-password" />
+        <input type="password" name="password" class="small" id="password" maxlength="50" required autocomplete="current-password" />
     </p>
 
     <input type="hidden" name="next_page" value="{{ next_page or '/' }}" />
 
     <p>
-        <button type="submit" class="action-button">Kirjaudu</button>
+        <button type="submit" class="btn btn-primary">Kirjaudu</button>
     </p>
 </form>
 

@@ -1,3 +1,6 @@
+/* =========================
+   Base & Typography
+   ========================= */
 body, button, input, select, textarea {
     font-family: Georgia, serif;
     font-size: 20px;
@@ -9,28 +12,56 @@ body {
     color: #3a3a3a;
     line-height: 1.6;
 }
-
 a {
   color: #5c4033;
   text-decoration: none;
   font-weight: bold;
 }
-
 a:hover {
   color: #3e2723;
   text-decoration: underline;
 }
-
 a:visited {
   color: #6d4c41;
 }
+h1, h2, h3 {
+    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    line-height: 1.58em;
+    margin-top: 0;
+}
+h1 { font-size: 31px; margin-bottom: 16px; }
+h2 { font-size: 25px; margin-bottom: 16px; }
+h3 { font-size: 20px; }
 
+/* =========================
+   Layout & Containers
+   ========================= */
 .container {
     max-width: 768px;
     margin: 0 auto;
     padding: 0 1rem;
 }
+.content-box {
+    background-color: white;
+    padding: 2rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.05); 
+}
+footer {
+    background-color: #9e7967;
+    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    color: white;
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 18px;
+}
 
+/* =========================
+   Logo & Navigation
+   ========================= */
 .logo-bar {
     background-color: #9e7967;
     padding: 1rem 0;
@@ -39,13 +70,16 @@ a:visited {
     font-size: 32px;
     font-weight: bold;
 }
-
 .logo {
     width: auto;
     max-width: 350px;
     height: auto;
 }
-
+.logo-bar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 .logo-title,
 .logo-title:visited,
 .logo-title:active,
@@ -56,16 +90,13 @@ a:visited {
   color: white;
   text-decoration: none;
 }
-
 .logo-title:hover {
-  color: #ffede2; /* vaalea hover-väri */
+  color: #ffede2;
   text-decoration: none;
 }
-
 .main-nav {
     background-color: #9e7967;
 }
-
 .main-nav-list {
     list-style: none;
     display: flex;
@@ -74,11 +105,9 @@ a:visited {
     height: 42px;
     gap: 0.5rem;
 }
-
 .main-nav-list li {
     margin: 0;
 }
-
 .main-nav-list li a {
     display: flex;
     align-items: center;
@@ -92,14 +121,12 @@ a:visited {
     font-weight: bold;
     text-decoration: none;
 }
-
 .main-nav-list li a:hover {
     background-color: #dcbaa5;
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;    
     transition: background-color 0.2s ease-in-out;
 }
-
 .main-nav-list li.active a {
     background-color: #ffede2;
     color: #000000;
@@ -109,48 +136,67 @@ a:visited {
     height: 100%;
 }
 
-.content-box {
-    background-color: white;
-    padding: 2rem;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.05); 
-}
-
-h1 {
-    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    font-weight: bold;
-    font-size: 31px;
-    line-height: 1.58em;
-    margin-bottom: 16px;
-    margin-top: 0;
-}
-
-h2 {
-    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    font-weight: 700;
-    font-size: 25px;
-    line-height: 1.58em;
-    margin-bottom: 16px;
-}
-
-h3 {
-    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    font-weight: 700;
+/* =========================
+   Flash Messages
+   ========================= */
+.flash-message {
+    background-color: #ffede2;
+    color: #3a3a3a;
+    border-left: 5px solid #9e7967;
+    padding: 1rem 1.25rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+    font-family: Georgia, serif;
     font-size: 20px;
-    line-height: 1.58em;
 }
 
-footer {
+/* =========================
+   Buttons
+   ========================= */
+.btn {
+    border-radius: 4px;
+    font-size: 20px;
+    cursor: pointer;
+    font-family: Georgia, serif;
+    padding: 0.7rem 1.5rem;
+    border: none;
+    transition: background-color 0.2s;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+}
+.btn-primary {
     background-color: #9e7967;
-    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
     color: white;
-    text-align: center;
-    padding: 2rem 1rem;
-    font-size: 18px;
+}
+.btn-primary:hover {
+    background-color: #bb8d79;
+}
+.btn-secondary {
+    background-color: #e0e0e0;
+    color: #333;
+    border: 1px solid #bbb;
+}
+.btn-secondary:hover {
+    background-color: #d6d6d6;
+}
+.btn-small {
+    font-size: 16px;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    padding: 0.2rem 0.6rem;
+    margin: 4px;
+}
+.btn-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
+/* =========================
+   Forms
+   ========================= */
 form.form-box {
   background-color: white;
   padding: 2rem;
@@ -158,18 +204,15 @@ form.form-box {
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
   margin: 2rem 0;
 }
-
 form.form-box p {
     margin-bottom: 1.5rem;
 }
-
 form.form-box label {
     display: block;
     font-weight: bold;
     margin-bottom: 0.4rem;
     color: #3a3a3a;
 }
-
 form.form-box input[type="text"],
 form.form-box input[type="password"],
 form.form-box input[type="email"] {
@@ -182,14 +225,12 @@ form.form-box input[type="email"] {
     color: #3a3a3a;
     font-family: Georgia, serif;
 }
-
 form.form-box input[type="text"]:focus,
 form.form-box input[type="password"]:focus {
     border-color: #9e7967;
     outline: none;
     box-shadow: 0 0 0 2px rgba(158, 121, 103, 0.05);
 }
-
 form.form-box input[type="submit"] {
     background-color: #9e7967;
     color: white;
@@ -201,11 +242,9 @@ form.form-box input[type="submit"] {
     cursor: pointer;
     font-family: Georgia, serif;
 }
-
 form.form-box input[type="submit"]:hover {
     background-color: #bb8d79;
 }
-
 form.form-box input[disabled],
 form.form-box textarea[disabled] {
   background-color: #f2f2f2;
@@ -214,68 +253,101 @@ form.form-box textarea[disabled] {
   cursor: not-allowed;
   font-style: italic;
 }
-
-.flash-message {
-    background-color: #ffede2;
+form select,
+form textarea,
+form input[type="date"] {
+    padding: 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 20px;
+    background-color: #fff;
     color: #3a3a3a;
-    border-left: 5px solid #9e7967;
-    padding: 1rem 1.25rem;
-    border-radius: 8px;
-    margin: 1rem 0;
     font-family: Georgia, serif;
-    font-size: 20px;
+    box-sizing: border-box;
 }
-
-.logo-bar-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+form textarea {
+    width: 95%;
+    resize: vertical;
 }
-
-.login-button {
-    background-color: #dcbaa5;
-    color: #6d4c41;
+form small {
+    display: block;
+    margin-top: 0.4rem;
+    color: #555;
+    font-size: 0.9em;
+    font-style: italic;
+}
+form.form-box fieldset {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  width: 95%;
+  box-sizing: border-box;
+}
+form.form-box fieldset legend {
+  font-weight: bold;
+  font-size: 1rem;
+  font-family: Georgia, serif;
+  color: #3a3a3a;
+  padding: 0 0.5rem;
+}
+form.form-box fieldset label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-family: Georgia, serif;
+  font-size: 16px;
+  color: #3a3a3a;
+}
+form.form-box .large-checkbox {
+  transform: scale(1.2);
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+input[type="checkbox"].large-checkbox {
+  width: 1.1em;
+  height: 1.1em;
+  transform: translateY(0.2em);
+  margin-right: 0.5em;
+}
+form.form-box input.small {
+    width: 20ch;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+form.form-box input.medium {
+    width: 40ch;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+form.form-box input.large {
+    width: 60ch;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+/* =========================
+   Tables
+   ========================= */
+.admin-table {
+  font-size: 18px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  width: 100%;
+  border-collapse: collapse;
+}
+.admin-table th, .admin-table td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #ccc;
+  vertical-align: top;
+}
+.admin-table select,
+.admin-table input[type="text"] {
     font-family: Georgia, serif;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 0.7rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background-color 0.2s ease-in-out;
+    font-size: 18px;
+    color: #3a3a3a;
 }
 
-.login-button:hover {
-    background-color: #ffede2;
-}
-
-a.action-button,
-a.action-button:visited,
-a.action-button:hover,
-a.action-button:active {
-    color: white;
-}
-
-.action-button {
-    background-color: #9e7967;
-    color: white;
-    font-weight: bold;
-    padding: 0.7rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    font-size: 20px;
-    cursor: pointer;
-    font-family: Georgia, serif;
-    text-decoration: none;
-    display: inline-block;
-    transition: background-color 0.2s ease-in-out;
-}
-
-.action-button:hover {
-    background-color: #bb8d79;
-}
-
+/* =========================
+   Lists & Contest Components
+   ========================= */
 .contest-list {
     list-style: none;
     padding: 0;
@@ -284,7 +356,6 @@ a.action-button:active {
     flex-direction: column;
     gap: 1.5rem;
 }
-
 .contest-list li {
     background-color: #ffffff;
     border-left: 5px solid #9e7967;
@@ -296,49 +367,41 @@ a.action-button:active {
     line-height: 1.6;
     color: #3a3a3a;
 }
-
 .contest-list li em {
     font-style: normal;
     font-weight: bold;
     display: block;
     margin-bottom: 0.3rem;
 }
-
 .contest-list li a:hover {
     text-decoration: underline;
 }
-
 .contest-header {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     margin-bottom: 0.3rem;
 }
-
 .contest-header em {
     font-style: normal;
     font-weight: bold;
     font-size: 20px;
 }
-
 .contest-header a {
     color: #5c4033;
     text-decoration: none;
 }
-
 .contest-header a:hover {
     text-decoration: underline;
 }
-
 .contest-deadline {
     font-size: 18px;
     color: #9e7967;
     font-weight: bold;
     margin-left: 1rem;
 }
-
 .contest-summary-box {
-position: relative; 
+    position: relative; 
     background-color: #fff4ed;
     border-radius: 10px;
     border-left: 5px solid #9e7967;
@@ -349,11 +412,9 @@ position: relative;
     position: relative;
     line-height: 1.4;
 }
-
 .contest-summary-box p {
     margin: 0.3rem 0;
 }
-
 .contest-status {
     position: absolute;
     top: 1rem;
@@ -364,22 +425,18 @@ position: relative;
     border-radius: 5px;
     white-space: nowrap;
 }
-
 .contest-status.open {
     background-color: #d0f2c7;
     color: #2f6c00;
 }
-
 .contest-status.review {
     background-color: #ffe49a;
     color: #805500;
 }
-
 .contest-status.closed {
     background-color: #ccc;
     color: #444;
 }
-
 .contest-stats {
   position: absolute;
   bottom: 1rem;
@@ -389,136 +446,15 @@ position: relative;
   text-align: right;
   line-height: 1.4;
 }
-
 .status-note {
   color: #888;
   font-style: italic;
   font-size: 90%;
 }
 
-.admin-table {
-  font-size: 18px;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.admin-table th, .admin-table td {
-  padding: 0.5rem;
-  border-bottom: 1px solid #ccc;
-  vertical-align: top;
-}
-
-.admin-table select,
-.admin-table input[type="text"] {
-    font-family: Georgia, serif;
-    font-size: 18px;
-    color: #3a3a3a;
-}
-
-.small-button {
-  background-color: #e0e0e0;
-  color: #333;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-  font-size: 16px;
-  margin: 4px;
-  padding: 0.2rem 0.6rem;
-  cursor: pointer;
-  font-family: 'Segoe UI', sans-serif;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.small-button:hover {
-  background-color: #d6d6d6;
-}
-
-input[type="checkbox"].large-checkbox {
-  width: 1.1em;
-  height: 1.1em;
-  transform: translateY(0.2em);
-  margin-right: 0.5em;
-}
-
-form select,
-form textarea,
-form input[type="date"] {
-    width: 95%;
-    padding: 0.6rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 20px;
-    background-color: #fff;
-    color: #3a3a3a;
-    font-family: Georgia, serif;
-    box-sizing: border-box;
-}
-
-form textarea {
-    resize: vertical;
-}
-
-form small {
-    display: block;
-    margin-top: 0.4rem;
-    color: #555;
-    font-size: 0.9em;
-    font-style: italic;
-}
-
-.button-row {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-form.form-box fieldset {
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  width: 95%;
-  box-sizing: border-box;
-}
-
-form.form-box fieldset legend {
-  font-weight: bold;
-  font-size: 1rem;
-  font-family: Georgia, serif;
-  color: #3a3a3a;
-  padding: 0 0.5rem;
-}
-
-form.form-box fieldset label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-family: Georgia, serif;
-  font-size: 16px;
-  color: #3a3a3a;
-}
-
-form.form-box .large-checkbox {
-  transform: scale(1.2);
-  margin-right: 0.5rem;
-  vertical-align: middle;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-}
-
-.pagination-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  gap: 1rem;
-}
-
-/* Consistent filter styling for admin table filter row */
+/* =========================
+   Filters & Pagination
+   ========================= */
 .filter-input {
     width: 95%;
     padding: 0.6rem;
@@ -530,30 +466,32 @@ form.form-box .large-checkbox {
     font-family: Georgia, serif;
     box-sizing: border-box;
 }
-
 .filter-input:focus {
     border-color: #9e7967;
     outline: none;
     box-shadow: 0 0 0 2px rgba(158, 121, 103, 0.05);
 }
+.pagination {
+  display: flex;
+  justify-content: center;
+}
+.pagination-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 1rem;
+}
 
-/* Base styles for mobile first (default) */
-
-/* Tablet: 768px and up */
+/* =========================
+   Responsive Design
+   ========================= */
 @media (min-width: 768px) {
-  .container {
-    max-width: 768px;
-  }
+  .container { max-width: 768px; }
 }
-
-/* Desktop: 1024px and up */
 @media (min-width: 1024px) {
-  .container {
-    max-width: 1024px;
-  }
+  .container { max-width: 1024px; }
 }
-
-/* Example: make .main-nav-list horizontal only on wider screens */
 @media (max-width: 767px) {
   .main-nav-list {
     flex-direction: column;
@@ -564,8 +502,6 @@ form.form-box .large-checkbox {
     font-size: 18px;
   }
 }
-
-/* Example: stack table columns on small screens */
 @media (max-width: 600px) {
   .admin-table, .admin-table thead, .admin-table tbody, .admin-table th, .admin-table td, .admin-table tr {
     display: block;

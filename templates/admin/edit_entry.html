@@ -27,13 +27,14 @@
         </small>
     </p>
 
-    <div class="button-row" role="group" aria-label="Kilpailutyön muokkauspainikkeet">
-        <button type="submit" class="action-button" aria-label="Tallenna muutokset">
+    <div class="btn-row" role="group" aria-label="Kilpailutyön muokkauspainikkeet">
+        <button type="submit" class="btn btn-primary" aria-label="Tallenna muutokset">
             Tallenna muutokset
         </button>
-        <a href="{{ url_for('admin_entries') }}" class="action-button" aria-label="Peruuta">
+        <button type="button" class="btn btn-primary" aria-label="Peruuta"
+            onclick="window.location.href='{{ url_for('admin_entries') }}'">
             Peruuta
-        </a>
+        </button>
     </div>
 </form>
 

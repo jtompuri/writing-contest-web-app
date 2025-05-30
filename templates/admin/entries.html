@@ -10,7 +10,7 @@
 
 <h1>Tekstien hallinta</h1>
 
-<a href="{{ url_for('admin_new_entry') }}" class="small-button" style="display:inline-block; margin-bottom: 1rem;">
+<a href="{{ url_for('admin_new_entry') }}" class="btn btn-secondary btn-small" style="display:inline-block; margin-bottom: 1rem;">
   Lisää uusi teksti
 </a>
 
@@ -51,7 +51,7 @@
                     >
                 </td>
                 <td>
-                    <button type="submit" class="small-button">Suodata</button>
+                    <button type="submit" class="btn btn-secondary btn-small">Suodata</button>
                 </td>
             </form>
         </tr>
@@ -68,10 +68,17 @@
                 </td>
                 <td>{{ entry.author_name }} ({{ entry.username }})</td>
                 <td>
-                    <a href="{{ url_for('admin_edit_entry', entry_id=entry.id) }}" class="small-button">Muokkaa</a>
+                    <button
+                        type="button"
+                        class="btn btn-secondary btn-small"
+                        onclick="window.location.href='{{ url_for('admin_edit_entry', entry_id=entry.id) }}'"
+                        aria-label="Muokkaa tekstiä {{ entry.author_name }} ({{ entry.username }})"
+                    >
+                        Muokkaa
+                    </button>
                     <form action="{{ url_for('admin_delete_entry', entry_id=entry.id) }}" method="post" style="display:inline;">
                         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                        <button type="submit" class="small-button" onclick="return confirm('Poistetaanko teksti?')">
+                        <button type="submit" class="btn btn-secondary btn-small" onclick="return confirm('Poistetaanko teksti?')">
                             Poista
                         </button>
                     </form>

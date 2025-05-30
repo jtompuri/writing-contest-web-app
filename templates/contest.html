@@ -44,7 +44,7 @@
 {% if review_ended and contest.public_results %}
     <form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="post" style="margin-top: 2rem;">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        <button type="submit" class="action-button" aria-label="Näytä kilpailun tulokset">
+        <button type="submit" class="btn btn-primary" aria-label="Näytä kilpailun tulokset">
             Näytä kilpailun tulokset
         </button>
     </form>
@@ -52,14 +52,14 @@
 {% elif collection_ended and session.user_id and contest.public_reviews %}
     <form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="post" style="margin-top: 2rem;">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        <button type="submit" class="action-button" aria-label="Vertaisarvioi kilpailutöitä">
+        <button type="submit" class="btn btn-primary" aria-label="Vertaisarvioi kilpailutöitä">
             Vertaisarvioi kilpailutöitä
         </button>
     </form>
 
 {% elif not collection_ended and session.user_id %}
     <form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="get" style="margin-top: 2rem;">
-        <button type="submit" class="action-button" aria-label="Osallistu kilpailuun">
+        <button type="submit" class="btn btn-primary" aria-label="Osallistu kilpailuun">
             Osallistu kilpailuun
         </button>
     </form>
