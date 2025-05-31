@@ -23,7 +23,10 @@ Voit käynnistää sovelluksen näin:
 $ flask run
 ```
 
-Kirjaudu demoon käyttäjätunnuksella `admin` ja salasanalla `admin`.
+Kirjaudu demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja salasanalla `admin`. Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä.
+
+Voit luoda demoon oman käyttäjätunnuksen, jolla on peruskäyttäjän oikeudet. Peruskäyttäjä ei näe Ylläpito-välilehteä.
+
 
 ## Sovelluksen toiminnot
 
