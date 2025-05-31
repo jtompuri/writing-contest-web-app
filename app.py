@@ -63,8 +63,8 @@ def format_text(text, links_allowed=False):
     """Formats text with HTML tags for styling. Allows links if specified."""
     text = text.replace('\n', '<br />')
     text = re.sub(r' {2,}', lambda m: '&nbsp;' * len(m.group()), text)
-    text = re.sub(r'\*(\S(?:.*?\S)?)\*', r'<strong>\1</strong>', text)  # Bold
-    text = re.sub(r'_(\S(?:.*?\S)?)_', r'<em>\1</em>', text)  # Italics
+    text = re.sub(r'\*(\S(?:.*?\S)?)\*', r'<strong>\1</strong>', text)
+    text = re.sub(r'_(\S(?:.*?\S)?)_', r'<em>\1</em>', text)
 
     if links_allowed:
         email_regex = r'([\w\.-]+@[\w\.-]+\.\w+)'
@@ -292,7 +292,7 @@ def admin_create_contest():
 
     form = request.form
     title = sanitize_input(form["title"])
-    class_id = form["class_id"]
+    class_id = int(form["class_id"])
     short_description = sanitize_input(form["short_description"])
     long_description = sanitize_input(form["long_description"])
     collection_end = form["collection_end"]
@@ -302,6 +302,14 @@ def admin_create_contest():
     if (not title or not class_id or not collection_end or not review_end or
             not short_description or not long_description):
         flash("Kaikki pakolliset kentät on täytettävä.")
+        return redirect(url_for("admin_new_contest"))
+
+    if len(short_description) > 255:
+        flash("Lyhyt kuvaus saa olla enintään 255 merkkiä.")
+        return redirect(url_for("admin_new_contest"))
+
+    if len(long_description) > 2000:
+        flash("Pitkä kuvaus saa olla enintään 2000 merkkiä.")
         return redirect(url_for("admin_new_contest"))
 
     anonymity = 1 if form.get("anonymity") == "on" else 0
@@ -500,7 +508,7 @@ def admin_update_contest(contest_id):
 
     form = request.form
     title = sanitize_input(form["title"])
-    class_id = form["class_id"]
+    class_id = int(form["class_id"])
     short_description = sanitize_input(form["short_description"])
     long_description = sanitize_input(form["long_description"])
     collection_end = form["collection_end"]
@@ -511,6 +519,14 @@ def admin_update_contest(contest_id):
             not short_description or not long_description):
         flash("Kaikki pakolliset kentät on täytettävä.")
         return redirect(url_for("edit_contest", contest_id=contest_id))
+
+    if len(short_description) > 255:
+        flash("Lyhyt kuvaus saa olla enintään 255 merkkiä.")
+        return redirect(url_for("admin_new_contest"))
+
+    if len(long_description) > 2000:
+        flash("Pitkä kuvaus saa olla enintään 2000 merkkiä.")
+        return redirect(url_for("admin_new_contest"))
 
     anonymity = 1 if form.get("anonymity") == "on" else 0
     public_reviews = 1 if form.get("public_reviews") == "on" else 0

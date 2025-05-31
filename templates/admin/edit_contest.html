@@ -16,7 +16,7 @@
     <select name="class_id" id="class_id" required>
       <option value="" disabled hidden>Valitse kirjallisuuslaji</option>
       {% for cl in classes %}
-        <option value="{{ cl.id }}" {% if cl.id == contest.class_id %}selected{% endif %}>
+        <option value="{{ cl.id }}" {% if cl.id == contest.class_id | int %}selected{% endif %}>
           {{ cl.value }}
         </option>
       {% endfor %}
@@ -25,7 +25,7 @@
 
   <p>
     <label for="short_description">Lyhyt kuvaus:</label>
-    <input type="text" name="short_description" id="short_description" maxlength="200" value="{{ contest.short_description }}" required>
+    <input type="text" name="short_description" id="short_description" maxlength="255" value="{{ contest.short_description }}" required>
   </p>
 
   <p>

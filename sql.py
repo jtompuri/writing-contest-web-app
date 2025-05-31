@@ -188,11 +188,11 @@ def get_contest_by_id(contest_id):
         dict: The contest details if found, otherwise None.
     """
     query = """
-            SELECT contests.id, contests.title, contests.short_description,
-                contests.long_description, contests.collection_end,
-                contests.review_end, contests.public_reviews,
-                contests.public_results, contests.anonymity,
-                classes.value AS class_value
+            SELECT contests.id, contests.title, contests.class_id, contests.short_description,
+                   contests.long_description, contests.collection_end,
+                   contests.review_end, contests.public_reviews,
+                   contests.public_results, contests.anonymity,
+                   classes.value AS class_value
             FROM contests
             JOIN classes ON contests.class_id = classes.id
             WHERE contests.id = ?
