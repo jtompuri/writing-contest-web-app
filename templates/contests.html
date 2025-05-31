@@ -9,11 +9,15 @@
 
 <section aria-label="Käynnissä olevat kilpailut" style="margin-bottom: 2rem;">
     {% if contests %}
-        <ul class="contest-list">
-        {% for contest in contests %}
-            {% include "partials/_contest_card.html" %}
-        {% endfor %}
-        </ul>
+        <div class="review-cards">
+            {% for contest in contests %}
+                {% set ns = namespace(contest_url=url_for('contest', contest_id=contest.id)) %}
+                {% set phase_text = "Keräysvaihe käynnissä, päättyy " ~ (contest.collection_end|format_date) %}
+                {% set _contest = contest %}
+                {% set _phase_text = phase_text %}
+                {% include "partials/_contest_card.html" %}
+            {% endfor %}
+        </div>
         {% set page = page %}
         {% set total_pages = (total // per_page) + (1 if total % per_page > 0 else 0) %}
         {% set base_url = '/contests?page=' %}
