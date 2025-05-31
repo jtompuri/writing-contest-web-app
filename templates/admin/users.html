@@ -20,21 +20,21 @@
 <table class="admin-table" role="table" aria-label="Käyttäjälista">
     <thead>
         <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Nimi</th>
-            <th scope="col">Käyttäjänimi</th>
-            <th scope="col">Pääkäyttäjä</th>
-            <th scope="col">Toiminnot</th>
+            <th scope="col" class="td-right">ID</th>
+            <th scope="col" class="td-left">Nimi</th>
+            <th scope="col" class="td-left">Käyttäjänimi</th>
+            <th scope="col" class="td-center">Pääkäyttäjä</th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
         {% for user in users %}
         <tr>
-            <td>{{ user.id }}</td>
+            <td class="td-right">{{ user.id }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.username }}</td>
-            <td>{{ 'Kyllä' if user.super_user else 'Ei' }}</td>
-            <td>
+            <td class="td-center">{{ 'Kyllä' if user.super_user else 'Ei' }}</td>
+            <td class="td-right">
                 <button
                     type="button"
                     class="btn btn-secondary btn-small"
