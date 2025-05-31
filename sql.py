@@ -106,7 +106,9 @@ def get_contests_for_entry(limit=None, offset=None):
         list: A list of contests available for entry.
     """
     query = """SELECT contests.id, contests.title, contests.short_description,
-            contests.collection_end, contests.review_end, classes.value
+            contests.collection_end, contests.review_end, classes.value AS class_value,
+            contests.anonymity AS anonymity, contests.public_reviews AS public_reviews,
+            contests.public_results AS public_results
             FROM contests
             JOIN classes ON contests.class_id = classes.id
             WHERE contests.collection_end >= DATE('now')
@@ -131,7 +133,9 @@ def get_contests_for_review(limit=None, offset=None):
         list: A list of contests available for review.
     """
     query = """SELECT contests.id, contests.title, contests.short_description,
-    contests.collection_end, contests.review_end, classes.value
+    contests.collection_end, contests.review_end, classes.value AS class_value,
+    contests.anonymity AS anonymity, contests.public_reviews AS public_reviews,
+    contests.public_results AS public_results
             FROM contests
             JOIN classes ON contests.class_id = classes.id
             WHERE contests.review_end >= DATE('now')
@@ -158,7 +162,9 @@ def get_contests_for_results(limit=None, offset=None):
         list: A list of contests with results available.
     """
     query = """SELECT contests.id, contests.title, contests.short_description,
-    contests.collection_end, contests.review_end, classes.value
+    contests.collection_end, contests.review_end, classes.value AS class_value,
+    contests.anonymity AS anonymity, contests.public_reviews AS public_reviews,
+    contests.public_results AS public_results
             FROM contests
             JOIN classes ON contests.class_id = classes.id
             WHERE contests.review_end < DATE('now')
@@ -449,22 +455,22 @@ def get_results_contest_count():
 
 def get_entry_by_id(entry_id):
     """
-    Retrieve an entry by its ID, including user and contest information.
-
-    Args:
-        entry_id (int): The ID of the entry.
-
-    Returns:
-        dict: The entry details if found, otherwise None.
+    Retrieve an entry by its ID, including user, contest info, total points,
+    contest anonymity, and review_end date.
     """
     query = """
         SELECT entries.id, entries.entry, entries.created,
-               users.username AS author_name, contests.title AS contest_title,
-               contests.id AS contest_id, users.id AS user_id
+               users.name AS author_name, users.username, contests.title AS contest_title,
+               contests.id AS contest_id, users.id AS user_id,
+               contests.anonymity AS anonymity,
+               contests.review_end AS review_end,
+               IFNULL(SUM(reviews.points), 0) AS points
         FROM entries
         JOIN users ON entries.user_id = users.id
         JOIN contests ON entries.contest_id = contests.id
+        LEFT JOIN reviews ON reviews.entry_id = entries.id
         WHERE entries.id = ?
+        GROUP BY entries.id
     """
     result = db.query(query, [entry_id])
     return result[0] if result else None
@@ -497,3 +503,123 @@ def delete_entry(entry_id):
     """
     query = "DELETE FROM entries WHERE id = ?"
     db.execute(query, [entry_id])
+
+
+def get_contest_results(contest_id):
+    """
+    Retrieve all entries for a contest with author name, username, entry text,
+    and total review points, ordered by points descending.
+
+    Args:
+        contest_id (int): The ID of the contest.
+
+    Returns:
+        list of dict: Each dict contains id, author_name, username, entry, points.
+    """
+    query = """
+        SELECT
+            entries.id AS id,
+            users.name AS author_name,
+            users.username AS username,
+            entries.entry AS entry,
+            IFNULL(SUM(reviews.points), 0) AS points
+        FROM entries
+        JOIN users ON entries.user_id = users.id
+        LEFT JOIN reviews ON reviews.entry_id = entries.id
+        WHERE entries.contest_id = ?
+        GROUP BY entries.id
+        ORDER BY points DESC, entries.id ASC
+    """
+    return db.query(query, [contest_id])
+
+
+def get_entries_for_review(contest_id):
+    """
+    Get all entries for a contest in random order for review.
+    """
+    query = """
+        SELECT entries.id, users.name AS author_name, entries.entry
+        FROM entries
+        JOIN users ON entries.user_id = users.id
+        WHERE entries.contest_id = ?
+        ORDER BY RANDOM()
+    """
+    return db.query(query, [contest_id])
+
+
+def save_review(entry_id, user_id, points):
+    """
+    Insert or update a review for an entry by a user.
+    """
+    # Try update first
+    query = """
+        INSERT INTO reviews (entry_id, user_id, points)
+        VALUES (?, ?, ?)
+        ON CONFLICT(entry_id, user_id) DO UPDATE SET points=excluded.points
+    """
+    db.execute(query, [entry_id, user_id, points])
+
+
+def get_user_reviews_for_contest(contest_id, user_id):
+    """
+    Retrieve the reviews and points given by a user for a specific contest.
+
+    Args:
+        contest_id (int): The ID of the contest.
+        user_id (int): The ID of the user.
+
+    Returns:
+        dict: Mapping of entry_id to points given by the user.
+    """
+    query = """
+        SELECT reviews.entry_id, reviews.points
+        FROM reviews
+        JOIN entries ON reviews.entry_id = entries.id
+        WHERE entries.contest_id = ? AND reviews.user_id = ?
+    """
+    return {row["entry_id"]: row["points"] for row in db.query(query, [contest_id, user_id])}
+
+
+def get_user_entries_with_results(user_id):
+    """
+    Retrieve all entries submitted by a user, including contest info, points, placement, and total entries.
+
+    Args:
+        user_id (int): The ID of the user.
+
+    Returns:
+        list of dict: Each dict contains entry and contest details, points, placement, and total_entries.
+    """
+    query = """
+        SELECT
+            entries.id AS entry_id,
+            entries.entry AS entry_text,
+            contests.title AS title,
+            contests.anonymity,
+            contests.public_reviews,
+            contests.public_results,
+            contests.collection_end,
+            contests.review_end,
+            contests.id AS contest_id,
+            classes.value AS class_value,
+            IFNULL(SUM(reviews.points), 0) AS points,
+            (
+                SELECT COUNT(*) + 1
+                FROM entries e2
+                LEFT JOIN reviews r2 ON r2.entry_id = e2.id
+                WHERE e2.contest_id = contests.id
+                GROUP BY e2.id
+                HAVING SUM(r2.points) > IFNULL(SUM(reviews.points), 0)
+            ) AS placement,
+            (
+                SELECT COUNT(*) FROM entries e3 WHERE e3.contest_id = contests.id
+            ) AS total_entries
+        FROM entries
+        JOIN contests ON entries.contest_id = contests.id
+        JOIN classes ON contests.class_id = classes.id
+        LEFT JOIN reviews ON reviews.entry_id = entries.id
+        WHERE entries.user_id = ?
+        GROUP BY entries.id
+        ORDER BY contests.review_end DESC
+    """
+    return db.query(query, [user_id])
