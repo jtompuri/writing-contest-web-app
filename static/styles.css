@@ -59,7 +59,7 @@ a:visited {
   color: #6d4c41;
 }
 h1, h2, h3 {
-    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: bold;
     line-height: 1.58em;
     margin-top: 0;
@@ -82,11 +82,11 @@ h3 { font-size: 20px; }
     margin-top: 2rem;
     margin-bottom: 2rem;
     border-radius: 12px;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.05); 
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2); 
 }
 footer {
     background-color: #9e7967;
-    font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     color: white;
     text-align: center;
     padding: 2rem 1rem;
@@ -235,7 +235,7 @@ form.form-box {
   background-color: white;
   padding: 2rem;
   border-radius: 8px;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
   margin: 2rem 0;
 }
 form.form-box p {
@@ -379,6 +379,18 @@ form.form-box input.input-chars-50 {
     font-size: 18px;
     color: #3a3a3a;
 }
+.td-left {
+    text-align: left;
+}
+.td-right {
+    text-align: right;
+}
+.td-center {
+    text-align: center;
+}
+.td-middle {
+    vertical-align: text-bottom;
+}
 
 /* =========================
    Lists & Contest Components
@@ -396,7 +408,7 @@ form.form-box input.input-chars-50 {
     border-left: 5px solid #9e7967;
     padding: 1rem 1.25rem;
     border-radius: 8px;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
     font-family: Georgia, serif;
     font-size: 20px;
     line-height: 1.6;
@@ -491,7 +503,7 @@ form.form-box input.input-chars-50 {
    Filters & Pagination
    ========================= */
 .filter-input {
-    width: 95%;
+    width: 100%;
     padding: 0.6rem;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -516,6 +528,22 @@ form.form-box input.input-chars-50 {
   margin: 0;
   display: flex;
   gap: 1rem;
+}
+ 
+/* =========================
+   Visually Hidden (Screen Reader Only)
+   ========================= */
+.sr-only,
+.visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
 }
 
 /* =========================
@@ -554,4 +582,52 @@ form.form-box input.input-chars-50 {
   .admin-table thead {
     display: none;
   }
+}
+
+/* =========================
+   Review Cards
+   ========================= */
+.review-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.review-card {
+    border-radius: 8px;
+    border-left: 5px solid #9e7967;
+    padding: 1.2rem 1.5rem;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+    background: #fff;
+}
+
+.review-card-header {
+    margin-bottom: 0.5rem;
+}
+
+.entry-index {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.read-full-text {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.pill-tag {
+    display: inline-block;
+    background: #ffede2;
+    color: #9e7967;
+    font-size: 14px;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    border-radius: 999px;
+    padding: 0.2em 0.9em;
+    margin-right: 0.3em;
+    margin-bottom: 0.2em;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    vertical-align: middle;
+    white-space: nowrap;
 }
