@@ -20,10 +20,10 @@ DATABASE = "database.db"
 SCHEMA = "schema.sql"
 
 # --- CONFIGURABLE TEST DATA SIZES ---
-USER_COUNT = 100
-CONTEST_COUNT = 1000
-ENTRY_COUNT = 10000
-REVIEW_COUNT = 100000
+USER_COUNT = 30
+CONTEST_COUNT = 100
+ENTRY_COUNT = 1000
+REVIEW_COUNT = 2000
 CLASS_COUNT = 5
 
 # --- INDEX DEFINITIONS ---
@@ -126,8 +126,10 @@ def populate_db():
         public_reviews = random.randint(0, 1)
         public_results = 1  # Results are public
         # Ended in the past
-        collection_end = (today - timedelta(days=random.randint(30, 365))).strftime("%Y-%m-%d")
-        review_end = (today - timedelta(days=random.randint(1, 29))).strftime("%Y-%m-%d")
+        collection_end_dt = today - timedelta(days=random.randint(30, 365))
+        review_end_dt = collection_end_dt + timedelta(days=random.randint(1, 29))
+        collection_end = collection_end_dt.strftime("%Y-%m-%d")
+        review_end = review_end_dt.strftime("%Y-%m-%d")
         cur.execute(
             "INSERT INTO contests (title, class_id, short_description, "
             "long_description, anonymity, public_reviews, public_results, "
@@ -146,8 +148,10 @@ def populate_db():
         public_reviews = random.randint(0, 1)
         public_results = random.randint(0, 1)
         # Some ongoing, some in future
-        collection_end = (today + timedelta(days=random.randint(-10, 365))).strftime("%Y-%m-%d")
-        review_end = (today + timedelta(days=random.randint(1, 730))).strftime("%Y-%m-%d")
+        collection_end_dt = today + timedelta(days=random.randint(-10, 365))
+        review_end_dt = collection_end_dt + timedelta(days=random.randint(1, 365))
+        collection_end = collection_end_dt.strftime("%Y-%m-%d")
+        review_end = review_end_dt.strftime("%Y-%m-%d")
         cur.execute(
             "INSERT INTO contests (title, class_id, short_description, "
             "long_description, anonymity, public_reviews, public_results, "
@@ -173,19 +177,23 @@ def populate_db():
         )
 
     # Reviews
-    for i in range(REVIEW_COUNT):
+    review_pairs = set()
+    attempts = 0
+    while len(review_pairs) < REVIEW_COUNT and attempts < REVIEW_COUNT * 10:
         entry_id = random.randint(1, ENTRY_COUNT)
         user_id = random.randint(1, USER_COUNT)
+        if (entry_id, user_id) in review_pairs:
+            attempts += 1
+            continue
+        review_pairs.add((entry_id, user_id))
         points = random.randint(1, 10)
         review = random_lorem(random.randint(50, 500))
-        try:
-            cur.execute(
-                "INSERT INTO reviews (entry_id, user_id, points, review) "
-                "VALUES (?, ?, ?, ?)",
-                (entry_id, user_id, points, review)
-            )
-        except sqlite3.IntegrityError:
-            continue
+        cur.execute(
+            "INSERT INTO reviews (entry_id, user_id, points, review) "
+            "VALUES (?, ?, ?, ?)",
+            (entry_id, user_id, points, review)
+        )
+        attempts += 1
 
     conn.commit()
     conn.close()
