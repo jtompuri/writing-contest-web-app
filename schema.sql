@@ -47,7 +47,8 @@ CREATE TABLE reviews (
     review TEXT,
     created DATETIME DEFAULT (DATETIME('now')),
     FOREIGN KEY (entry_id) REFERENCES entries(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    UNIQUE(entry_id, user_id)
 );
 
 CREATE TABLE classes (
