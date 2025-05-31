@@ -17,10 +17,10 @@
 <table class="admin-table">
     <thead>
         <tr>
-            <th scope="col">Otsikko</th>
-            <th scope="col">Keräys</th>
-            <th scope="col">Arviointi</th>
-            <th scope="col">Toiminnot</th>
+            <th scope="col" class="td-left">Otsikko</th>
+            <th scope="col" class="td-right">Keräys</th>
+            <th scope="col" class="td-right">Arviointi</th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
@@ -35,9 +35,9 @@
                 {% endif %}
                 </a>
             </td>
-            <td>{{ c.collection_end | format_date }}</td>
-            <td>{{ c.review_end | format_date }}</td>
-            <td>
+            <td class="td-right">{{ c.collection_end | format_date }}</td>
+            <td class="td-right">{{ c.review_end | format_date }}</td>
+            <td class="td-right">
                 <button
                     type="button"
                     class="btn btn-secondary btn-small"

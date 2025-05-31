@@ -2,27 +2,24 @@
 {% block title %}Tulokset{% endblock %}
 
 {% block content %}
-
 <h1>Kilpailujen tulokset</h1>
-
 <p>Tarkastele kilpailujen tuloksia, jotka ovat avoimia.</p>
-
 <section aria-label="Päättyneet kilpailut">
     {% if contests %}
-    <ul class="contest-list">
-        {% for contest in contests %}
-        {% include "partials/_contest_card.html" %}
-        {% endfor %}
-    </ul>
-    {% if total > 1 %}
-        {% set page = page %}
+        <div class="review-cards">
+            {% for contest in contests %}
+                {% set ns = namespace(contest_url=url_for('result', contest_id=contest.id)) %}
+                {% set phase_text = "Kilpailu päättyi " ~ (contest.review_end|format_date) %}
+                {% set _contest = contest %}
+                {% set _phase_text = phase_text %}
+                {% include "partials/_contest_card.html" %}
+            {% endfor %}
+        </div>
         {% set total_pages = (total // per_page) + (1 if total % per_page > 0 else 0) %}
         {% set base_url = '/results?page=' %}
         {% include "partials/_pagination.html" %}
-    {% endif %}
     {% else %}
-    <p>Ei päättyneitä kilpailuja, joiden tulokset ovat julkisia.</p>
+        <p>Ei päättyneitä kilpailuja, joiden tulokset ovat julkisia.</p>
     {% endif %}
 </section>
-
 {% endblock %}

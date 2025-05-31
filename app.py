@@ -1,10 +1,10 @@
 import re
 import secrets
 import sqlite3
-from datetime import datetime
+from datetime import datetime, date
 
 from flask import (
-    Flask, abort, flash, redirect, render_template, request, session, url_for
+    Flask, abort, flash, redirect, render_template, request, session, url_for, g
 )
 from markupsafe import Markup
 
@@ -664,8 +664,27 @@ def reviews():
 
 @app.route("/my_texts")
 def my_texts():
-    """Displays the user's texts."""
-    return render_template("my_texts.html")
+    if not session.get("user_id"):
+        flash("Kirjaudu sisään nähdäksesi omat tekstisi.")
+        return redirect(url_for("login", next_page=request.path))
+    entries = sql.get_user_entries_with_results(session["user_id"])
+    today = date.today().isoformat()
+    # Sort by review_end DESC (already done in SQL)
+    all_entries = entries
+    total = len(all_entries)
+    per_page = 5  # or your preferred page size
+    page = int(request.args.get("page", 1))
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_entries = all_entries[start:end]
+    return render_template(
+        "my_texts.html",
+        all_entries=paginated_entries,
+        total=total,
+        per_page=per_page,
+        page=page,
+        today=today
+    )
 
 
 @app.route("/terms_of_use")
@@ -845,3 +864,98 @@ def admin_delete_entry(entry_id):
         print("Virhe tekstin poistossa:", e)
         flash("Tekstiä ei voitu poistaa.")
     return redirect(url_for("admin_entries"))
+
+
+@app.route("/result/<int:contest_id>")
+def result(contest_id):
+    """Displays the results for a specific contest."""
+    contest = sql.get_contest_by_id(contest_id)
+    if not contest:
+        abort(404)
+    # Fetch entries with user names and total review points, ordered descending
+    entries = sql.get_contest_results(contest_id)
+    return render_template(
+        "result.html",
+        contest=contest,
+        entries=entries
+    )
+
+
+@app.route("/entry/<int:entry_id>")
+def entry(entry_id):
+    """Show the full text of a single entry."""
+    entry = sql.get_entry_by_id(entry_id)
+    if not entry:
+        abort(404)
+    idx = request.args.get("idx")
+    source = request.args.get("source")  # "review" or "result"
+    return render_template("entry.html", entry=entry, now=date.today().isoformat(), idx=idx, source=source)
+
+@app.route("/review/<int:contest_id>", methods=["GET", "POST"])
+def review(contest_id):
+    # Only allow logged-in users
+    if not session.get("user_id"):
+        flash("Kirjaudu sisään arvioidaksesi kilpailutöitä.")
+        return redirect(url_for("login", next_page=request.path))
+
+    contest = sql.get_contest_by_id(contest_id)
+    if not contest:
+        abort(404)
+
+    today = datetime.now().date()
+    collection_end = datetime.strptime(contest["collection_end"], "%Y-%m-%d").date()
+    review_end = datetime.strptime(contest["review_end"], "%Y-%m-%d").date()
+    if not (collection_end <= today < review_end):
+        flash("Kilpailun arviointijakso ei ole käynnissä.")
+        return redirect(url_for("reviews"))
+
+    # Get entries in random order
+    entries = sql.get_entries_for_review(contest_id)
+
+    if request.method == "POST":
+        check_csrf()
+        user_id = session["user_id"]
+        errors = []
+        rated_entry_ids = set()
+        for entry in entries:
+            key = f"points_{entry['id']}"
+            value = request.form.get(key)
+            if value is None or value == "":
+                errors.append(f"Kaikki tekstit on arvioitava. Puuttuu: {entry['author_name']}")
+            else:
+                try:
+                    points = int(value)
+                    if points < 0 or points > 5:
+                        errors.append(f"Arvosanan tulee olla välillä 0–5. ({entry['author_name']})")
+                    else:
+                        rated_entry_ids.add(entry['id'])
+                except ValueError:
+                    errors.append(f"Virheellinen arvosana: {entry['author_name']}")
+
+        if errors or len(rated_entry_ids) != len(entries):
+            flash("Kaikki tekstit on arvioitava ja arvosanojen tulee olla välillä 0-5.")
+            for error in errors:
+                flash(error)
+            return render_template("review.html", contest=contest, entries=entries)
+
+        # Save reviews
+        for entry in entries:
+            points = int(request.form[f"points_{entry['id']}"])
+            sql.save_review(entry['id'], user_id, points)
+        flash("Arviot tallennettu.")
+        return redirect(url_for("reviews"))
+
+    if request.method == "GET":
+        user_reviews = sql.get_user_reviews_for_contest(contest_id, session["user_id"])
+        return render_template(
+            "review.html",
+            contest=contest,
+            entries=entries,
+            user_reviews=user_reviews
+        )
+
+    return render_template(
+        "review.html",
+        contest=contest,
+        entries=entries
+    )
