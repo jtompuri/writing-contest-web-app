@@ -87,7 +87,7 @@ def populate_db():
     for i in range(CLASS_COUNT):
         cur.execute(
             "INSERT INTO classes (title, value) VALUES (?, ?)",
-            (f"Luokka {i+1}", f"ClassValue{i+1}")
+            (f"Luokka {i + 1}", f"ClassValue{i + 1}")
         )
 
     # Add admin user (superuser, username: admin, password: admin, hashed)
