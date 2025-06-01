@@ -1,7 +1,12 @@
 <div class="review-card">
     <div class="review-card-header">
         <a href="{{ ns.contest_url }}">
-            <strong>{{ _contest.title }}</strong>
+            <strong>
+                {{ _contest.title }}
+                {% if show_placement is defined and show_placement and _contest.review_end <= today %}
+                    (sija {{ _contest.placement }}/{{ _contest.total_entries }}, {{ _contest.points }} p.)
+                {% endif %}
+            </strong>
         </a>
     </div>
     <div class="entry-preview">
