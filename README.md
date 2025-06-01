@@ -28,7 +28,9 @@ Voit käynnistää sovelluksen näin:
 $ flask run
 ```
 
-Jos luot vain tyhjän tietokannan, niin ensimmäisestä rekisteröidystä käyttäjästä tulee pääkäyttäjä. Vaihtoehtoisesti voit luoda demotietokannan ja kirjautua demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja salasanalla `admin`. Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä. Voit luoda demoon oman käyttäjätunnuksen, jolla on peruskäyttäjän oikeudet. Peruskäyttäjä ei näe Ylläpito-välilehteä.
+Jos luot vain tyhjän tietokannan, niin ensimmäisestä rekisteröidystä käyttäjästä tulee pääkäyttäjä. Vaihtoehtoisesti voit luoda demotietokannan ja kirjautua demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja salasanalla `admin`. 
+
+Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä. Voit luoda demoon oman käyttäjätunnuksen, jolla on peruskäyttäjän oikeudet. Peruskäyttäjä ei näe Ylläpito-välilehteä.
 
 
 ## Sovelluksen toiminnot
