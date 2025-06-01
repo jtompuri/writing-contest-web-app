@@ -11,6 +11,7 @@
         {% set phase_text = "Kilpailu päättyi " ~ (contest.review_end|format_date) %}
         {% set _contest = contest %}
         {% set _phase_text = phase_text %}
+        {% set show_placement = False %}
         {% include "partials/_contest_card.html" %}
         {% endfor %}
     </div>
