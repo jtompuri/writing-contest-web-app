@@ -464,10 +464,12 @@ def get_entry_by_id(entry_id):
                contests.id AS contest_id, users.id AS user_id,
                contests.anonymity AS anonymity,
                contests.review_end AS review_end,
+               classes.value AS class_value,
                IFNULL(SUM(reviews.points), 0) AS points
         FROM entries
         JOIN users ON entries.user_id = users.id
         JOIN contests ON entries.contest_id = contests.id
+        JOIN classes ON contests.class_id = classes.id
         LEFT JOIN reviews ON reviews.entry_id = entries.id
         WHERE entries.id = ?
         GROUP BY entries.id
@@ -603,14 +605,14 @@ def get_user_entries_with_results(user_id):
             contests.id AS contest_id,
             classes.value AS class_value,
             IFNULL(SUM(reviews.points), 0) AS points,
-            (
+            IFNULL((
                 SELECT COUNT(*) + 1
                 FROM entries e2
                 LEFT JOIN reviews r2 ON r2.entry_id = e2.id
                 WHERE e2.contest_id = contests.id
                 GROUP BY e2.id
                 HAVING SUM(r2.points) > IFNULL(SUM(reviews.points), 0)
-            ) AS placement,
+            ), 1) AS placement,
             (
                 SELECT COUNT(*) FROM entries e3 WHERE e3.contest_id = contests.id
             ) AS total_entries
