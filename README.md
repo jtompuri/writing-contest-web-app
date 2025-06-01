@@ -55,7 +55,7 @@ Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä
 - Käyttäjä pystyy etsimään kilpailuja hakusanalla.
 - Käyttäjä voi lisätä✅, muokata✅ ja poistaa oman tekstin kirjoituskilpailuun.
 - Käyttäjä voi arvioida muiden tekstejä antamalla pistemäärän 1-5. ✅
-- Sovelluksessa on käyttäjäsivut, jotka näyttävät listan kilpailuista, joihin käyttäjä on osallistunut.
+- Sovelluksessa on käyttäjäsivu kilpailuista, joihin käyttäjä on osallistunut, käyttäjän sijoituksen ja pistemäärän.
 - Käyttäjä voi tarkastella kilpailun tuloksia.✅
 
 ## Tietokohteet
