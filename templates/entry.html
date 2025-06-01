@@ -3,7 +3,7 @@
 {% if not entry.anonymity or entry.review_end <= now %}
     {{ entry.author_name }}{% if entry.points is defined %} ({{ entry.points }} p.){% endif %} – {{ entry.contest_title }} – {{ site_name }}
 {% else %}
-    Teksti {{ idx }} – {{ entry.contest_title }} – {{ site_name }}
+    {{ entry.class_value }} {{ idx }} – {{ entry.contest_title }} – {{ site_name }}
 {% endif %}
 {% endblock %}
 {% block content %}
@@ -11,7 +11,7 @@
 {% if not entry.anonymity or entry.review_end <= now %} <h2>{{ entry.author_name }}{% if entry.points is defined %} ({{
     entry.points }} p.){% endif %}</h2>
     {% else %}
-    <h2>Teksti {{ idx }}</h2>
+    <h2>{{ entry.class_value }} {{ idx }}</h2>
     {% endif %}
     {{ entry.entry | richtext }}
     <div class="btn-row">
