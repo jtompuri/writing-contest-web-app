@@ -7,69 +7,71 @@
     <link rel="stylesheet" href="/static/styles.css" />
 </head>
 <body>
-  <div class="page-wrapper">
-        
-    <header class="logo-bar" role="banner">
-        <div class="container logo-bar-inner">
-            {% if request.path != '/' %}
-            <a href="{{ url_for('index') }}" class="logo-title" aria-label="Palaa etusivulle">Kirjoituskilpailut</a>
-            {% else %}
-            <div class="logo" aria-hidden="true">Kirjoituskilpailut</div>
-            {% endif %}
-            {% if session.user_id %}
+    <div class="page-wrapper">
+        <header class="logo-bar" role="banner">
+            <div class="container logo-bar-inner">
+                {% if request.path != '/' %}
+                <a href="{{ url_for('index') }}" class="logo-title" aria-label="Palaa etusivulle">Kirjoituskilpailut</a>
+                {% else %}
+                <div class="logo" aria-hidden="true">Kirjoituskilpailut</div>
+                {% endif %}
+                {% if session.user_id %}
                 <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
                     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                    <button type="submit" class="btn btn-primary btn-small" aria-label="Kirjaudu ulos">Kirjaudu ulos</button>
+                    <button type="submit" class="btn btn-primary btn-small" aria-label="Kirjaudu ulos">Kirjaudu
+                        ulos</button>
                 </form>
-            {% else %}
+                {% else %}
                 <form action="{{ url_for('login') }}" method="get" style="display:inline;">
-                    <button type="submit" class="btn btn-primary btn-small" aria-label="Kirjaudu sisään">Kirjaudu sisään</button>
+                    <button type="submit" class="btn btn-primary btn-small" aria-label="Kirjaudu sisään">Kirjaudu
+                        sisään</button>
                 </form>
-            {% endif %}
-        </div>
-    </header>
-
-    <nav role="navigation" aria-label="Päävalikko" class="main-nav">
-      <div class="container">
-        <ul  class="main-nav-list">
-          <li class="{% if request.path == '/' %}active{% endif %}">
-              <a href="/" {% if request.path == '/' %}aria-current="page"{% endif %}>Etusivu</a>
-          </li>
-          <li class="{% if request.path.startswith('/contest') %}active{% endif %}">
-              <a href="/contests" {% if request.path.startswith('/contests') %}aria-current="page"{% endif %}>Kilpailut</a>
-          </li>
-          <li class="{% if request.path.startswith('/result') or source == 'result' %}active{% endif %}">
-              <a href="/results" {% if request.path.startswith('/results') or source == 'result' %}aria-current="page"{% endif %}>Tulokset</a>
-          </li>
-          {% if session.user_id %}
-          <li class="{% if request.path.startswith('/review') or source == 'review' %}active{% endif %}">
-              <a href="/reviews" {% if request.path.startswith('/reviews') or source == 'review' %}aria-current="page"{% endif %}>Arvioi</a>
-          </li>
-          {% endif %}
-          {% if session.user_id %}
-          <li class="{% if request.path.startswith('/my_texts') or source == 'my_texts' %}active{% endif %}">
-              <a href="/my_texts" {% if request.path.startswith('/my_texts') or source == 'my_texts' %}aria-current="page"{% endif %}>Tekstisi</a>
-          </li>
-          {% endif %}
-          {% if session.super_user %}
-          <li class="{% if request.path.startswith('/admin') %}active{% endif %}">
-              <a href="/admin" {% if request.path.startswith('/admin') %}aria-current="page"{% endif %}>Ylläpito</a>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
-    </nav>
-
-    <main class="content-box container" role="main">
-        {% block content %}{% endblock %}
-    </main>
-
-    <footer role="contentinfo">
-      <div class="container">
-        <p>&copy; 2025 Janne Tompuri</p>
-      </div>
-    </footer>
-
-  </div>
+                {% endif %}
+            </div>
+        </header>
+        <nav role="navigation" aria-label="Päävalikko" class="main-nav">
+            <div class="container">
+                <ul class="main-nav-list">
+                    <li class="{% if request.path == '/' %}active{% endif %}">
+                        <a href="/" {% if request.path=='/' %}aria-current="page" {% endif %}>Etusivu</a>
+                    </li>
+                    <li class="{% if request.path.startswith('/contest') %}active{% endif %}">
+                        <a href="/contests" {% if request.path.startswith('/contests') %}aria-current="page" {% endif
+                            %}>Kilpailut</a>
+                    </li>
+                    <li class="{% if request.path.startswith('/result') or source == 'result' %}active{% endif %}">
+                        <a href="/results" {% if request.path.startswith('/results') or source=='result'
+                            %}aria-current="page" {% endif %}>Tulokset</a>
+                    </li>
+                    {% if session.user_id %}
+                    <li class="{% if request.path.startswith('/review') or source == 'review' %}active{% endif %}">
+                        <a href="/reviews" {% if request.path.startswith('/reviews') or source=='review'
+                            %}aria-current="page" {% endif %}>Arvioi</a>
+                    </li>
+                    {% endif %}
+                    {% if session.user_id %}
+                    <li class="{% if request.path.startswith('/my_texts') or source == 'my_texts' %}active{% endif %}">
+                        <a href="/my_texts" {% if request.path.startswith('/my_texts') or source=='my_texts'
+                            %}aria-current="page" {% endif %}>Tekstisi</a>
+                    </li>
+                    {% endif %}
+                    {% if session.super_user %}
+                    <li class="{% if request.path.startswith('/admin') %}active{% endif %}">
+                        <a href="/admin" {% if request.path.startswith('/admin') %}aria-current="page" {% endif
+                            %}>Ylläpito</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+        <main class="content-box container" role="main">
+            {% block content %}{% endblock %}
+        </main>
+        <footer role="contentinfo">
+            <div class="container">
+                <p>&copy; 2025 Janne Tompuri</p>
+            </div>
+        </footer>
+    </div>
 </body>
 </html>

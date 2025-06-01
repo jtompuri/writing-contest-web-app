@@ -1,16 +1,13 @@
 {% extends "base.html" %}
+{% block title %}Ylläpito: Uusi kilpailu – {{ site_name }}{% endblock %}
 {% block content %}
-
 <form action="{{ url_for('admin_create_contest') }}" method="post" class="form-box">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-
     <h1>Luo uusi kilpailu</h1>
-
     <p>
         <label for="title">Otsikko:</label>
         <input type="text" name="title" id="title" maxlength="100" required>
     </p>
-
     <p>
         <label for="class_id">Laji:</label>
         <select name="class_id" id="class_id" class="medium" required>
@@ -20,17 +17,14 @@
             {% endfor %}
         </select>
     </p>
-
     <p>
         <label for="short_description">Lyhyt kuvaus:</label>
         <input type="text" name="short_description" id="short_description" maxlength="255" required>
     </p>
-
     <p>
         <label for="long_description">Pitkä kuvaus:</label>
         <textarea name="long_description" id="long_description" rows="10" maxlength="2000" required></textarea>
     </p>
-
     <fieldset style="margin-top: 1rem;">
         <legend class="visually-hidden">Asetukset</legend>
         <label>
@@ -46,18 +40,14 @@
             Tulokset ovat julkisia
         </label>
     </fieldset>
-
     <p>
         <label for="collection_end">Jättöaika päättyy:</label>
         <input type="date" name="collection_end" id="collection_end" required>
     </p>
-
     <p>
         <label for="review_end">Arviointiaika päättyy:</label>
         <input type="date" name="review_end" id="review_end" required>
     </p>
-
     <button type="submit" class="btn btn-primary">Luo kilpailu</button>
 </form>
-
 {% endblock %}

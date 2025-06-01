@@ -1,32 +1,28 @@
 {% extends "base.html" %}
-
+{% block title %}Ylläpito: Muokkaa kilpailutyötä – {{ entry.contest_title }} – {{ site_name }}{% endblock %}
 {% block content %}
-
-<form action="{{ url_for('admin_update_entry', entry_id=entry.id) }}" method="post" class="form-box" aria-label="Kilpailutyön muokkauslomake">
+<form action="{{ url_for('admin_update_entry', entry_id=entry.id) }}" method="post" class="form-box"
+    aria-label="Kilpailutyön muokkauslomake">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <input type="hidden" name="contest_id" value="{{ entry.contest_id }}">
     <input type="hidden" name="user_id" value="{{ entry.user_id }}">
-
     <h1>Muokkaa kilpailutyötä</h1>
-
     <div class="form-group">
         <label>Kirjoittaja:</label>
         <div>{{ entry.author_name }}</div>
     </div>
-
     <div class="form-group">
         <label>Kilpailu:</label>
         <div>{{ entry.contest_title }}</div>
     </div>
-
     <p>
         <label for="entry">Kilpailutyö:</label>
-        <textarea name="entry" id="entry" rows="15" maxlength="5000" required aria-describedby="entry-help">{{ entry.entry }}</textarea>
+        <textarea name="entry" id="entry" rows="15" maxlength="5000" required
+            aria-describedby="entry-help">{{ entry.entry }}</textarea>
         <small id="entry-help">
             Enintään 5000 merkkiä. Sallitut muotoilut: <strong>*lihavointi*</strong> ja <em>_kursivointi_</em>.
         </small>
     </p>
-
     <div class="btn-row" role="group" aria-label="Kilpailutyön muokkauspainikkeet">
         <button type="submit" class="btn btn-primary" aria-label="Tallenna muutokset">
             Tallenna muutokset
@@ -37,5 +33,4 @@
         </button>
     </div>
 </form>
-
 {% endblock %}

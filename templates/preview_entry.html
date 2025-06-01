@@ -1,12 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-
 <h1>Esikatselu</h1>
-
 <div class="content-box" role="region" aria-label="Kilpailutyön esikatselu">
     {{ entry | richtext }}
 </div>
-
 <div class="btn-row" role="group" aria-label="Esikatselutoiminnot">
     <form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="post" style="margin: 0;">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
@@ -23,5 +20,4 @@
         </button>
     </form>
 </div>
-
 {% endblock %}

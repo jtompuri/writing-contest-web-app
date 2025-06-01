@@ -9,14 +9,15 @@
     </div>
     {# Show entry text if present (for my_texts.html) #}
     {% if _contest.entry_text %}
-        <div class="entry-user-text" style="margin-top:0.5em;">
-            {% if _contest.entry_text|length > 255 %}
-                {{ _contest.entry_text[:255] | richtext }}...
-                <a href="{{ url_for('entry', entry_id=_contest.entry_id, source='my_texts') }}" class="read-full-text">(Lue koko teksti)</a>
-            {% else %}
-                {{ _contest.entry_text | richtext }}
-            {% endif %}
-        </div>
+    <div class="entry-user-text" style="margin-top:0.5em;">
+        {% if _contest.entry_text|length > 255 %}
+        {{ _contest.entry_text[:255] | richtext }}...
+        <a href="{{ url_for('entry', entry_id=_contest.entry_id, source='my_texts') }}" class="read-full-text">(Lue koko
+            teksti)</a>
+        {% else %}
+        {{ _contest.entry_text | richtext }}
+        {% endif %}
+    </div>
     {% endif %}
     <div style="margin-top:0.5em;">
         <span class="pill-tag">

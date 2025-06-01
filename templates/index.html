@@ -1,16 +1,11 @@
 {% extends "base.html" %}
-
-{% block title %}Etusivu{% endblock %}
-
+{% block title %}Etusivu – {{ site_name }}{% endblock %}
 {% block content %}
-
 <h1>Tervetuloa!</h1>
-
 <p>
-  Kirjoitatko runoja, aforismeja tai esseitä? Tutustu käynnissä oleviin kirjoituskilpailuihin ja osallistu!
-  Aloita tutustumalla päättyneiden kilpailujen tuloksiin.
-  <a href="{{ url_for('register') }}">Rekisteröidy</a> ja
-  <a href="{{ url_for('login') }}">kirjaudu sisään</a> osallistuaksesi.
+    Kirjoitatko runoja, aforismeja tai esseitä? Tutustu käynnissä oleviin kirjoituskilpailuihin ja osallistu!
+    Aloita tutustumalla päättyneiden kilpailujen tuloksiin.
+    <a href="{{ url_for('register') }}">Rekisteröidy</a> ja
+    <a href="{{ url_for('login') }}">kirjaudu sisään</a> osallistuaksesi.
 </p>
-
 {% endblock %}

@@ -1,13 +1,12 @@
 {% if total_pages > 1 %}
 <nav class="pagination" aria-label="Sivutus" style="margin-top: 1rem;">
-  <ul class="pagination-list">
-    {% if page > 1 %}
-      <li><a href="{{ base_url }}{{ page - 1 }}" class="pagination-link">Edellinen</a></li>
-    {% endif %}
-    <li><span class="pagination-current">Sivu {{ page }}</span></li>
-    {% if page < total_pages %}
-      <li><a href="{{ base_url }}{{ page + 1 }}" class="pagination-link">Seuraava</a></li>
-    {% endif %}
-  </ul>
+    <ul class="pagination-list">
+        {% if page > 1 %}
+        <li><a href="{{ base_url }}{{ page - 1 }}" class="pagination-link">Edellinen</a></li>
+        {% endif %}
+        <li><span class="pagination-current">Sivu {{ page }}</span></li>
+        {% if page < total_pages %} <li><a href="{{ base_url }}{{ page + 1 }}" class="pagination-link">Seuraava</a></li>
+            {% endif %}
+    </ul>
 </nav>
 {% endif %}

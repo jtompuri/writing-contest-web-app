@@ -1,32 +1,31 @@
 {% extends "base.html" %}
 {% block title %}Tulokset – {{ contest.title }}{% endblock %}
-
 {% block content %}
 <h1>Tulokset: {{ contest.title }}</h1>
-
+<p>{{ contest.short_description }}</p>
 {% if entries %}
-  <div class="review-cards">
+<div class="review-cards">
     {% for entry in entries %}
-      <div class="review-card">
+    <div class="review-card">
         <div class="review-card-header">
-          <span class="entry-index">{{ loop.index }}.</span>
-          <strong>{{ entry.author_name }}</strong>, {{ entry.points }} p.
+            <span class="entry-index">{{ loop.index }}.</span>
+            <strong>{{ entry.author_name }}</strong> ({{ entry.points }} p.)
         </div>
         <div class="entry-preview">
-          {% if entry.entry|length > 255 %}
+            {% if entry.entry|length > 255 %}
             {{ entry.entry[:255] | richtext }}...
-            <a href="{{ url_for('entry', entry_id=entry.id, source='result') }}" class="read-full-text">Lue koko teksti &raquo;</a>
-          {% else %}
-            {{ entry.entry  | richtext }}
-          {% endif %}
+            <a href="{{ url_for('entry', entry_id=entry.id, source='result') }}" class="read-full-text">Lue koko teksti
+                &raquo;</a>
+            {% else %}
+            {{ entry.entry | richtext }}
+            {% endif %}
         </div>
-      </div>
+    </div>
     {% endfor %}
-  </div>
+</div>
 {% else %}
-  <p>Ei tuloksia tälle kilpailulle.</p>
+<p>Ei tuloksia tälle kilpailulle.</p>
 {% endif %}
-
 <div class="btn-row">
     <form action="{{ url_for('results') }}" method="get">
         <button type="submit" class="btn btn-primary">

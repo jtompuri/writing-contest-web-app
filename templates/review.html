@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Arvioi kilpailutöitä – {{ contest.title }}{% endblock %}
-
 {% block content %}
 <h1>Arvioi kilpailutöitä: {{ contest.title }}</h1>
-
 <form method="post">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <div class="review-cards">
@@ -12,23 +10,25 @@
             <div class="review-card-header">
                 <span class="entry-index">{{ loop.index }}.</span>
                 {% if not contest.anonymity %}
-                  <strong>{{ entry.author_name }}</strong>
+                <strong>{{ entry.author_name }}</strong>
                 {% endif %}
             </div>
             <div class="entry-preview">
                 {% if entry.entry|length > 255 %}
-                    {{ entry.entry[:255] | richtext }}...
-                    <a href="{{ url_for('entry', entry_id=entry.id, idx=loop.index, source='review') }}" class="read-full-text">Lue koko teksti &raquo;</a>
+                {{ entry.entry[:255] | richtext }}...
+                <a href="{{ url_for('entry', entry_id=entry.id, idx=loop.index, source='review') }}"
+                    class="read-full-text">Lue koko teksti &raquo;</a>
                 {% else %}
-                    {{ entry.entry | richtext }}
+                {{ entry.entry | richtext }}
                 {% endif %}
             </div>
             <div class="review-rating">
                 <label for="points_{{ entry.id }}" class="sr-only">Arvosana:</label>
                 <select name="points_{{ entry.id }}" id="points_{{ entry.id }}" required>
-                    <option value="" disabled {% if entry.id not in user_reviews %}selected{% endif %}>Valitse arvosana</option>
+                    <option value="" disabled {% if entry.id not in user_reviews %}selected{% endif %}>Valitse arvosana
+                    </option>
                     {% for p in range(0, 6) %}
-                        <option value="{{ p }}" {% if user_reviews.get(entry.id) == p %}selected{% endif %}>{{ p }}</option>
+                    <option value="{{ p }}" {% if user_reviews.get(entry.id)==p %}selected{% endif %}>{{ p }}</option>
                     {% endfor %}
                 </select>
             </div>

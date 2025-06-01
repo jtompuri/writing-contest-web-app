@@ -1,22 +1,16 @@
 {% extends "base.html" %}
-
+{% block title %}Ylläpito: Käyttäjien hallinta – {{ site_name }}{% endblock %}
 {% block content %}
-
 {% for message in get_flashed_messages() %}
 <div class="flash-message" role="alert" aria-live="polite">
-  {{ message }}
+    {{ message }}
 </div>
 {% endfor %}
-
 <h1>Käyttäjien hallinta</h1>
-
-<a href="{{ url_for('admin_new_user') }}"
-   class="btn btn-secondary btn-small"
-   style="display:inline-block; margin-bottom: 1rem;"
-   aria-label="Luo uusi käyttäjä">
-  Luo uusi käyttäjä
+<a href="{{ url_for('admin_new_user') }}" class="btn btn-secondary btn-small"
+    style="display:inline-block; margin-bottom: 1rem;" aria-label="Luo uusi käyttäjä">
+    Luo uusi käyttäjä
 </a>
-
 <table class="admin-table" role="table" aria-label="Käyttäjälista">
     <thead>
         <tr>
@@ -35,21 +29,16 @@
             <td>{{ user.username }}</td>
             <td class="td-center">{{ 'Kyllä' if user.super_user else 'Ei' }}</td>
             <td class="td-right">
-                <button
-                    type="button"
-                    class="btn btn-secondary btn-small"
+                <button type="button" class="btn btn-secondary btn-small"
                     aria-label="Muokkaa käyttäjää {{ user.username }}"
                     onclick="window.location.href='{{ url_for('admin_edit_user', user_id=user.id) }}'">
                     Muokkaa
                 </button>
-                <form action="{{ url_for('delete_user', user_id=user.id) }}"
-                      method="post"
-                      style="display:inline;">
+                <form action="{{ url_for('delete_user', user_id=user.id) }}" method="post" style="display:inline;">
                     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                    <button type="submit"
-                            class="btn btn-secondary btn-small"
-                            onclick="return confirm('Poistetaanko käyttäjä?')"
-                            aria-label="Poista käyttäjä {{ user.username }}">
+                    <button type="submit" class="btn btn-secondary btn-small"
+                        onclick="return confirm('Poistetaanko käyttäjä?')"
+                        aria-label="Poista käyttäjä {{ user.username }}">
                         Poista
                     </button>
                 </form>
@@ -58,6 +47,5 @@
         {% endfor %}
     </tbody>
 </table>
-
 {% include "partials/_pagination.html" %}
 {% endblock %}

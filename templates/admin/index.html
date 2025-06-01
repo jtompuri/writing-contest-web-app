@@ -1,7 +1,7 @@
 {% extends "base.html" %}
+{% block title %}Ylläpito – {{ site_name }}{% endblock %}
 {% block content %}
 <h1>Ylläpito</h1>
-
 <section role="navigation" aria-label="Ylläpidon hallintalinkit">
     <ul>
         <li><a href="{{ url_for('admin_contests') }}">Hallinnoi kilpailuja ({{ contest_count }})</a></li>
@@ -9,5 +9,4 @@
         <li><a href="{{ url_for('admin_entries') }}">Hallinnoi kilpailutöitä ({{ entry_count }})</a></li>
     </ul>
 </section>
-
 {% endblock %}

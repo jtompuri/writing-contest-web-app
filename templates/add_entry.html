@@ -1,58 +1,51 @@
 {% extends "base.html" %}
+{% block title %}Osallistu – {{ contest.title }} – {{ site_name }}{% endblock %}
 {% block content %}
-
 <section class="contest-summary-box" aria-label="Kilpailun yhteenveto">
     {% if not collection_ended %}
-        <span class="contest-status open">Kilpailu on käynnissä</span>
+    <span class="contest-status open">Kilpailu on käynnissä</span>
     {% elif collection_ended and not review_ended and contest.public_reviews %}
-        <span class="contest-status review">Arviointivaihe</span>
+    <span class="contest-status review">Arviointivaihe</span>
     {% else %}
-        <span class="contest-status closed">Kilpailu on päättynyt</span>
+    <span class="contest-status closed">Kilpailu on päättynyt</span>
     {% endif %}
-
     <p><strong>Laji:</strong> {{ contest.class_value }}</p>
-
     <p>
         <strong>Keräys päättyy:</strong> {{ contest.collection_end | format_date }}
         {% if collection_ended %}<span class="status-note"> (päättynyt)</span>{% endif %}
     </p>
-
     <p>
         <strong>Arviointi päättyy:</strong> {{ contest.review_end | format_date }}
         {% if review_ended %}<span class="status-note"> (päättynyt)</span>{% endif %}
     </p>
-
     {% if collection_ended %}
-        <div class="contest-stats">
-            <div><strong>Jätetyt työt:</strong> {{ stats.entry_count }}</div>
-            <div><strong>Annetut arviot:</strong> {{ stats.review_count }}</div>
-        </div>
+    <div class="contest-stats">
+        <div><strong>Jätetyt työt:</strong> {{ stats.entry_count }}</div>
+        <div><strong>Annetut arviot:</strong> {{ stats.review_count }}</div>
+    </div>
     {% endif %}
 </section>
-
 <form action="" method="post" class="form-box" aria-label="Kilpailutyön lähetyslomake">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-
     <h1>Osallistu kilpailuun</h1>
-
     <p>{{ contest.short_description }}</p>
-
     <p>
         <label for="entry">Kilpailutyö:</label>
-        <textarea name="entry" id="entry" rows="15" maxlength="5000" required aria-describedby="entry-help">{{ entry or '' }}</textarea>
+        <textarea name="entry" id="entry" rows="15" maxlength="5000" required
+            aria-describedby="entry-help">{{ entry or '' }}</textarea>
         <small id="entry-help">
             Enintään 5000 merkkiä. Sallitut muotoilut: <strong>*lihavointi*</strong> ja <em>_kursivointi_</em>.
         </small>
     </p>
-
     <div class="btn-row" role="group" aria-label="Kilpailutyön lähetyspainikkeet" style="margin-top: 1.5rem;">
-        <button type="submit" name="action" value="submit" class="btn btn-primary" style="margin-left: 1rem;" aria-label="Lähetä kilpailutyö">
+        <button type="submit" name="action" value="submit" class="btn btn-primary" style="margin-left: 1rem;"
+            aria-label="Lähetä kilpailutyö">
             Lähetä kilpailutyö
         </button>
-        <button type="submit" name="action" value="preview" class="btn btn-primary" aria-label="Esikatsele kilpailutyö ennen lähettämistä">
+        <button type="submit" name="action" value="preview" class="btn btn-primary"
+            aria-label="Esikatsele kilpailutyö ennen lähettämistä">
             Esikatsele
         </button>
     </div>
 </form>
-
 {% endblock %}
