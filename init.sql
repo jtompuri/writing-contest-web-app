@@ -1,9 +1,3 @@
-DELETE FROM classes;
-DELETE FROM users;
-DELETE FROM contests;
-DELETE FROM entries;
-DELETE FROM reviews;
-
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
 CREATE TABLE users (
