@@ -4,7 +4,7 @@ import sqlite3
 from datetime import datetime, date
 
 from flask import (
-    Flask, abort, flash, redirect, render_template, request, session, url_for, g
+    Flask, abort, flash, redirect, render_template, request, session, url_for
 )
 from markupsafe import Markup
 
@@ -16,6 +16,11 @@ import users
 app = Flask(__name__)
 app.secret_key = config.secret_key
 app.teardown_appcontext(db.close_connection)
+
+
+@app.context_processor
+def inject_site_name():
+    return dict(site_name="Kirjoituskilpailut")
 
 
 @app.template_filter("format_date")
@@ -73,7 +78,7 @@ def format_text(text, links_allowed=False):
         text = re.sub(
             url_regex, r'<a href="\1" target="_blank" rel="noopener">\1</a>',
             text
-            )
+        )
 
     return Markup(text)
 
@@ -117,9 +122,7 @@ def contest(contest_id):
         abort(404)
 
     today = datetime.now().date()
-    collection_end = datetime.strptime(
-        contest["collection_end"], "%Y-%m-%d"
-        ).date()
+    collection_end = datetime.strptime(contest["collection_end"], "%Y-%m-%d").date()
     review_end = datetime.strptime(contest["review_end"], "%Y-%m-%d").date()
 
     collection_ended = collection_end <= today
@@ -155,8 +158,7 @@ def create():
     password2 = request.form["password2"]
 
     # Validate input lengths and match passwords
-    if (not username or len(username) > 50 or not name or len(name) > 50 or
-            len(password1) > 50 or len(password2) > 50):
+    if (not username or len(username) > 50 or not name or len(name) > 50 or len(password1) > 50 or len(password2) > 50):
         session["form_data"] = {"name": name, "username": username}
         flash("Virhe: Tarkista syötteet.")
         return redirect("/register")
@@ -201,9 +203,7 @@ def login():
     if request.method == "GET":
         username = session.pop("form_data", {}).get("username", "")
         next_page = request.args.get("next_page", "/")
-        return render_template(
-            "login.html", next_page=next_page, username=username
-            )
+        return render_template("login.html", next_page=next_page, username=username)
 
     if request.method == "POST":
         check_csrf()
@@ -225,9 +225,7 @@ def login():
             return redirect(next_page)
         else:
             flash("Virhe: Väärä tunnus tai salasana.")
-            return render_template(
-                "login.html", next_page=next_page, username=username
-                )
+            return render_template("login.html", next_page=next_page, username=username)
 
     return redirect("/login")
 
@@ -299,8 +297,7 @@ def admin_create_contest():
     review_end = form["review_end"]
 
     # Ensure all required fields are filled
-    if (not title or not class_id or not collection_end or not review_end or
-            not short_description or not long_description):
+    if (not title or not class_id or not collection_end or not review_end or not short_description or not long_description):
         flash("Kaikki pakolliset kentät on täytettävä.")
         return redirect(url_for("admin_new_contest"))
 
@@ -494,9 +491,7 @@ def edit_contest(contest_id):
     if not contest:
         abort(404)
 
-    return render_template(
-        "admin/edit_contest.html", contest=contest, classes=classes
-        )
+    return render_template("admin/edit_contest.html", contest=contest, classes=classes)
 
 
 @app.route("/admin/contests/update/<int:contest_id>", methods=["POST"])
@@ -515,8 +510,7 @@ def admin_update_contest(contest_id):
     review_end = form["review_end"]
 
     # Ensure all required fields are filled
-    if (not title or not class_id or not collection_end or not review_end or
-            not short_description or not long_description):
+    if (not title or not class_id or not collection_end or not review_end or not short_description or not long_description):
         flash("Kaikki pakolliset kentät on täytettävä.")
         return redirect(url_for("edit_contest", contest_id=contest_id))
 
@@ -555,9 +549,7 @@ def add_entry(contest_id):
         abort(404)
 
     today = datetime.now().date()
-    collection_end = datetime.strptime(
-        contest["collection_end"], "%Y-%m-%d"
-        ).date()
+    collection_end = datetime.strptime(contest["collection_end"], "%Y-%m-%d").date()
     review_end = datetime.strptime(contest["review_end"], "%Y-%m-%d").date()
     collection_ended = collection_end <= today
     review_ended = review_end <= today
@@ -781,8 +773,7 @@ def admin_new_entry():
             return redirect(url_for("admin_entries"))
         except Exception as e:
             # Check for unique constraint violation
-            if ("UNIQUE constraint failed" in str(e) or
-                    "duplicate key" in str(e)):
+            if ("UNIQUE constraint failed" in str(e) or "duplicate key" in str(e)):
                 flash("Tällä käyttäjällä on jo teksti tässä kilpailussa.")
             else:
                 print("Virhe tekstin luomisessa:", e)
@@ -796,9 +787,7 @@ def admin_new_entry():
                 selected_user_id=user_id
             )
 
-    return render_template(
-        "admin/new_entry.html", contests=contests, users=users_list
-        )
+    return render_template("admin/new_entry.html", contests=contests, users=users_list)
 
 
 @app.route("/admin/entries/create", methods=["POST"])
@@ -836,10 +825,7 @@ def admin_edit_entry(entry_id):
     users_list = users.get_all_users()
     if not entry:
         abort(404)
-    return render_template(
-        "admin/edit_entry.html", entry=entry,
-        contests=contests, users=users_list
-        )
+    return render_template("admin/edit_entry.html", entry=entry, contests=contests, users=users_list)
 
 
 @app.route("/admin/entries/update/<int:entry_id>", methods=["POST"])
@@ -906,6 +892,7 @@ def entry(entry_id):
     idx = request.args.get("idx")
     source = request.args.get("source")  # "review" or "result"
     return render_template("entry.html", entry=entry, now=date.today().isoformat(), idx=idx, source=source)
+
 
 @app.route("/review/<int:contest_id>", methods=["GET", "POST"])
 def review(contest_id):
