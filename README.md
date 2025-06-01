@@ -49,41 +49,9 @@ Voit kirjautua demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja sala
 - Sovelluksessa on käyttäjäsivu kilpailuista, joihin käyttäjä on osallistunut, käyttäjän sijoituksen ja pistemäärän.
 - Käyttäjä voi tarkastella kilpailun tuloksia.✅
 
-## Tietokohteet
+## Tietokantarakenne
 
-### Käyttäjät
-- ID
-- Nimi tai nimimerkki: teksi
-- Käyttäjätunnus (sähköpostiosoite): teksti
-- Salasana: teksti
-- Pääkäyttäjä: kyllä/ei
-- Luontiaika
-  
-### Kilpailut
-- ID
-- Nimi: teksti
-- Lyhyt kuvaus: teksti 
-- Säännöt: teksti
-- Luokka: runo/aforismi/proosa
-- Anonyymi: kyllä/ei
-- Arviointi: julkinen/piilotettu
-- Tulokset: julkinen/piilotettu
-- Keräyksen päättymisaika
-- Arvioinnin päättymisaika
-- Luontiaika
- 
-### Kilpailutyöt
-- ID
-- Teksti
-- Linkittyy kilpailuun, käyttäjään (kirjoittaja)
-- Luontiaika
- 
-### Arvio
-- ID
-- Pistemäärä: kokonaisluku
-- Palaute: teksti
-- Linkittyy tekstiin, käyttäjään (arvioija)
-- Luontiaika
+![Tietokantarakenne](/images/database.png)
    
 ## Työn eteneminen
 
