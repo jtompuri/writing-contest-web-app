@@ -24,7 +24,7 @@ USER_COUNT = 30
 CONTEST_COUNT = 100
 ENTRY_COUNT = 1000
 REVIEW_COUNT = 2000
-CLASS_COUNT = 5
+CLASS_COUNT = 3
 
 # --- INDEX DEFINITIONS ---
 INDEXES = [
@@ -83,11 +83,12 @@ def populate_db():
     conn = sqlite3.connect(DATABASE)
     cur = conn.cursor()
 
-    # Classes
-    for i in range(CLASS_COUNT):
+    # Classes (first three are fixed, rest random)
+    class_values = [("Runo", "Runo"), ("Aforismi", "Aforismi"), ("Essee", "Essee")]
+    for i, (title, value) in enumerate(class_values):
         cur.execute(
             "INSERT INTO classes (title, value) VALUES (?, ?)",
-            (f"Luokka {i + 1}", f"ClassValue{i + 1}")
+            (title, value)
         )
 
     # Add admin user (superuser, username: admin, password: admin, hashed)
