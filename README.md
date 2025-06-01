@@ -51,7 +51,7 @@ Voit kirjautua demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja sala
 
 ## Tietokantarakenne
 
-![Tietokantarakenne](/images/database.png)
+![Tietokantarakenne](/images/dark_database.png)
    
 ## Työn eteneminen
 
