@@ -125,19 +125,19 @@ def contest(contest_id):
     collection_end = datetime.strptime(contest["collection_end"], "%Y-%m-%d").date()
     review_end = datetime.strptime(contest["review_end"], "%Y-%m-%d").date()
 
-    collection_ended = collection_end <= today
-    review_ended = review_end <= today
+    collection_open = today <= collection_end
+    review_open = collection_end < today <= review_end
 
     stats = {}
-    if collection_ended:
+    if not collection_open:
         stats["entry_count"] = sql.get_entry_count(contest_id)
         stats["review_count"] = sql.get_review_count(contest_id)
 
     return render_template(
         "contest.html",
         contest=contest,
-        collection_ended=collection_ended,
-        review_ended=review_ended,
+        collection_open=collection_open,
+        review_open=review_open,
         stats=stats
     )
 
@@ -551,11 +551,11 @@ def add_entry(contest_id):
     today = datetime.now().date()
     collection_end = datetime.strptime(contest["collection_end"], "%Y-%m-%d").date()
     review_end = datetime.strptime(contest["review_end"], "%Y-%m-%d").date()
-    collection_ended = collection_end <= today
-    review_ended = review_end <= today
+    collection_open = today <= collection_end
+    review_open = collection_end < today <= review_end
 
     stats = {}
-    if collection_ended:
+    if not collection_open:
         stats["entry_count"] = sql.get_entry_count(contest_id)
         stats["review_count"] = sql.get_review_count(contest_id)
 
@@ -564,8 +564,8 @@ def add_entry(contest_id):
         return render_template(
             "add_entry.html",
             contest=contest,
-            collection_ended=collection_ended,
-            review_ended=review_ended,
+            collection_open=collection_open,
+            review_open=review_open,
             stats=stats,
             entry=entry
         )
@@ -584,8 +584,8 @@ def add_entry(contest_id):
                 "preview_entry.html",
                 contest=contest,
                 entry=entry,
-                collection_ended=collection_ended,
-                review_ended=review_ended,
+                collection_open=collection_open,
+                review_open=review_open,
                 stats=stats
             )
 
@@ -620,13 +620,15 @@ def contests():
 
     contests = sql.get_contests_for_entry(limit=per_page, offset=offset)
     total = sql.get_entry_contest_count()
+    today = date.today().isoformat()
 
     return render_template(
         "contests.html",
         contests=contests,
         page=page,
         per_page=per_page,
-        total=total
+        total=total,
+        today=today
     )
 
 
@@ -639,6 +641,7 @@ def results():
 
     contests = sql.get_contests_for_results(limit=per_page, offset=offset)
     total = sql.get_results_contest_count()
+    today = date.today().isoformat()
 
     return render_template(
         "results.html",
@@ -646,7 +649,8 @@ def results():
         page=page,
         per_page=per_page,
         total=total,
-        base_url="/results?page="
+        base_url="/results?page=",
+        today=today
     )
 
 
