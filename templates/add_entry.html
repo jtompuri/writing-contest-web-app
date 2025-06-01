@@ -2,9 +2,9 @@
 {% block title %}Osallistu – {{ contest.title }} – {{ site_name }}{% endblock %}
 {% block content %}
 <section class="contest-summary-box" aria-label="Kilpailun yhteenveto">
-    {% if not collection_ended %}
+    {% if collection_open %}
     <span class="contest-status open">Kilpailu on käynnissä</span>
-    {% elif collection_ended and not review_ended and contest.public_reviews %}
+    {% elif review_open and contest.public_reviews %}
     <span class="contest-status review">Arviointivaihe</span>
     {% else %}
     <span class="contest-status closed">Kilpailu on päättynyt</span>
@@ -12,16 +12,16 @@
     <p><strong>Laji:</strong> {{ contest.class_value }}</p>
     <p>
         <strong>Keräys päättyy:</strong> {{ contest.collection_end | format_date }}
-        {% if collection_ended %}<span class="status-note"> (päättynyt)</span>{% endif %}
+        {% if not collection_open %}<span class="status-note"> (päättynyt)</span>{% endif %}
     </p>
     <p>
         <strong>Arviointi päättyy:</strong> {{ contest.review_end | format_date }}
-        {% if review_ended %}<span class="status-note"> (päättynyt)</span>{% endif %}
+        {% if not review_open %}<span class="status-note"> (päättynyt)</span>{% endif %}
     </p>
-    {% if collection_ended %}
+    {% if not collection_open %}
     <div class="contest-stats">
         <div><strong>Jätetyt työt:</strong> {{ stats.entry_count }}</div>
-        <div><strong>Annetut arviot:</strong> {{ stats.review_count }}</div>
+        <div><strong>Arviot:</strong> {{ stats.review_count }}</div>
     </div>
     {% endif %}
 </section>
