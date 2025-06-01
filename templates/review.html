@@ -2,6 +2,7 @@
 {% block title %}Arvioi kilpailutöitä – {{ contest.title }}{% endblock %}
 {% block content %}
 <h1>Arvioi kilpailutöitä: {{ contest.title }}</h1>
+<p>Lue kaikki kilpailutyöt ja pisteytä työt asteikolla nollasta viiteen, missä viisi on paras arvosana.</p>
 <form method="post">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <div class="review-cards">
