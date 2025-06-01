@@ -7,4 +7,4 @@ pytest.ini
 .coverage
 dump.sql
 .flake8
-.vscode
+.vscode/
