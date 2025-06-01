@@ -53,10 +53,10 @@ Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä
 - Käyttäjä voi kirjautua sisään sovellukseen. ✅
 - Käyttäjä näkee sovellukseen lisätyt kilpailut. ✅
 - Käyttäjä pystyy etsimään kilpailuja hakusanalla.
-- Käyttäjä voi lisätä, muokata ja poistaa oman tekstin kirjoituskilpailuun.
-- Käyttäjä voi arvioida muiden tekstejä antamalla pistemäärän 1-5 ja valinnaisen perustelun.
+- Käyttäjä voi lisätä✅, muokata✅ ja poistaa oman tekstin kirjoituskilpailuun.
+- Käyttäjä voi arvioida muiden tekstejä antamalla pistemäärän 1-5. ✅
 - Sovelluksessa on käyttäjäsivut, jotka näyttävät listan kilpailuista, joihin käyttäjä on osallistunut.
-- Käyttäjä voi tarkastella kilpailun tuloksia.
+- Käyttäjä voi tarkastella kilpailun tuloksia.✅
 
 ## Tietokohteet
 
@@ -114,8 +114,8 @@ Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 
 ### Välipalautus 3 (15.6.2025)
 
-- [ ] Tavoitteena on, että sovelluksessa on ainakin seuraavat toiminnot:
-	- [ ] Sovelluksessa on käyttäjäsivut, jotka näyttävät tilastoja ja käyttäjän lisäämät tietokohteet.
-	- [ ] Käyttäjä pystyy valitsemaan tietokohteelle yhden tai useamman luokittelun. Mahdolliset luokat ovat tietokannassa.
-	- [ ] Käyttäjä pystyy lähettämään toisen käyttäjän tietokohteeseen liittyen jotain lisätietoa, joka tulee näkyviin sovelluksessa.
-- [ ] README.md-tiedoston tulee kuvata, mikä on sovelluksen nykyinen tilanne.
+- [x] Tavoitteena on, että sovelluksessa on ainakin seuraavat toiminnot:
+	- [x] Sovelluksessa on käyttäjäsivut, jotka näyttävät tilastoja ja käyttäjän lisäämät tietokohteet.
+	- [x] Käyttäjä pystyy valitsemaan tietokohteelle yhden tai useamman luokittelun. Mahdolliset luokat ovat tietokannassa.
+	- [x] Käyttäjä pystyy lähettämään toisen käyttäjän tietokohteeseen liittyen jotain lisätietoa, joka tulee näkyviin sovelluksessa.
+- [x] README.md-tiedoston tulee kuvata, mikä on sovelluksen nykyinen tilanne.
