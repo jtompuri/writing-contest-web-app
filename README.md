@@ -10,10 +10,15 @@ Asenna `flask`-kirjasto:
 $ pip install flask
 ```
 
-Luo tietokannan taulut ja lisää demosisältö:
+Luo pelkkä tyhjä tietokanta:
 
 ```
+
 $ sqlite3 database.db < schema.sql
+```
+
+Luo tietokanta demosisällöllä:
+```
 $ sqlite3 database.db < init.sql
 ```
 
@@ -23,9 +28,7 @@ Voit käynnistää sovelluksen näin:
 $ flask run
 ```
 
-Kirjaudu demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja salasanalla `admin`. Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä.
-
-Voit luoda demoon oman käyttäjätunnuksen, jolla on peruskäyttäjän oikeudet. Peruskäyttäjä ei näe Ylläpito-välilehteä.
+Jos luot vain tyhjän tietokannan, niin ensimmäisestä rekisteröidystä käyttäjästä tulee pääkäyttäjä. Vaihtoehtoisesti voit luoda demotietokannan ja kirjautua demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja salasanalla `admin`. Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä. Voit luoda demoon oman käyttäjätunnuksen, jolla on peruskäyttäjän oikeudet. Peruskäyttäjä ei näe Ylläpito-välilehteä.
 
 
 ## Sovelluksen toiminnot
