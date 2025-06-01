@@ -103,8 +103,8 @@ def populate_db():
 
     # Users
     for i in range(USER_COUNT):
-        name = f"User {i+1}"
-        username = f"user{i+1}@example.com"
+        name = f"User {i + 1}"
+        username = f"user{i + 1}@example.com"
         password_hash = random_string(60)
         super_user = 0
         cur.execute(
@@ -118,7 +118,7 @@ def populate_db():
 
     # Finished contests (collection_end and review_end in the past, public_results=1)
     for i in range(finished_count):
-        title = f"Contest {i+1}"
+        title = f"Contest {i + 1}"
         class_id = random.randint(1, CLASS_COUNT)
         short_description = random_lorem(100)
         long_description = random_lorem(500)
@@ -140,7 +140,7 @@ def populate_db():
 
     # Ongoing/future contests (collection_end/review_end in future or ongoing)
     for i in range(finished_count, CONTEST_COUNT):
-        title = f"Contest {i+1}"
+        title = f"Contest {i + 1}"
         class_id = random.randint(1, CLASS_COUNT)
         short_description = random_lorem(100)
         long_description = random_lorem(500)
