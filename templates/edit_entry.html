@@ -3,6 +3,7 @@
 {% block content %}
 <form action="" method="post" class="form-box" aria-label="Kilpailutyön muokkauslomake">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    <input type="hidden" name="source" value="{{ source }}">
     <h1>Muokkaa kilpailutyötä</h1>
     <p>{{ contest.short_description }}</p>
     <p>
