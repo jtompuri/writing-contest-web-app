@@ -186,3 +186,19 @@ def update_password(user_id, password):
     password_hash = generate_password_hash(password)
     query = "UPDATE users SET password_hash = ? WHERE id = ?"
     db.execute(query, [password_hash, user_id])
+
+
+def get_user_entry_for_contest(contest_id, user_id):
+    """
+    Retrieve the user's entry for a specific contest, if it exists.
+
+    Args:
+        contest_id (int): The ID of the contest.
+        user_id (int): The ID of the user.
+
+    Returns:
+        dict or None: The entry if found, otherwise None.
+    """
+    query = "SELECT id FROM entries WHERE contest_id = ? AND user_id = ? LIMIT 1"
+    result = db.query(query, [contest_id, user_id])
+    return result[0] if result else None
