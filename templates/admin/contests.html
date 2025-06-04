@@ -1,11 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Ylläpito: Kilpailujen hallinta – {{ site_name }}{% endblock %}
 {% block content %}
-{% for message in get_flashed_messages() %}
-<div class="flash-message" role="alert" aria-live="polite">
-    {{ message }}
-</div>
-{% endfor %}
 <h1>Hallinnoi kilpailuja</h1>
 <a href="{{ url_for('admin_new_contest') }}" class="btn btn-secondary btn-small"
     style="display:inline-block; margin-bottom: 1rem;">

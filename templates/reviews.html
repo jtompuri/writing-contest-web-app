@@ -1,16 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Arvioi – {{ site_name }}{% endblock %}
 {% block content %}
-{% for message in get_flashed_messages() %}
-<div class="flash-message" role="alert" aria-live="polite">
-    {{ message }}
-</div>
-{% endfor %}
 <h1>Arvioi kilpailutöitä</h1>
 <p>Voit arvioida kilpailutöitä kilpailuissa, joissa on avoin arviointi.</p>
 <section aria-label="Arviointivaiheessa olevat kilpailut" style="margin-bottom: 2rem;">
     {% if contests %}
-    <div class="review-cards">
+    <div class="cards">
         {% for contest in contests %}
         {% set ns = namespace(contest_url=url_for('review', contest_id=contest.id)) %}
         {% set phase_text = "Arviointivaihe käynnissä, päättyy " ~ (contest.review_end|format_date) %}
