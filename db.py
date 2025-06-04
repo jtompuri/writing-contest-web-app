@@ -1,9 +1,13 @@
 """
-db.py
+Provides database connection management and helper functions for executing and querying SQL statements
+using SQLite and Flask's application context.
 
-This module provides database connection management and helper functions
-for executing and querying SQL statements using SQLite and Flask's application
-context.
+Functions:
+    get_connection()
+    execute(sql, params=None)
+    query(sql, params=None)
+    last_insert_id()
+    close_connection(e=None)
 """
 
 import sqlite3
@@ -19,6 +23,7 @@ def get_connection():
 
     Returns:
         sqlite3.Connection: The database connection.
+
     Raises:
         sqlite3.Error: If a connection cannot be established.
     """
@@ -43,6 +48,7 @@ def execute(sql, params=None):
 
     Returns:
         sqlite3.Cursor: The result cursor.
+
     Raises:
         sqlite3.IntegrityError: On integrity constraint violation.
         sqlite3.Error: On other database errors.
@@ -56,7 +62,6 @@ def execute(sql, params=None):
         g.last_insert_id = result.lastrowid
         return result
     except sqlite3.IntegrityError as e:
-        # e.g. UNIQUE constraint violation
         current_app.logger.warning(f"Integrity error: {e}")
         raise
     except sqlite3.Error as e:
@@ -74,6 +79,7 @@ def query(sql, params=None):
 
     Returns:
         list: List of sqlite3.Row objects.
+
     Raises:
         sqlite3.Error: On database errors.
     """
@@ -103,6 +109,9 @@ def close_connection(e=None):
 
     Args:
         e (Exception, optional): Exception, if any, that triggered teardown.
+
+    Returns:
+        None
     """
     db = g.pop("db", None)
     if db is not None:
