@@ -1,12 +1,24 @@
 {% if total_pages > 1 %}
 <nav class="pagination" aria-label="Sivutus" style="margin-top: 1rem;">
     <ul class="pagination-list">
+        {% set extra_params = "" %}
+        {% if user_search %}
+            {% set extra_params = extra_params + "&user_search=" + user_search|urlencode %}
+        {% endif %}
+        {% if selected_contest_id %}
+            {% set extra_params = extra_params + "&contest_id=" + selected_contest_id|string %}
+        {% endif %}
         {% if page > 1 %}
-        <li><a href="{{ base_url }}{{ page - 1 }}" class="pagination-link">Edellinen</a></li>
+        <li>
+            <a href="{{ base_url }}{{ page - 1 }}{{ extra_params }}" class="pagination-link">Edellinen</a>
+        </li>
         {% endif %}
         <li><span class="pagination-current">Sivu {{ page }}</span></li>
-        {% if page < total_pages %} <li><a href="{{ base_url }}{{ page + 1 }}" class="pagination-link">Seuraava</a></li>
-            {% endif %}
+        {% if page < total_pages %}
+        <li>
+            <a href="{{ base_url }}{{ page + 1 }}{{ extra_params }}" class="pagination-link">Seuraava</a>
+        </li>
+        {% endif %}
     </ul>
 </nav>
 {% endif %}
