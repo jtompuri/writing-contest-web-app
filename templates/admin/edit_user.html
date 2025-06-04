@@ -10,15 +10,15 @@
     </p>
     <p>
         <label for="name">Nimi:</label>
-        <input type="text" name="name" id="name" value="{{ user.name }}" maxlength="50" required>
+        <input type="text" name="name" id="name" value="{{ user.name }}" maxlength="{{ FIELD_MAX_LENGTH }}" required>
     </p>
     <p>
         <label for="username">Sähköposti (käyttäjätunnus):</label>
-        <input type="email" name="username" id="username" value="{{ user.username }}" maxlength="50" required>
+        <input type="email" name="username" id="username" value="{{ user.username }}" maxlength="{{ FIELD_MAX_LENGTH }}" required>
     </p>
     <p>
         <label for="password">Uusi salasana (valinnainen):</label>
-        <input type="password" name="password" id="password" maxlength="50" aria-describedby="password-help">
+        <input type="password" name="password" id="password" maxlength="{{ FIELD_MAX_LENGTH }}" aria-describedby="password-help">
         <small id="password-help">Vähintään 8 merkkiä. Jos jätät tyhjäksi, salasana ei muutu.</small>
     </p>
     <p>

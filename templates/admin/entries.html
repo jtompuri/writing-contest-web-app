@@ -32,7 +32,7 @@
                 <td>
                     <input type="text" class="filter-input" name="user_search" id="user_search"
                         placeholder="Etsi nimellä tai käyttäjätunnuksella" value="{{ user_search or '' }}"
-                        maxlength="50" class="form-box" title="Käyttäjän nimi tai käyttäjätunnus">
+                        maxlength="{{ FIELD_MAX_LENGTH }}" class="form-box" title="Käyttäjän nimi tai käyttäjätunnus">
                 </td>
                 <td>
                     <button type="submit" class="btn btn-secondary btn-small">Suodata</button>

@@ -6,17 +6,17 @@
     <h1>Luo uusi käyttäjä</h1>
     <p>
         <label for="name">Nimi:</label>
-        <input type="text" name="name" id="name" maxlength="50"
+        <input type="text" name="name" id="name" maxlength="{{ FIELD_MAX_LENGTH }}"
             value="{{ session.get('form_data', {}).get('name', '') }}" required>
     </p>
     <p>
         <label for="username">Sähköposti (käyttäjätunnus):</label>
-        <input type="email" name="username" id="username" maxlength="50"
+        <input type="email" name="username" id="username" maxlength="{{ FIELD_MAX_LENGTH }}"
             value="{{ session.get('form_data', {}).get('username', '') }}" required>
     </p>
     <p>
         <label for="password">Salasana:</label>
-        <input type="password" name="password" id="password" maxlength="50" minlength="8" required>
+        <input type="password" name="password" id="password" maxlength="{{ FIELD_MAX_LENGTH }}" minlength="{{ PASSWORD_MIN_LENGTH }}" required>
         <small>Vähintään 8 merkkiä pitkä.</small>
     </p>
     <p>

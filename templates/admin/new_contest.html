@@ -6,7 +6,7 @@
     <h1>Luo uusi kilpailu</h1>
     <p>
         <label for="title">Otsikko:</label>
-        <input type="text" name="title" id="title" maxlength="100" required>
+        <input type="text" name="title" id="title" minlength="{{ TITLE_MAX_LENGTH }}" required>
     </p>
     <p>
         <label for="class_id">Laji:</label>
@@ -19,11 +19,11 @@
     </p>
     <p>
         <label for="short_description">Lyhyt kuvaus:</label>
-        <input type="text" name="short_description" id="short_description" maxlength="255" required>
+        <input type="text" name="short_description" id="short_description" minlength="{{ SHORT_DESCRIPTION_MAX_LENGTH }}" required>
     </p>
     <p>
         <label for="long_description">Pitkä kuvaus:</label>
-        <textarea name="long_description" id="long_description" rows="10" maxlength="2000" required></textarea>
+        <textarea name="long_description" id="long_description" rows="15" minlength="{{ LONG_DESCRIPTION_MAX_LENGTH }}" required></textarea>
     </p>
     <fieldset style="margin-top: 1rem;">
         <legend class="visually-hidden">Asetukset</legend>

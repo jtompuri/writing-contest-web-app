@@ -28,7 +28,7 @@
     </div>
     <p>
         <label for="entry">Kilpailutyö:</label>
-        <textarea name="entry" id="entry" rows="15" maxlength="5000" required
+        <textarea name="entry" id="entry" rows="15" maxlength="{{ ENTRY_MAX_LENGTH }}" required
             aria-describedby="entry-help">{{ entry or '' }}</textarea>
         <small id="entry-help">
             Enintään 5000 merkkiä. Sallitut muotoilut: <strong>*lihavointi*</strong> ja <em>_kursivointi_</em>.
