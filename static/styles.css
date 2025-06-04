@@ -335,7 +335,7 @@ form.form-box fieldset label {
 form.form-box .large-checkbox {
   transform: scale(1.2);
   margin-right: 0.5rem;
-  vertical-align: middle;
+  vertical-align: sub;
 }
 input[type="checkbox"].large-checkbox {
   width: 1.1em;
@@ -587,13 +587,13 @@ form.form-box input.input-chars-50 {
 /* =========================
    Review Cards
    ========================= */
-.review-cards {
+.cards {
     display: flex;
     flex-direction: column;
     gap: 2rem;
 }
 
-.review-card {
+.card {
     border-radius: 8px;
     border-left: 5px solid #9e7967;
     padding: 1.2rem 1.5rem;
@@ -601,7 +601,7 @@ form.form-box input.input-chars-50 {
     background: #fff;
 }
 
-.review-card-header {
+.card-header {
     margin-bottom: 0.5rem;
 }
 
