@@ -37,29 +37,29 @@
                     <li class="{% if request.path == '/' %}active{% endif %}">
                         <a href="/" {% if request.path=='/' %}aria-current="page" {% endif %}>Etusivu</a>
                     </li>
-                    <li class="{% if request.path.startswith('/contest') %}active{% endif %}">
-                        <a href="/contests" {% if request.path.startswith('/contests') %}aria-current="page" {% endif
-                            %}>Kilpailut</a>
+                    <li class="{% if request.path.startswith('/contest') or source=='contest'%}active{% endif %}">
+                        <a href="/contests"{% if request.path.startswith('/contests') or source=='contest'
+                            %} aria-current="page"{% endif %}>Kilpailut</a>
                     </li>
-                    <li class="{% if request.path.startswith('/result') or source == 'result' %}active{% endif %}">
-                        <a href="/results" {% if request.path.startswith('/results') or source=='result'
-                            %}aria-current="page" {% endif %}>Tulokset</a>
+                    <li class="{% if request.path.startswith('/result') or source == 'result'%}active{% endif %}">
+                        <a href="/results"{% if request.path.startswith('/results') or source=='result'
+                            %} aria-current="page"{% endif %}>Tulokset</a>
                     </li>
                     {% if session.user_id %}
-                    <li class="{% if request.path.startswith('/review') or source == 'review' %}active{% endif %}">
-                        <a href="/reviews" {% if request.path.startswith('/reviews') or source=='review'
-                            %}aria-current="page" {% endif %}>Arvioi</a>
+                    <li class="{% if request.path.startswith('/review') or source == 'review'%}active{% endif %}">
+                        <a href="/reviews"{% if request.path.startswith('/reviews') or source=='review'
+                            %} aria-current="page"{% endif %}>Arvioi</a>
                     </li>
                     {% endif %}
                     {% if session.user_id %}
-                    <li class="{% if request.path.startswith('/my_texts') or source == 'my_texts' %}active{% endif %}">
-                        <a href="/my_texts" {% if request.path.startswith('/my_texts') or source=='my_texts'
-                            %}aria-current="page" {% endif %}>Tekstisi</a>
+                    <li class="{% if request.path.startswith('/my_texts') or source == 'my_texts'%}active{% endif %}">
+                        <a href="/my_texts"{% if request.path.startswith('/my_texts') or source=='my_texts'
+                            %} aria-current="page"{% endif %}>Tekstisi</a>
                     </li>
                     {% endif %}
                     {% if session.super_user %}
-                    <li class="{% if request.path.startswith('/admin') %}active{% endif %}">
-                        <a href="/admin" {% if request.path.startswith('/admin') %}aria-current="page" {% endif
+                    <li class="{% if request.path.startswith('/admin')%}active{% endif %}">
+                        <a href="/admin"{% if request.path.startswith('/admin') %} aria-current="page"{% endif
                             %}>Ylläpito</a>
                     </li>
                     {% endif %}
