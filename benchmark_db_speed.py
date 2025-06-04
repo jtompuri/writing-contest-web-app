@@ -84,7 +84,7 @@ def populate_db():
     conn = sqlite3.connect(DATABASE)
     cur = conn.cursor()
 
-    # Classes (first three are fixed, rest random)
+    # Classes
     class_values = [("Runo", "Runo"), ("Aforismi", "Aforismi"), ("Essee", "Essee")]
     for i, (title, value) in enumerate(class_values):
         cur.execute(
