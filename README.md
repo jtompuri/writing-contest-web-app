@@ -82,8 +82,8 @@ Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 
 Testasin tietokannan nopeutta suurilla tietomäärillä ilman indeksejä ja lisäämällä indeksit. Haut, jotka kohdistuvat suuriin tietomääriin nopeutuivat merkittävästi:
 
+### 10 000 reviews
 ```
-## 10000 reviews
 Step 1: Recreate DB and populate with random data...
 
 --- Table Record Counts ---
