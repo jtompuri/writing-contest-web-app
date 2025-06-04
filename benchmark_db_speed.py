@@ -15,6 +15,7 @@ import random
 import string
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash
+import secrets
 
 DATABASE = "database.db"
 SCHEMA = "schema.sql"
@@ -131,12 +132,13 @@ def populate_db():
         review_end_dt = collection_end_dt + timedelta(days=random.randint(1, 29))
         collection_end = collection_end_dt.strftime("%Y-%m-%d")
         review_end = review_end_dt.strftime("%Y-%m-%d")
+        private_key = secrets.token_urlsafe(16)  # <-- Add review key
         cur.execute(
             "INSERT INTO contests (title, class_id, short_description, "
             "long_description, anonymity, public_reviews, public_results, "
-            "collection_end, review_end) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "collection_end, review_end, private_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (title, class_id, short_description, long_description, anonymity,
-             public_reviews, public_results, collection_end, review_end)
+             public_reviews, public_results, collection_end, review_end, private_key)
         )
 
     # Ongoing/future contests (collection_end/review_end in future or ongoing)
@@ -153,12 +155,13 @@ def populate_db():
         review_end_dt = collection_end_dt + timedelta(days=random.randint(1, 365))
         collection_end = collection_end_dt.strftime("%Y-%m-%d")
         review_end = review_end_dt.strftime("%Y-%m-%d")
+        private_key = secrets.token_urlsafe(16)  # <-- Add review key
         cur.execute(
             "INSERT INTO contests (title, class_id, short_description, "
             "long_description, anonymity, public_reviews, public_results, "
-            "collection_end, review_end) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "collection_end, review_end, private_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (title, class_id, short_description, long_description, anonymity,
-             public_reviews, public_results, collection_end, review_end)
+             public_reviews, public_results, collection_end, review_end, private_key)
         )
 
     # Entries

@@ -192,6 +192,7 @@ def get_contest_by_id(contest_id):
                    contests.long_description, contests.collection_end,
                    contests.review_end, contests.public_reviews,
                    contests.public_results, contests.anonymity,
+                   contests.private_key,
                    classes.value AS class_value
             FROM contests
             JOIN classes ON contests.class_id = classes.id
@@ -293,7 +294,7 @@ def get_review_count(contest_id):
 
 def create_contest(title, class_id, short_description, long_description,
                    anonymity, public_reviews, public_results,
-                   collection_end, review_end):
+                   collection_end, review_end, private_key):
     """
     Create a new contest with the specified details.
 
@@ -312,12 +313,12 @@ def create_contest(title, class_id, short_description, long_description,
         INSERT INTO contests
         (title, class_id, short_description, long_description,
          anonymity, public_reviews, public_results,
-         collection_end, review_end)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+         collection_end, review_end, private_key)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
     db.execute(query, [title, class_id, short_description, long_description,
                        anonymity, public_reviews, public_results,
-                       collection_end, review_end])
+                       collection_end, review_end, private_key])
 
 
 def update_contest(contest_id, title, class_id, short_description,
@@ -593,35 +594,47 @@ def get_user_entries_with_results(user_id):
         list of dict: Each dict contains entry and contest details, points, placement, and total_entries.
     """
     query = """
+    SELECT
+        entry_id,
+        entry_text,
+        title,
+        anonymity,
+        public_reviews,
+        public_results,
+        collection_end,
+        review_end,
+        contest_id,
+        class_value,
+        points,
+        placement,
+        total_entries,
+        user_id
+    FROM (
         SELECT
-            entries.id AS entry_id,
-            entries.entry AS entry_text,
-            contests.title AS title,
-            contests.anonymity,
-            contests.public_reviews,
-            contests.public_results,
-            contests.collection_end,
-            contests.review_end,
-            contests.id AS contest_id,
-            classes.value AS class_value,
-            IFNULL(SUM(reviews.points), 0) AS points,
-            IFNULL((
-                SELECT COUNT(*) + 1
-                FROM entries e2
-                LEFT JOIN reviews r2 ON r2.entry_id = e2.id
-                WHERE e2.contest_id = contests.id
-                GROUP BY e2.id
-                HAVING SUM(r2.points) > IFNULL(SUM(reviews.points), 0)
-            ), 1) AS placement,
-            (
-                SELECT COUNT(*) FROM entries e3 WHERE e3.contest_id = contests.id
-            ) AS total_entries
-        FROM entries
-        JOIN contests ON entries.contest_id = contests.id
-        JOIN classes ON contests.class_id = classes.id
-        LEFT JOIN reviews ON reviews.entry_id = entries.id
-        WHERE entries.user_id = ?
-        GROUP BY entries.id
-        ORDER BY contests.review_end DESC
+            e.id AS entry_id,
+            e.entry AS entry_text,
+            c.title AS title,
+            c.anonymity,
+            c.public_reviews,
+            c.public_results,
+            c.collection_end,
+            c.review_end,
+            c.id AS contest_id,
+            cl.value AS class_value,
+            IFNULL(SUM(r.points), 0) AS points,
+            RANK() OVER (
+                PARTITION BY e.contest_id
+                ORDER BY IFNULL(SUM(r.points), 0) DESC, e.id ASC
+            ) AS placement,
+            COUNT(*) OVER (PARTITION BY e.contest_id) AS total_entries,
+            e.user_id
+        FROM entries e
+        JOIN contests c ON e.contest_id = c.id
+        JOIN classes cl ON c.class_id = cl.id
+        LEFT JOIN reviews r ON r.entry_id = e.id
+        GROUP BY e.id
+    ) AS ranked_entries
+    WHERE user_id = ?
+    ORDER BY review_end DESC
     """
     return db.query(query, [user_id])

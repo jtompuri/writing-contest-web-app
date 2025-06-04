@@ -24,6 +24,7 @@ CREATE TABLE contests (
     public_results BOOLEAN,
     collection_end DATE,
     review_end DATE,
+    private_key TEXT,
     created DATETIME DEFAULT (DATETIME('now')),
     FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
 );
