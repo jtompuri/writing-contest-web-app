@@ -6,23 +6,23 @@
 {% if all_entries %}
 <div class="cards">
     {% for entry in all_entries %}
-    {% if entry.collection_end > today %}
-    {% set ns = namespace(contest_url=url_for('contest', contest_id=entry.contest_id)) %}
-    {% set _phase_text = "Keräysvaihe on käynnissä, päättyy " ~ (entry.collection_end|format_date) %}
-    {% elif entry.review_end > today %}
-    {% set ns = namespace(contest_url=url_for('review', contest_id=entry.contest_id)) %}
-    {% set _phase_text = "Arviointivaihe on käynnissä, päättyy " ~ (entry.review_end|format_date) %}
-    {% else %}
-    {% if entry.public_results %}
-    {% set ns = namespace(contest_url=url_for('result', contest_id=entry.contest_id)) %}
-    {% else %}
-    {% set ns = namespace(contest_url=None) %}
-    {% endif %}
-    {% set _phase_text = "Kilpailu on päättynyt " ~ (entry.review_end|format_date) %}
-    {% endif %}
-    {% set _contest = entry %}
-    {% set show_placement = True %}
-    {% include "partials/_contest_card.html" %}
+        {% if entry.collection_end > today %}
+            {% set ns = namespace(contest_url=url_for('contest', contest_id=entry.contest_id)) %}
+            {% set _phase_text = "Keräysvaihe on käynnissä, päättyy " ~ (entry.collection_end|format_date) %}
+        {% elif entry.review_end > today %}
+            {% set ns = namespace(contest_url=url_for('review', contest_id=entry.contest_id)) %}
+            {% set _phase_text = "Arviointivaihe on käynnissä, päättyy " ~ (entry.review_end|format_date) %}
+        {% else %}
+            {% if entry.public_results %}
+                {% set ns = namespace(contest_url=url_for('result', contest_id=entry.contest_id)) %}
+            {% else %}
+             {% set ns = namespace(contest_url=None) %}
+            {% endif %}
+            {% set _phase_text = "Kilpailu on päättynyt " ~ (entry.review_end|format_date) %}
+        {% endif %}
+        {% set _contest = entry %}
+        {% set show_placement = True %}
+        {% include "partials/_contest_card.html" %}
     {% endfor %}
 </div>
 {% set total_pages = (total // per_page) + (1 if total % per_page > 0 else 0) %}
