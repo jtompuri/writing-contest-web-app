@@ -313,11 +313,15 @@ def admin_create_contest():
     public_reviews = 1 if form.get("public_reviews") == "on" else 0
     public_results = 1 if form.get("public_results") == "on" else 0
 
+    # Generate a random private key
+    private_key = secrets.token_urlsafe(16)
+
     try:
         sql.create_contest(
             title, class_id, short_description, long_description,
             anonymity, public_reviews, public_results,
-            collection_end, review_end
+            collection_end, review_end,
+            private_key  # Pass the key to SQL
         )
         flash("Kilpailu on luotu.")
         return redirect(url_for("admin_contests"))
@@ -878,6 +882,14 @@ def result(contest_id):
     contest = sql.get_contest_by_id(contest_id)
     if not contest:
         abort(404)
+
+    # Check for private key in URL if results are not public
+    if not contest["public_results"]:
+        private_key_param = request.args.get("key", "")
+        if not private_key_param or private_key_param != contest["private_key"]:
+            flash("Tämän kilpailun tulokset eivät ole julkisia.")
+            return redirect(url_for("results"))
+
     # Fetch entries with user names and total review points, ordered descending
     entries = sql.get_contest_results(contest_id)
     return render_template(
@@ -895,7 +907,88 @@ def entry(entry_id):
         abort(404)
     idx = request.args.get("idx")
     source = request.args.get("source")  # "review" or "result"
+    private_key_param = request.args.get("key", "")
+
+    contest = sql.get_contest_by_id(entry["contest_id"])
+    if not contest:
+        abort(404)
+
+    # Block access if results are not public and no valid key is provided for result view
+    if source == "result" and not contest["public_results"]:
+        if not private_key_param or private_key_param != contest["private_key"]:
+            flash("Tämän kilpailun tulokset eivät ole julkisia.")
+            return redirect(url_for("results"))
+
+    # Block access if reviews are not public and no valid key is provided for review view
+    if source == "review" and not contest["public_reviews"]:
+        if not private_key_param or private_key_param != contest["private_key"]:
+            flash("Tämän kilpailun arviointi ei ole julkista.")
+            return redirect(url_for("reviews"))
+
     return render_template("entry.html", entry=entry, now=date.today().isoformat(), idx=idx, source=source)
+
+
+@app.route("/entry/<int:entry_id>/delete", methods=["POST"])
+def delete_entry(entry_id):
+    if not session.get("user_id"):
+        abort(403)
+    entry = sql.get_entry_by_id(entry_id)
+    if not entry or entry["user_id"] != session["user_id"]:
+        abort(403)
+    # Only allow delete if collection phase is open
+    contest = sql.get_contest_by_id(entry["contest_id"])
+    today = date.today().isoformat()
+    if contest["collection_end"] <= today:
+        flash("Et voi enää poistaa tätä tekstiä.")
+        return redirect(url_for("my_texts"))
+    sql.delete_entry(entry_id)
+    flash("Teksti poistettu.")
+    return redirect(url_for("my_texts"))
+
+
+@app.route("/entry/<int:entry_id>/edit", methods=["GET", "POST"])
+def edit_entry(entry_id):
+    if not session.get("user_id"):
+        abort(403)
+    entry = sql.get_entry_by_id(entry_id)
+    if not entry or entry["user_id"] != session["user_id"]:
+        abort(403)
+    contest = sql.get_contest_by_id(entry["contest_id"])
+    today = date.today().isoformat()
+    if contest["collection_end"] <= today:
+        flash("Et voi enää muokata tätä tekstiä.")
+        return redirect(url_for("my_texts"))
+    if request.method == "GET":
+        # If coming back from preview, show the unsaved text if present
+        entry_text = request.args.get("entry")
+        if entry_text is not None:
+            entry = dict(entry)
+            entry["entry"] = entry_text
+        return render_template("edit_entry.html", entry=entry, contest=contest)
+    if request.method == "POST":
+        check_csrf()
+        action = request.form.get("action")
+        new_text = sanitize_input(request.form.get("entry", ""))
+        if not new_text:
+            flash("Teksti ei saa olla tyhjä.")
+            return render_template("edit_entry.html", entry=entry, contest=contest)
+        if action == "preview":
+            return render_template(
+                "preview_entry.html",
+                contest=contest,
+                entry=new_text,
+                edit_mode=True,
+                entry_id=entry_id
+            )
+        if action == "back":
+            # Show the edit form with the unsaved text
+            entry = dict(entry)
+            entry["entry"] = new_text
+            return render_template("edit_entry.html", entry=entry, contest=contest)
+        if action == "submit":
+            sql.update_entry(entry_id, entry["contest_id"], session["user_id"], new_text)
+            flash("Teksti päivitetty.")
+            return redirect(url_for("my_texts"))
 
 
 @app.route("/review/<int:contest_id>", methods=["GET", "POST"])
@@ -908,6 +1001,15 @@ def review(contest_id):
     contest = sql.get_contest_by_id(contest_id)
     if not contest:
         abort(404)
+
+    # Check for private key in URL
+    private_key_param = request.args.get("key", "")
+
+    # If reviews are not public, require the correct key
+    if not contest["public_reviews"]:
+        if not private_key_param or private_key_param != contest["private_key"]:
+            flash("Tämän kilpailun arviointi ei ole julkinen.")
+            return redirect(url_for("reviews"))
 
     today = datetime.now().date()
     collection_end = datetime.strptime(contest["collection_end"], "%Y-%m-%d").date()
