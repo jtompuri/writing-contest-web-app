@@ -128,17 +128,22 @@ def contest(contest_id):
     collection_open = today <= collection_end
     review_open = collection_end < today <= review_end
 
-    stats = {}
-    if not collection_open:
-        stats["entry_count"] = sql.get_entry_count(contest_id)
-        stats["review_count"] = sql.get_review_count(contest_id)
+    has_entry = False
+    user_entry_id = None
+    if session.get("user_id"):
+        entry = sql.get_user_entry_for_contest(contest_id, session["user_id"])
+        if entry:
+            has_entry = True
+            user_entry_id = entry["id"]
 
     return render_template(
         "contest.html",
         contest=contest,
         collection_open=collection_open,
         review_open=review_open,
-        stats=stats
+        has_entry=has_entry,
+        user_entry_id=user_entry_id,
+        source="contest"
     )
 
 
@@ -558,11 +563,6 @@ def add_entry(contest_id):
     collection_open = today <= collection_end
     review_open = collection_end < today <= review_end
 
-    stats = {}
-    if not collection_open:
-        stats["entry_count"] = sql.get_entry_count(contest_id)
-        stats["review_count"] = sql.get_review_count(contest_id)
-
     if request.method == "GET":
         entry = request.args.get("entry", "")
         return render_template(
@@ -570,7 +570,6 @@ def add_entry(contest_id):
             contest=contest,
             collection_open=collection_open,
             review_open=review_open,
-            stats=stats,
             entry=entry
         )
 
@@ -589,8 +588,7 @@ def add_entry(contest_id):
                 contest=contest,
                 entry=entry,
                 collection_open=collection_open,
-                review_open=review_open,
-                stats=stats
+                review_open=review_open
             )
 
         if action == "submit":
@@ -784,7 +782,6 @@ def admin_new_entry():
             if ("UNIQUE constraint failed" in str(e) or "duplicate key" in str(e)):
                 flash("Tällä käyttäjällä on jo teksti tässä kilpailussa.")
             else:
-                print("Virhe tekstin luomisessa:", e)
                 flash("Tekstiä ei voitu luoda.")
             return render_template(
                 "admin/new_entry.html",
@@ -958,36 +955,38 @@ def edit_entry(entry_id):
     if contest["collection_end"] <= today:
         flash("Et voi enää muokata tätä tekstiä.")
         return redirect(url_for("my_texts"))
+    source = request.args.get("source") or request.form.get("source", "")
     if request.method == "GET":
-        # If coming back from preview, show the unsaved text if present
         entry_text = request.args.get("entry")
         if entry_text is not None:
             entry = dict(entry)
             entry["entry"] = entry_text
-        return render_template("edit_entry.html", entry=entry, contest=contest)
+        return render_template("edit_entry.html", entry=entry, contest=contest, source=source)
     if request.method == "POST":
         check_csrf()
         action = request.form.get("action")
         new_text = sanitize_input(request.form.get("entry", ""))
         if not new_text:
             flash("Teksti ei saa olla tyhjä.")
-            return render_template("edit_entry.html", entry=entry, contest=contest)
+            return render_template("edit_entry.html", entry=entry, contest=contest, source=source)
         if action == "preview":
             return render_template(
                 "preview_entry.html",
                 contest=contest,
                 entry=new_text,
                 edit_mode=True,
-                entry_id=entry_id
+                entry_id=entry_id,
+                source=source
             )
         if action == "back":
-            # Show the edit form with the unsaved text
             entry = dict(entry)
             entry["entry"] = new_text
-            return render_template("edit_entry.html", entry=entry, contest=contest)
+            return render_template("edit_entry.html", entry=entry, contest=contest, source=source)
         if action == "submit":
             sql.update_entry(entry_id, entry["contest_id"], session["user_id"], new_text)
-            flash("Teksti päivitetty.")
+            flash("Kilpailutyö on päivitetty.")
+            if source == "contest":
+                return redirect(url_for("contest", contest_id=entry["contest_id"]))
             return redirect(url_for("my_texts"))
 
 
