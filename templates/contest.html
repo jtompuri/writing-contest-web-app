@@ -2,55 +2,43 @@
 {% block title %}{{ contest.title }} – Kilpailut – {{ site_name }}{% endblock %}
 {% block content %}
 <h1>{{ contest.title }}</h1>
-<section class="contest-summary-box" aria-label="Kilpailun yhteenveto">
-    {% if collection_open %}
-    <span class="contest-status open">Kilpailu on käynnissä</span>
-    {% elif review_open and contest.public_reviews %}
-    <span class="contest-status review">Arviointivaihe</span>
-    {% else %}
-    <span class="contest-status closed">Kilpailu on päättynyt</span>
-    {% endif %}
-    <p><strong>Laji:</strong> {{ contest.class_value }}</p>
-    <p>
-        <strong>Keräys päättyy:</strong> {{ contest.collection_end | format_date }}
-        {% if collection_ended %}<span class="status-note"> (päättynyt)</span>{% endif %}
-    </p>
-    <p>
-        <strong>Arviointi päättyy:</strong> {{ contest.review_end | format_date }}
-        {% if review_ended %}<span class="status-note"> (päättynyt)</span>{% endif %}
-    </p>
-    {% if collection_ended %}
-    <div class="contest-stats">
-        <div><strong>Jätetyt työt:</strong> {{ stats.entry_count }}</div>
-        <div><strong>Annetut arviot:</strong> {{ stats.review_count }}</div>
-    </div>
-    {% endif %}
-</section>
 <section aria-label="Kilpailun kuvaus" style="margin-top: 2rem;">
     <p><strong>{{ contest.short_description }}</strong></p>
     <p>{{ contest.long_description | richtext_with_links }}</p>
 </section>
-{% if review_ended and contest.public_results %}
+<p><em>Keräysvaihe käynnissä, päättyy {{ contest.collection_end | format_date }}. Arviointivaihe päättyy {{ contest.review_end | format_date }}.</em>
+</p>
+
+{% if not collection_open and not review_open and contest.public_results %}
 <form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="post" style="margin-top: 2rem;">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <button type="submit" class="btn btn-primary" aria-label="Näytä kilpailun tulokset">
         Näytä kilpailun tulokset
     </button>
 </form>
-{% elif collection_ended and session.user_id and contest.public_reviews %}
+{% elif not collection_open and review_open and session.user_id and contest.public_reviews %}
 <form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="post" style="margin-top: 2rem;">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <button type="submit" class="btn btn-primary" aria-label="Vertaisarvioi kilpailutöitä">
         Vertaisarvioi kilpailutöitä
     </button>
 </form>
-{% elif not collection_ended and session.user_id %}
-<form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="get" style="margin-top: 2rem;">
-    <button type="submit" class="btn btn-primary" aria-label="Osallistu kilpailuun">
-        Osallistu kilpailuun
-    </button>
-</form>
-{% elif not collection_ended or not review_ended %}
+{% elif collection_open and session.user_id %}
+    {% if has_entry and user_entry_id %}
+    <form action="{{ url_for('edit_entry', entry_id=user_entry_id) }}" method="get" style="margin-top: 2rem;">
+        <input type="hidden" name="source" value="contest">
+        <button type="submit" class="btn btn-primary" aria-label="Muokkaa kilpailutyötäsi">
+            Muokkaa kilpailutyötäsi
+        </button>
+    </form>
+    {% else %}
+    <form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="get" style="margin-top: 2rem;">
+        <button type="submit" class="btn btn-primary" aria-label="Osallistu kilpailuun">
+            Osallistu kilpailuun
+        </button>
+    </form>
+    {% endif %}
+{% elif not collection_open or not review_open %}
 <p style="margin-top: 2rem; font-style: italic;">
     <a href="/login" aria-label="Kirjaudu sisään osallistuaksesi kilpailuun">
         Kirjaudu sisään
