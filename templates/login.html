@@ -8,11 +8,6 @@
         Kirjaudu sisään tai
         <a href="{{ url_for('register') }}">rekisteröidy</a>, jos sinulla ei ole tunnusta.
     </p>
-    {% for message in get_flashed_messages() %}
-    <div class="flash-message" role="alert" aria-live="polite">
-        {{ message }}
-    </div>
-    {% endfor %}
     <p>
         <label for="username">Sähköposti:</label>
         <input type="text" name="username" class="input-chars-40" id="username" value="{{ username or '' }}"
