@@ -4,18 +4,24 @@
 <h1>Tulokset: {{ contest.title }}</h1>
 <p>{{ contest.short_description }}</p>
 {% if entries %}
-<div class="review-cards">
+<div class="cards">
     {% for entry in entries %}
-    <div class="review-card">
-        <div class="review-card-header">
-            <span class="entry-index">{{ loop.index }}.</span>
+    <div class="card">
+        <div class="card-header">
+            {{ loop.index }}.
             <strong>{{ entry.author_name }}</strong> ({{ entry.points }} p.)
+            <span class="entry-index">
+                {% if loop.index == 1 %}🥇🎉
+                {% elif loop.index == 2 %}🥈
+                {% elif loop.index == 3 %}🥉
+                {% endif %}
+            </span>
         </div>
         <div class="entry-preview">
             {% if entry.entry|length > 255 %}
             {{ entry.entry[:255] | richtext }}...
-            <a href="{{ url_for('entry', entry_id=entry.id, source='result') }}" class="read-full-text">Lue koko teksti
-                &raquo;</a>
+            <a href="{{ url_for('entry', entry_id=entry.id, source='result', key=request.args.get('key'), idx=loop.index) }}"
+               class="read-full-text">Lue koko teksti &raquo;</a>
             {% else %}
             {{ entry.entry | richtext }}
             {% endif %}

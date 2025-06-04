@@ -4,7 +4,7 @@
 <h1>Omat tekstisi</h1>
 <p>Tällä sivulla on listattuna kaikki kilpailutyösi. Sijoitus ja pisteet näytetään päättyneiden kilpailujen osalta.</p>
 {% if all_entries %}
-<div class="review-cards">
+<div class="cards">
     {% for entry in all_entries %}
     {% if entry.collection_end > today %}
     {% set ns = namespace(contest_url=url_for('contest', contest_id=entry.contest_id)) %}

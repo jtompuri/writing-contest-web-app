@@ -5,7 +5,7 @@
 <p>Tarkastele kilpailujen tuloksia, jotka ovat avoimia.</p>
 <section aria-label="Päättyneet kilpailut">
     {% if contests %}
-    <div class="review-cards">
+    <div class="cards">
         {% for contest in contests %}
         {% set ns = namespace(contest_url=url_for('result', contest_id=contest.id)) %}
         {% set phase_text = "Kilpailu päättyi " ~ (contest.review_end|format_date) %}

@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Arvioi kilpailutöitä – {{ contest.title }}{% endblock %}
 {% block content %}
-<h1>Arvioi kilpailutöitä: {{ contest.title }}</h1>
+<h1>Arvioi: {{ contest.title }}</h1>
 <p>Lue kaikki kilpailutyöt ja pisteytä työt asteikolla nollasta viiteen, missä viisi on paras arvosana.</p>
 <form method="post">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    <div class="review-cards">
+    <div class="cards">
         {% for entry in entries %}
-        <div class="review-card">
-            <div class="review-card-header">
+        <div class="card">
+            <div class="card-header">
                 <span class="entry-index">{{ loop.index }}.</span>
                 {% if not contest.anonymity %}
                 <strong>{{ entry.author_name }}</strong>
@@ -17,7 +17,7 @@
             <div class="entry-preview">
                 {% if entry.entry|length > 255 %}
                 {{ entry.entry[:255] | richtext }}...
-                <a href="{{ url_for('entry', entry_id=entry.id, idx=loop.index, source='review') }}"
+                <a href="{{ url_for('entry', entry_id=entry.id, idx=loop.index, source='review', key=request.args.get('key')) }}"
                     class="read-full-text">Lue koko teksti &raquo;</a>
                 {% else %}
                 {{ entry.entry | richtext }}

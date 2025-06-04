@@ -5,7 +5,7 @@
 <p>Käynnissä olevat kilpailut, joihin voit osallistua.</p>
 <section aria-label="Käynnissä olevat kilpailut" style="margin-bottom: 2rem;">
     {% if contests %}
-    <div class="review-cards">
+    <div class="cards">
         {% for contest in contests %}
         {% set ns = namespace(contest_url=url_for('contest', contest_id=contest.id)) %}
         {% set phase_text = "Keräysvaihe käynnissä, päättyy " ~ (contest.collection_end|format_date) %}
