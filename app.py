@@ -23,6 +23,21 @@ def inject_site_name():
     return dict(site_name="Kirjoituskilpailut")
 
 
+@app.context_processor
+def inject_config():
+    """Injects configuration constants into all templates."""
+    return dict(
+        TITLE_MAX_LENGTH=getattr(config, "TITLE_MAX_LENGTH", 100),
+        SHORT_DESCRIPTION_MAX_LENGTH=getattr(config, "SHORT_DESCRIPTION_MAX_LENGTH", 255),
+        LONG_DESCRIPTION_MAX_LENGTH=getattr(config, "LONG_DESCRIPTION_MAX_LENGTH", 2000),
+        ENTRY_MAX_LENGTH=getattr(config, "ENTRY_MAX_LENGTH", 5000),
+        FIELD_MAX_LENGTH=getattr(config, "FIELD_MAX_LENGTH", 50),
+        PASSWORD_MIN_LENGTH=getattr(config, "PASSWORD_MIN_LENGTH", 8),
+        DEFAULT_PER_PAGE=getattr(config, "DEFAULT_PER_PAGE", 5),
+        ADMIN_PER_PAGE=getattr(config, "ADMIN_PER_PAGE", 20)
+    )
+
+
 @app.template_filter("format_date")
 def format_date(value):
     """Formats a date string in 'YYYY-MM-DD' format to 'DD.MM.YYYY'."""
@@ -131,7 +146,7 @@ def contest(contest_id):
     has_entry = False
     user_entry_id = None
     if session.get("user_id"):
-        entry = users.get_user_entry_for_contest(contest_id, session["user_id"])
+        entry = sql.get_user_entry_for_contest(contest_id, session["user_id"])
         if entry:
             has_entry = True
             user_entry_id = entry["id"]
@@ -259,7 +274,7 @@ def admin_contests():
     if not session.get("super_user"):
         abort(403)
     page = request.args.get("page", 1, type=int)
-    per_page = 20
+    per_page = config.ADMIN_PER_PAGE
     offset = (page - 1) * per_page
 
     contests = sql.get_all_contests(limit=per_page, offset=offset)
@@ -273,6 +288,65 @@ def admin_contests():
         total=total,
         total_pages=total_pages(total, per_page),
         base_url="/admin/contests?page="
+    )
+
+
+@app.route("/admin/users")
+def admin_users():
+    """Displays a paginated list of users in the admin panel."""
+    if not session.get("super_user"):
+        abort(403)
+    page = request.args.get("page", 1, type=int)
+    per_page = config.ADMIN_PER_PAGE
+    offset = (page - 1) * per_page
+
+    users_list = users.get_all_users(limit=per_page, offset=offset)
+    total = users.get_user_count()
+
+    return render_template(
+        "admin/users.html",
+        users=users_list,
+        page=page,
+        per_page=per_page,
+        total=total,
+        total_pages=total_pages(total, per_page),
+        base_url="/admin/users?page="
+    )
+
+
+@app.route("/admin/entries")
+def admin_entries():
+    """Displays a paginated and filterable list of entries in the admin panel."""
+    if not session.get("super_user"):
+        abort(403)
+    page = request.args.get("page", 1, type=int)
+    per_page = config.ADMIN_PER_PAGE
+
+    contest_id = request.args.get("contest_id", type=int)
+    user_search = request.args.get("user_search", "", type=str).strip()
+
+    offset = (page - 1) * per_page
+
+    contests = sql.get_all_contests()
+    entries = sql.get_all_entries(
+        limit=per_page,
+        offset=offset,
+        contest_id=contest_id,
+        user_search=user_search
+    )
+    total = sql.get_entry_count(contest_id=contest_id, user_search=user_search)
+
+    return render_template(
+        "admin/entries.html",
+        entries=entries,
+        contests=contests,
+        selected_contest_id=contest_id,
+        user_search=user_search,
+        page=page,
+        per_page=per_page,
+        total=total,
+        total_pages=total_pages(total, per_page),
+        base_url="/admin/entries?page="
     )
 
 
@@ -346,29 +420,6 @@ def delete_contest(contest_id):
     sql.delete_contest(contest_id)
     flash("Kilpailu on poistettu.")
     return redirect(url_for("admin_contests"))
-
-
-@app.route("/admin/users")
-def admin_users():
-    """Displays a paginated list of users in the admin panel."""
-    if not session.get("super_user"):
-        abort(403)
-    page = request.args.get("page", 1, type=int)
-    per_page = 20
-    offset = (page - 1) * per_page
-
-    users_list = users.get_all_users(limit=per_page, offset=offset)
-    total = users.get_user_count()
-
-    return render_template(
-        "admin/users.html",
-        users=users_list,
-        page=page,
-        per_page=per_page,
-        total=total,
-        total_pages=total_pages(total, per_page),
-        base_url="/admin/users?page="
-    )
 
 
 @app.route("/admin/users/delete/<int:user_id>", methods=["POST"])
@@ -617,7 +668,7 @@ def logout():
 def contests():
     """Displays a list of contests available for entry."""
     page = request.args.get("page", 1, type=int)
-    per_page = 5
+    per_page = config.DEFAULT_PER_PAGE
     offset = (page - 1) * per_page
 
     contests = sql.get_contests_for_entry(limit=per_page, offset=offset)
@@ -638,7 +689,7 @@ def contests():
 def results():
     """Displays contest results."""
     page = request.args.get("page", 1, type=int)
-    per_page = 5
+    per_page = config.DEFAULT_PER_PAGE
     offset = (page - 1) * per_page
 
     contests = sql.get_contests_for_results(limit=per_page, offset=offset)
@@ -660,7 +711,7 @@ def results():
 def reviews():
     """Displays contests available for review."""
     page = request.args.get("page", 1, type=int)
-    per_page = 5
+    per_page = config.DEFAULT_PER_PAGE
     offset = (page - 1) * per_page
 
     contests = sql.get_contests_for_review(limit=per_page, offset=offset)
@@ -683,10 +734,9 @@ def my_texts():
         return redirect(url_for("login", next_page=request.path))
     entries = sql.get_user_entries_with_results(session["user_id"])
     today = date.today().isoformat()
-    # Sort by review_end DESC (already done in SQL)
     all_entries = entries
     total = len(all_entries)
-    per_page = 5  # or your preferred page size
+    per_page = config.DEFAULT_PER_PAGE
     page = int(request.args.get("page", 1))
     start = (page - 1) * per_page
     end = start + per_page
@@ -705,46 +755,6 @@ def my_texts():
 def terms_of_use():
     """Displays the terms of use page."""
     return render_template("terms_of_use.html")
-
-
-@app.route("/admin/entries")
-def admin_entries():
-    """Displays a paginated and filterable list of entries in the admin
-        panel."""
-    if not session.get("super_user"):
-        abort(403)
-    page = request.args.get("page", 1, type=int)
-    per_page = 20
-
-    contest_id = request.args.get("contest_id", type=int)
-    user_search = request.args.get("user_search", "", type=str).strip()
-
-    offset = (page - 1) * per_page
-
-    # Fetch contests for the dropdown
-    contests = sql.get_all_contests()
-
-    # Fetch filtered entries and total count
-    entries = sql.get_all_entries(
-        limit=per_page,
-        offset=offset,
-        contest_id=contest_id,
-        user_search=user_search
-    )
-    total = sql.get_entry_count(contest_id=contest_id, user_search=user_search)
-
-    return render_template(
-        "admin/entries.html",
-        entries=entries,
-        contests=contests,
-        selected_contest_id=contest_id,
-        user_search=user_search,
-        page=page,
-        per_page=per_page,
-        total=total,
-        total_pages=total_pages(total, per_page),
-        base_url="/admin/entries?page="
-    )
 
 
 @app.route("/admin/new_entry", methods=["GET", "POST"])
