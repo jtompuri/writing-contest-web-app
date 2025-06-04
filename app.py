@@ -131,7 +131,7 @@ def contest(contest_id):
     has_entry = False
     user_entry_id = None
     if session.get("user_id"):
-        entry = sql.get_user_entry_for_contest(contest_id, session["user_id"])
+        entry = users.get_user_entry_for_contest(contest_id, session["user_id"])
         if entry:
             has_entry = True
             user_entry_id = entry["id"]
