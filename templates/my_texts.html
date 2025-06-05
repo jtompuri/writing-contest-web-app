@@ -7,14 +7,14 @@
 <div class="cards">
     {% for entry in all_entries %}
         {% if entry.collection_end > today %}
-            {% set ns = namespace(contest_url=url_for('contest', contest_id=entry.contest_id)) %}
+            {% set ns = namespace(contest_url=url_for('main.contest', contest_id=entry.contest_id)) %}
             {% set _phase_text = "Keräysvaihe on käynnissä, päättyy " ~ (entry.collection_end|format_date) %}
         {% elif entry.review_end > today %}
-            {% set ns = namespace(contest_url=url_for('review', contest_id=entry.contest_id)) %}
+            {% set ns = namespace(contest_url=url_for('entries.review', contest_id=entry.contest_id)) %}
             {% set _phase_text = "Arviointivaihe on käynnissä, päättyy " ~ (entry.review_end|format_date) %}
         {% else %}
             {% if entry.public_results %}
-                {% set ns = namespace(contest_url=url_for('result', contest_id=entry.contest_id)) %}
+                {% set ns = namespace(contest_url=url_for('main.result', contest_id=entry.contest_id)) %}
             {% else %}
              {% set ns = namespace(contest_url=None) %}
             {% endif %}

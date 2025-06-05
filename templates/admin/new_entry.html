@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Ylläpito: Uusi kilpailutyö – {{ site_name }}{% endblock %}
 {% block content %}
-<form action="{{ url_for('admin_new_entry') }}" method="post" class="form-box" aria-label="Kilpailutyön luontilomake">
+<form action="{{ url_for('admin.new_entry') }}" method="post" class="form-box" aria-label="Kilpailutyön luontilomake">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <h1>Luo uusi kilpailutyö</h1>
     <div class="form-group">
@@ -38,7 +38,7 @@
         <button type="submit" class="btn btn-primary" aria-label="Luo kilpailutyö">
             Luo kilpailutyö
         </button>
-        <a href="{{ url_for('admin_entries') }}" class="action-button button-secondary" aria-label="Peruuta">
+        <a href="{{ url_for('admin.admin_entries') }}" class="action-button button-secondary" aria-label="Peruuta">
             Peruuta
         </a>
     </div>

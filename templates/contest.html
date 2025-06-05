@@ -10,14 +10,14 @@
 </p>
 
 {% if not collection_open and not review_open and contest.public_results %}
-<form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="post" style="margin-top: 2rem;">
+<form action="{{ url_for('entries.add_entry', contest_id=contest.id) }}" method="post" style="margin-top: 2rem;">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <button type="submit" class="btn btn-primary" aria-label="Näytä kilpailun tulokset">
         Näytä kilpailun tulokset
     </button>
 </form>
 {% elif not collection_open and review_open and session.user_id and contest.public_reviews %}
-<form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="post" style="margin-top: 2rem;">
+<form action="{{ url_for('entries.add_entry', contest_id=contest.id) }}" method="post" style="margin-top: 2rem;">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <button type="submit" class="btn btn-primary" aria-label="Vertaisarvioi kilpailutöitä">
         Vertaisarvioi kilpailutöitä
@@ -25,14 +25,14 @@
 </form>
 {% elif collection_open and session.user_id %}
     {% if has_entry and user_entry_id %}
-    <form action="{{ url_for('edit_entry', entry_id=user_entry_id) }}" method="get" style="margin-top: 2rem;">
+    <form action="{{ url_for('entries.edit_entry', entry_id=user_entry_id) }}" method="get" style="margin-top: 2rem;">
         <input type="hidden" name="source" value="contest">
         <button type="submit" class="btn btn-primary" aria-label="Muokkaa kilpailutyötäsi">
             Muokkaa kilpailutyötäsi
         </button>
     </form>
     {% else %}
-    <form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="get" style="margin-top: 2rem;">
+    <form action="{{ url_for('entries.add_entry', contest_id=contest.id) }}" method="get" style="margin-top: 2rem;">
         <button type="submit" class="btn btn-primary" aria-label="Osallistu kilpailuun">
             Osallistu kilpailuun
         </button>

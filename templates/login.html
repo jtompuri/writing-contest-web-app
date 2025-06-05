@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Kirjaudu{% endblock %}
 {% block content %}
-<form action="{{ url_for('login') }}" method="post" class="form-box" aria-labelledby="login-heading">
+<form action="{{ url_for('auth.login') }}" method="post" class="form-box" aria-labelledby="login-heading">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <h1 id="login-heading">Kirjaudu sisään</h1>
     <p>
         Kirjaudu sisään tai
-        <a href="{{ url_for('register') }}">rekisteröidy</a>, jos sinulla ei ole tunnusta.
+        <a href="{{ url_for('auth.register') }}">rekisteröidy</a>, jos sinulla ei ole tunnusta.
     </p>
     <p>
         <label for="username">Sähköposti:</label>

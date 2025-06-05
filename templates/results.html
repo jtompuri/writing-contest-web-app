@@ -7,7 +7,7 @@
     {% if contests %}
     <div class="cards">
         {% for contest in contests %}
-        {% set ns = namespace(contest_url=url_for('result', contest_id=contest.id)) %}
+        {% set ns = namespace(contest_url=url_for('main.result', contest_id=contest.id)) %}
         {% set phase_text = "Kilpailu päättyi " ~ (contest.review_end|format_date) %}
         {% set _contest = contest %}
         {% set _phase_text = phase_text %}

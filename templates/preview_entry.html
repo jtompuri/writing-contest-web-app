@@ -6,7 +6,7 @@
 </div>
 <div class="btn-row" role="group" aria-label="Esikatselutoiminnot">
     {% if edit_mode %}
-        <form action="{{ url_for('edit_entry', entry_id=entry_id) }}" method="post" style="margin: 0;">
+        <form action="{{ url_for('entries.edit_entry', entry_id=entry_id) }}" method="post" style="margin: 0;">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <input type="hidden" name="entry" value="{{ entry | e }}">
             <input type="hidden" name="action" value="submit">
@@ -15,7 +15,7 @@
                 Tallenna muutokset
             </button>
         </form>
-        <form action="{{ url_for('edit_entry', entry_id=entry_id) }}" method="post" style="margin: 0;">
+        <form action="{{ url_for('entries.edit_entry', entry_id=entry_id) }}" method="post" style="margin: 0;">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <input type="hidden" name="entry" value="{{ entry | e }}">
             <input type="hidden" name="source" value="{{ source }}">           
@@ -25,7 +25,7 @@
             </button>
         </form>
     {% else %}
-        <form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="post" style="margin: 0;">
+        <form action="{{ url_for('entries.add_entry', contest_id=contest.id) }}" method="post" style="margin: 0;">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <input type="hidden" name="entry" value="{{ entry | e }}">
             <input type="hidden" name="action" value="submit">
@@ -33,7 +33,7 @@
                 Lähetä kilpailutyö
             </button>
         </form>
-        <form action="{{ url_for('add_entry', contest_id=contest.id) }}" method="get" style="margin: 0;">
+        <form action="{{ url_for('entries.add_entry', contest_id=contest.id) }}" method="get" style="margin: 0;">
             <input type="hidden" name="entry" value="{{ entry | e }}">
             <input type="hidden" name="source" value="{{ source }}">            
             <button type="submit" class="btn btn-primary" aria-label="Palaa takaisin muokkaamaan kilpailutyötä">

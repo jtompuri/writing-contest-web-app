@@ -17,7 +17,7 @@
             <div class="entry-preview">
                 {% if entry.entry|length > 255 %}
                 {{ entry.entry[:255] | richtext }}...
-                <a href="{{ url_for('entry', entry_id=entry.id, idx=loop.index, source='review', key=request.args.get('key')) }}"
+                <a href="{{ url_for('entries.entry', entry_id=entry.id, idx=loop.index, source='review', key=request.args.get('key')) }}"
                     class="read-full-text">Lue koko teksti &raquo;</a>
                 {% else %}
                 {{ entry.entry | richtext }}

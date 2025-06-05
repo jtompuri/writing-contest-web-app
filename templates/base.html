@@ -13,18 +13,18 @@
         <header class="logo-bar" role="banner">
             <div class="container logo-bar-inner">
                 {% if request.path != '/' %}
-                <a href="{{ url_for('index') }}" class="logo-title" aria-label="Palaa etusivulle">Kirjoituskilpailut</a>
+                <a href="{{ url_for('main.index') }}" class="logo-title" aria-label="Palaa etusivulle">Kirjoituskilpailut</a>
                 {% else %}
                 <div class="logo" aria-hidden="true">Kirjoituskilpailut</div>
                 {% endif %}
                 {% if session.user_id %}
-                <form action="{{ url_for('logout') }}" method="post" style="display:inline;">
+                <form action="{{ url_for('auth.logout') }}" method="post" style="display:inline;">
                     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                     <button type="submit" class="btn btn-primary btn-small" aria-label="Kirjaudu ulos">Kirjaudu
                         ulos</button>
                 </form>
                 {% else %}
-                <form action="{{ url_for('login') }}" method="get" style="display:inline;">
+                <form action="{{ url_for('auth.login') }}" method="get" style="display:inline;">
                     <button type="submit" class="btn btn-primary btn-small" aria-label="Kirjaudu sisään">Kirjaudu
                         sisään</button>
                 </form>

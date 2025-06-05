@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Rekisteröidy{% endblock %}
 {% block content %}
-<form action="/create" method="post" class="form-box">
+<form action="{{ url_for('auth.create') }}" method="post" class="form-box">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <h1>Rekisteröidy</h1>
-    <p>Rekisteröidy tai <a href="/login">kirjaudu sisään</a>, jos olet jo rekisteröitynyt.</p>
+    <p>Rekisteröidy tai <a href="{{ url_for('auth.login') }}">kirjaudu sisään</a>, jos olet jo rekisteröitynyt.</p>
     <p>
         <label for="name">Nimi tai nimimerkki:</label>
         <input type="text" name="name" id="name" value="{{ session.get('form_data', {}).get('name', '') }}"

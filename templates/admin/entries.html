@@ -2,19 +2,19 @@
 {% block title %}Ylläpito: Kilpailutöiden hallinta – {{ site_name }}{% endblock %}
 {% block content %}
 <h1>Kilpailutöiden hallinta</h1>
-<a href="{{ url_for('admin_new_entry') }}" class="btn btn-secondary btn-small"
+<a href="{{ url_for('admin.new_entry') }}" class="btn btn-secondary btn-small"
     style="display:inline-block; margin-bottom: 1rem;">
     Lisää uusi teksti
 </a>
-<table class="admin-table">
-    <thead>
-        <tr>
-            <th scope="col" class="td-left">Kilpailun nimi</th>
-            <th scope="col" class="td-left">Nimi (käyttäjätunnus)</th>
-            <th scope="col"></th>
-        </tr>
-        <tr>
-            <form method="get" action="{{ url_for('admin_entries') }}">
+<form method="get" action="{{ url_for('admin.admin_entries') }}">
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th scope="col" class="td-left">Kilpailun nimi</th>
+                <th scope="col" class="td-left">Nimi (käyttäjätunnus)</th>
+                <th scope="col"></th>
+            </tr>
+            <tr>
                 <td>
                     <select name="contest_id" id="contest_id" class="filter-input">
                         <option value="">Kaikki kilpailut</option>
@@ -37,46 +37,46 @@
                 <td>
                     <button type="submit" class="btn btn-secondary btn-small">Suodata</button>
                     <button type="button" class="btn btn-secondary btn-small"
-                        onclick="window.location.href='{{ url_for('admin_entries') }}'">
+                        onclick="window.location.href='{{ url_for('admin.admin_entries') }}'">
                         Tyhjennä
                     </button>
                 </td>
-            </form>
-        </tr>
-    </thead>
-    <tbody>
-        {% for entry in entries %}
-        <tr>
-            <td>
-                {% if entry.contest_title|length > 33 %}
-                {{ entry.contest_title[:25] }}...{{ entry.contest_title[-5:] }}
-                {% else %}
-                {{ entry.contest_title }}
-                {% endif %}
-            </td>
-            <td>{{ entry.author_name }} ({{ entry.username }})</td>
-            <td class="td-right">
-                <button type="button" class="btn btn-secondary btn-small"
-                    onclick="window.location.href='{{ url_for('admin_edit_entry', entry_id=entry.id) }}'"
-                    aria-label="Muokkaa tekstiä {{ entry.author_name }} ({{ entry.username }})">
-                    Muokkaa
-                </button>
-                <form action="{{ url_for('admin_delete_entry', entry_id=entry.id) }}" method="post"
-                    style="display:inline;">
-                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                    <button type="submit" class="btn btn-secondary btn-small"
-                        onclick="return confirm('Poistetaanko teksti?')">
-                        Poista
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in entries %}
+            <tr>
+                <td>
+                    {% if entry.contest_title|length > 33 %}
+                    {{ entry.contest_title[:25] }}...{{ entry.contest_title[-5:] }}
+                    {% else %}
+                    {{ entry.contest_title }}
+                    {% endif %}
+                </td>
+                <td>{{ entry.author_name }} ({{ entry.username }})</td>
+                <td class="td-right">
+                    <button type="button" class="btn btn-secondary btn-small"
+                        onclick="window.location.href='{{ url_for('admin.edit_entry', entry_id=entry.id) }}'"
+                        aria-label="Muokkaa tekstiä {{ entry.author_name }} ({{ entry.username }})">
+                        Muokkaa
                     </button>
-                </form>
-            </td>
-        </tr>
-        {% else %}
-        <tr>
-            <td colspan="3">Ei tekstejä.</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                    <form action="{{ url_for('admin.delete_entry', entry_id=entry.id) }}" method="post"
+                        style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        <button type="submit" class="btn btn-secondary btn-small"
+                            onclick="return confirm('Poistetaanko teksti?')">
+                            Poista
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3">Ei tekstejä.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</form>
 {% include "partials/_pagination.html" %}
 {% endblock %}

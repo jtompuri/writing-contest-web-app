@@ -21,7 +21,7 @@
     <div class="entry-user-text" style="margin-top:0.5em;">
         {% if _contest.entry_text|length > 255 %}
         {{ _contest.entry_text[:255] | richtext }}...
-        <a href="{{ url_for('entry', entry_id=_contest.entry_id, source='my_texts') }}" class="read-full-text">Lue koko teksti &raquo;</a>
+        <a href="{{ url_for('entries.entry', entry_id=_contest.entry_id, source='my_texts') }}" class="read-full-text">Lue koko teksti &raquo;</a>
         {% else %}
         {{ _contest.entry_text | richtext }}
         {% endif %}
@@ -48,11 +48,11 @@
     </div>
     {% if _contest.entry_text and _contest.collection_end > today %}
     <div style="margin-top:0.5em; text-align: right;">
-        <form action="{{ url_for('edit_entry', entry_id=_contest.entry_id) }}" method="get" style="display:inline;">
+        <form action="{{ url_for('entries.edit_entry', entry_id=_contest.entry_id) }}" method="get" style="display:inline;">
             <input type="hidden" name="source" value="my_texts">
             <button type="submit" class="btn btn-small">Muokkaa</button>
         </form>
-        <form action="{{ url_for('delete_entry', entry_id=_contest.entry_id) }}" method="post" style="display:inline;">
+        <form action="{{ url_for('entries.delete_entry', entry_id=_contest.entry_id) }}" method="post" style="display:inline;">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <button type="submit" class="btn btn-small" onclick="return confirm('Haluatko varmasti poistaa tekstin?')">Poista</button>
         </form>

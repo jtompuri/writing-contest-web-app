@@ -4,9 +4,9 @@
 <h1>Ylläpito</h1>
 <section role="navigation" aria-label="Ylläpidon hallintalinkit">
     <ul>
-        <li><a href="{{ url_for('admin_contests') }}">Hallinnoi kilpailuja ({{ contest_count }})</a></li>
-        <li><a href="{{ url_for('admin_users') }}">Hallinnoi käyttäjiä ({{ user_count }})</a></li>
-        <li><a href="{{ url_for('admin_entries') }}">Hallinnoi kilpailutöitä ({{ entry_count }})</a></li>
+        <li><a href="{{ url_for('admin.admin_contests') }}">Hallinnoi kilpailuja ({{ contest_count }})</a></li>
+        <li><a href="{{ url_for('admin.admin_users') }}">Hallinnoi käyttäjiä ({{ user_count }})</a></li>
+        <li><a href="{{ url_for('admin.admin_entries') }}">Hallinnoi kilpailutöitä ({{ entry_count }})</a></li>
     </ul>
 </section>
 {% endblock %}

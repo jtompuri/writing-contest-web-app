@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Ylläpito: Muokkaa kilpailua – {{ contest.title }} – {{ site_name }}{% endblock %}
 {% block content %}
-<form action="{{ url_for('admin_update_contest', contest_id=contest.id) }}" method="post" class="form-box">
+<form action="{{ url_for('admin.update_contest', contest_id=contest.id) }}" method="post" class="form-box">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <h1>Muokkaa kilpailua</h1>
     <p>
@@ -64,12 +64,12 @@
     {% if contest.private_key %}
     <p>
         <label for="review_link">Arviointilinkki:</label>
-        <input type="text" id="review_link" value="{{ url_for('review', contest_id=contest.id, key=contest.private_key, _external=True) }}" readonly style="width:100%">
+        <input type="text" id="review_link" value="{{ url_for('entries.review', contest_id=contest.id, key=contest.private_key, _external=True) }}" readonly style="width:100%">
         <small>Kopioi ja jaa tämä linkki arvioijille, jos arviointi ei ole julkinen.</small>
     </p>
     <p>
         <label for="result_link">Tulossivu:</label>
-        <input type="text" id="result_link" value="{{ url_for('result', contest_id=contest.id, key=contest.private_key, _external=True) }}" readonly style="width:100%">
+        <input type="text" id="result_link" value="{{ url_for('main.result', contest_id=contest.id, key=contest.private_key, _external=True) }}" readonly style="width:100%">
         <small>Kopioi ja jaa tämä linkki niille, joiden haluat näkevän tulokset, jos tulokset eivät ole julkisia.</small>
     </p>
     {% endif %}

@@ -5,10 +5,8 @@ This module contains tests for routes, utility functions, and admin features.
 """
 
 import pytest
-from app import (
-    app, sanitize_input, is_valid_email, format_date,
-    format_text, total_pages
-)
+from app import app, format_date
+from utils import sanitize_input, is_valid_email, format_text, total_pages
 import users
 
 
@@ -132,13 +130,13 @@ class TestUtils:
 
 class TestAdminRoutes:
     def test_admin_route_without_super_user(self, client):
-        response = client.get('/admin')
+        response = client.get('/admin/')
         assert response.status_code == 403
 
     def test_admin_route_with_super_user(self, client):
         with client.session_transaction() as session:
             session['super_user'] = True
-        response = client.get('/admin')
+        response = client.get('/admin/')
         assert response.status_code == 200
         assert 'Ylläpito'.encode('utf-8') in response.data
 
@@ -177,7 +175,7 @@ class TestAdminRoutes:
         assert response.status_code == 403
 
     def test_admin_route_forbidden(self, client):
-        response = client.get('/admin')
+        response = client.get('/admin/')
         assert response.status_code == 403
 
 
