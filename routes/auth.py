@@ -14,9 +14,11 @@ from utils import check_csrf, sanitize_input, is_valid_email
 
 auth_bp = Blueprint('auth', __name__)
 
+
 @auth_bp.route("/register")
 def register():
     return render_template("register.html")
+
 
 @auth_bp.route("/create", methods=["POST"])
 def create():
@@ -63,6 +65,7 @@ def create():
 
     return redirect(url_for("auth.login", next_page="/"))
 
+
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
@@ -93,6 +96,7 @@ def login():
             return render_template("login.html", next_page=next_page, username=username)
 
     return redirect("/login")
+
 
 @auth_bp.route("/logout", methods=["POST"])
 def logout():

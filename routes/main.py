@@ -16,6 +16,7 @@ import sql
 
 main_bp = Blueprint('main', __name__)
 
+
 @main_bp.route("/")
 def index():
     contests_for_entry = sql.get_contests_for_entry(3)
@@ -27,6 +28,7 @@ def index():
         contests_for_review=contests_for_review,
         contests_for_results=contests_for_results
     )
+
 
 @main_bp.route("/contests/contest/<int:contest_id>")
 def contest(contest_id):
@@ -59,6 +61,7 @@ def contest(contest_id):
         source="contest"
     )
 
+
 @main_bp.route("/contests")
 def contests():
     page = request.args.get("page", 1, type=int)
@@ -77,6 +80,7 @@ def contests():
         total=total,
         today=today
     )
+
 
 @main_bp.route("/results")
 def results():
@@ -98,6 +102,7 @@ def results():
         today=today
     )
 
+
 @main_bp.route("/reviews")
 def reviews():
     page = request.args.get("page", 1, type=int)
@@ -116,9 +121,11 @@ def reviews():
         base_url="/reviews?page="
     )
 
+
 @main_bp.route("/terms_of_use")
 def terms_of_use():
     return render_template("terms_of_use.html")
+
 
 @main_bp.route("/result/<int:contest_id>")
 def result(contest_id):

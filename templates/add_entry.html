@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Osallistu – {{ contest.title }} – {{ site_name }}{% endblock %}
+{% block title %}Osallistu – {{ contest.title }} – {{ SITE_TITLE }}{% endblock %}
 {% block content %}
 <form action="" method="post" class="form-box" aria-label="Kilpailutyön lähetyslomake">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">

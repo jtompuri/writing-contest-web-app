@@ -12,6 +12,7 @@ Attributes:
 """
 
 secret_key = "8d394187c116a65f83ed7e0ee4ecf915"
+SITE_TITLE = "Kirjoituskilpailut"
 DATABASE = "database.db"
 DEFAULT_PER_PAGE = 5
 ADMIN_PER_PAGE = 20

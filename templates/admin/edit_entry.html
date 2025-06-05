@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Ylläpito: Muokkaa kilpailutyötä – {{ entry.contest_title }} – {{ site_name }}{% endblock %}
+{% block title %}Ylläpito: Muokkaa kilpailutyötä – {{ entry.contest_title }} – {{ SITE_TITLE }}{% endblock %}
 {% block content %}
 <form action="{{ url_for('admin.update_entry', entry_id=entry.id) }}" method="post" class="form-box"
     aria-label="Kilpailutyön muokkauslomake">

@@ -1,3 +1,28 @@
+"""Main Flask application setup for the Writing Contest Web App.
+
+This module initializes the Flask app, registers blueprints, sets up context processors,
+template filters, and global CSRF protection. It also injects configuration constants
+and site name into all templates.
+
+Blueprints:
+    main_bp (Blueprint): Handles public-facing routes.
+    auth_bp (Blueprint): Handles authentication-related routes.
+    admin_bp (Blueprint): Handles admin panel routes.
+    entries_bp (Blueprint): Handles entry-related routes.
+
+Context Processors:
+    inject_site_name: Injects the site name into all templates.
+    inject_config: Injects configuration constants into all templates.
+
+Template Filters:
+    format_date: Formats date strings for display.
+    richtext: Formats text with basic HTML (no links).
+    richtext_with_links: Formats text with basic HTML and links.
+
+Functions:
+    ensure_csrf_token: Ensures a CSRF token is present in the session for each request.
+"""
+
 import secrets
 from datetime import datetime
 
@@ -24,14 +49,10 @@ app.register_blueprint(entries_bp)
 
 
 @app.context_processor
-def inject_site_name():
-    return dict(site_name="Kirjoituskilpailut")
-
-
-@app.context_processor
 def inject_config():
     """Injects configuration constants into all templates."""
     return dict(
+        SITE_TITLE=getattr(config, "SITE_TITLE", "Kirjoituskilpailut"),
         TITLE_MAX_LENGTH=getattr(config, "TITLE_MAX_LENGTH", 100),
         SHORT_DESCRIPTION_MAX_LENGTH=getattr(config, "SHORT_DESCRIPTION_MAX_LENGTH", 255),
         LONG_DESCRIPTION_MAX_LENGTH=getattr(config, "LONG_DESCRIPTION_MAX_LENGTH", 2000),

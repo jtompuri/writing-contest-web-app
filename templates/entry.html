@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block title %}
 {% if source == "result" %}
-    {{ entry.author_name }}{% if entry.points is defined %} ({{ entry.points }} p.){% endif %} – {{ entry.contest_title }} – {{ site_name }}
+    {{ entry.author_name }}{% if entry.points is defined %} ({{ entry.points }} p.){% endif %} – {{ entry.contest_title }} – {{ SITE_TITLE }}
 {% elif not entry.anonymity or entry.review_end <= now %}
-    {{ entry.author_name }}{% if entry.points is defined %} ({{ entry.points }} p.){% endif %} – {{ entry.contest_title }} – {{ site_name }}
+    {{ entry.author_name }}{% if entry.points is defined %} ({{ entry.points }} p.){% endif %} – {{ entry.contest_title }} – {{ SITE_TITLE }}
 {% else %}
-    {{ entry.class_value }}{% if idx %} {{ idx }}{% endif %} – {{ entry.contest_title }} – {{ site_name }}
+    {{ entry.class_value }}{% if idx %} {{ idx }}{% endif %} – {{ entry.contest_title }} – {{ SITE_TITLE }}
 {% endif %}
 {% endblock %}
 {% block content %}

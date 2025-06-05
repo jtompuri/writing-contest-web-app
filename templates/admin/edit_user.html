@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Ylläpito: Muokkaa käyttäjää – {{ user.name }} – {{ site_name }}{% endblock %}
+{% block title %}Ylläpito: Muokkaa käyttäjää – {{ user.name }} – {{ SITE_TITLE }}{% endblock %}
 {% block content %}
 <form action="{{ url_for('admin.update_user', user_id=user.id) }}" method="post" class="form-box">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">

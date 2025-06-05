@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Ylläpito: Uusi kilpailutyö – {{ site_name }}{% endblock %}
+{% block title %}Ylläpito: Uusi kilpailutyö – {{ SITE_TITLE }}{% endblock %}
 {% block content %}
 <form action="{{ url_for('admin.new_entry') }}" method="post" class="form-box" aria-label="Kilpailutyön luontilomake">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">

@@ -17,6 +17,7 @@ from utils import check_csrf, sanitize_input
 
 entries_bp = Blueprint('entries', __name__)
 
+
 @entries_bp.route("/contests/contest/<int:contest_id>/add_entry", methods=["GET", "POST"])
 def add_entry(contest_id):
     if not session.get("user_id"):
@@ -74,6 +75,7 @@ def add_entry(contest_id):
 
     return redirect(url_for("main.index"))
 
+
 @entries_bp.route("/my_texts")
 def my_texts():
     if not session.get("user_id"):
@@ -96,6 +98,7 @@ def my_texts():
         page=page,
         today=today
     )
+
 
 @entries_bp.route("/entry/<int:entry_id>")
 def entry(entry_id):
@@ -121,6 +124,7 @@ def entry(entry_id):
             return redirect(url_for("main.reviews"))
 
     return render_template("entry.html", entry=entry, now=date.today().isoformat(), idx=idx, source=source)
+
 
 @entries_bp.route("/entry/<int:entry_id>/edit", methods=["GET", "POST"])
 def edit_entry(entry_id):
@@ -168,6 +172,7 @@ def edit_entry(entry_id):
                 return redirect(url_for("main.contest", contest_id=entry["contest_id"]))
             return redirect(url_for("entries.my_texts"))
 
+
 @entries_bp.route("/entry/<int:entry_id>/delete", methods=["POST"])
 def delete_entry(entry_id):
     if not session.get("user_id"):
@@ -183,6 +188,7 @@ def delete_entry(entry_id):
     sql.delete_entry(entry_id)
     flash("Teksti poistettu.")
     return redirect(url_for("entries.my_texts"))
+
 
 @entries_bp.route("/review/<int:contest_id>", methods=["GET", "POST"])
 def review(contest_id):
