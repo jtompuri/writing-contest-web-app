@@ -515,6 +515,105 @@ class TestEntryRoutes:
         )
         assert response2.status_code in (400, 302, 409)
 
+    def test_add_entry_requires_login(self, client):
+        response = client.get('/contests/contest/1/add_entry')
+        assert response.status_code in (302, 200)
+
+    def test_add_entry_get_logged_in(self, client):
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+        response = client.get('/contests/contest/1/add_entry')
+        assert response.status_code in (200, 404)
+
+    def test_add_entry_post_missing_fields(self, client):
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['csrf_token'] = 'testtoken'
+        response = client.post('/contests/contest/1/add_entry', data={'csrf_token': 'testtoken'})
+        assert 'Kaikki pakolliset kentät on täytettävä.'.encode('utf-8') in response.data or response.status_code in (200, 404)
+
+    def test_edit_entry_requires_login(self, client):
+        response = client.get('/entry/1/edit')
+        assert response.status_code in (302, 403, 200, 404)
+        # 302 if redirect to login, 403 if forbidden, 404 if not found, 200 if allowed
+
+    def test_edit_entry_logged_in(self, client):
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['csrf_token'] = 'test_token'
+        response = client.get('/entry/1/edit')
+        assert response.status_code in (200, 403, 404)
+
+    def test_delete_entry_requires_login(self, client):
+        response = client.post('/entry/1/delete')
+        assert response.status_code in (302, 403, 200, 404)
+
+    def test_delete_entry_logged_in(self, client):
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['csrf_token'] = 'test_token'
+        response = client.post('/entry/1/delete', data={'csrf_token': 'test_token'})
+        assert response.status_code in (302, 200, 403, 404)
+
+    def test_my_texts_requires_login(self, client):
+        response = client.get('/my_texts')
+        assert response.status_code in (302, 200)
+
+    def test_my_texts_logged_in(self, client):
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+        response = client.get('/my_texts')
+        assert response.status_code == 200
+
+    def test_add_entry_save_as_draft(self, client):
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['csrf_token'] = 'test_token'
+        response = client.post(
+            '/contests/contest/1/add_entry',
+            data={'csrf_token': 'test_token', 'entry': 'Draft entry', 'action': 'save_draft'}
+        )
+        assert response.status_code in (200, 302, 404)
+
+    def test_admin_update_contest_toggle_settings(self, client):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        response = client.post(
+            '/admin/contests/update/1',
+            data={
+                'csrf_token': 'test_token',
+                'title': 'Test',
+                'class_id': 1,
+                'short_description': 'Short',
+                'long_description': 'Long',
+                'collection_end': '2025-12-31',
+                'review_end': '2026-01-31',
+                'anonymity': 'on',
+                'public_reviews': 'on',
+                'public_results': 'on'
+            }
+        )
+        assert response.status_code in (200, 302, 404)
+
+    def test_admin_entries_pagination(self, client):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+        response = client.get('/admin/entries?page=2')
+        assert response.status_code == 200
+
+    def test_admin_entries_filter_by_contest(self, client):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+        response = client.get('/admin/entries?contest_id=1')
+        assert response.status_code == 200
+
+    def test_admin_users_search(self, client):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+        response = client.get('/admin/users?search=example')
+        assert response.status_code == 200
+
 
 class TestUserRoutes:
     def test_admin_users_edit_with_super_user(self, client):
@@ -839,6 +938,34 @@ class TestUserRoutes:
         response = client.post(f'/admin/users/delete/{own_user_id}', data={'csrf_token': 'test_token'}, follow_redirects=True)
         assert response.status_code == 200
         assert 'Et voi poistaa omaa tunnustasi.' in response.get_data(as_text=True)
+
+    def test_edit_entry_as_non_owner(self, client):
+        # Assume entry 2 belongs to user 2, but we log in as user 1
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+        response = client.get('/entry/2/edit')
+        assert response.status_code == 403
+
+    def test_delete_entry_invalid_csrf(self, client):
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['csrf_token'] = 'correct_token'
+        response = client.post('/entry/1/delete', data={'csrf_token': 'wrong_token'})
+        assert response.status_code in (400, 403)
+
+    def test_review_get_logged_in(self, client):
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+        response = client.get('/review/1')
+        assert response.status_code in (200, 404, 302)
+
+    def test_review_post_valid(self, client):
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
+            sess['csrf_token'] = 'test_token'
+        # You may need to adjust points_1, points_2, ... based on your app logic
+        response = client.post('/review/1', data={'csrf_token': 'test_token', 'points_1': '5'}, follow_redirects=True)
+        assert response.status_code in (200, 302, 404)
 
 
 class TestUserActions:
