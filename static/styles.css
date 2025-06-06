@@ -108,12 +108,12 @@ h3 {
 }
 
 h1 {
-    font-size: 31px;
+    font-size: 26px;
     margin-bottom: 16px;
 }
 
 h2 {
-    font-size: 25px;
+    font-size: 22px;
     margin-bottom: 16px;
 }
 
@@ -151,15 +151,15 @@ footer {
     background-color: var(--color-primary);
     padding: 1rem 0;
     color: var(--color-white);
-    font-family: Georgia, serif;
-    font-size: 32px;
-    font-weight: bold;
 }
 
 .logo {
     width: auto;
     max-width: 350px;
     height: auto;
+    font-family: Georgia, serif;
+    font-size: 28px;
+    font-weight: bold;
 }
 
 .logo-bar-inner {
@@ -172,9 +172,6 @@ footer {
 .logo-title:visited,
 .logo-title:active,
 .logo-title:focus {
-    font-family: Georgia, serif;
-    font-size: 32px;
-    font-weight: bold;
     color: var(--color-white);
     text-decoration: none;
 }
@@ -229,6 +226,28 @@ footer {
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
     height: 100%;
+}
+
+/* Highlight profile icon link on focus and use login color */
+.profile-link {
+    line-height: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 4px;
+    margin: 0 0 0 -4px;
+    border: none;
+    transition: background-color 0.2s;
+    display: inline-block;    
+    color: var(--color-white);
+}
+
+.profile-link:hover {
+    color: var(--color-white);
+    background-color: var(--color-primary-light);
+}
+
+.profile-link:visited {
+    color: var(--color-white);
 }
 
 /* =========================
@@ -412,7 +431,6 @@ form.form-box fieldset label {
 form.form-box .large-checkbox {
     transform: scale(1.2);
     margin-right: 0.5rem;
-    vertical-align: sub;
 }
 
 input[type="checkbox"].large-checkbox {

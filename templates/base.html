@@ -20,16 +20,24 @@
                 {% endif %}
                 <div class="user-actions" style="display: flex; align-items: center;">
                     {% if session.user_id %}
-                    <a href="{{ url_for('auth.edit_profile') }}" class="btn btn-small" style="margin-right: 0.5rem;">
-                        Muokkaa profiilia
-                    </a>
-                    <form action="{{ url_for('auth.logout') }}" method="post" style="display:inline;">
+                    <form action="{{ url_for('auth.logout') }}" method="post">
                         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                         <button type="submit" class="btn btn-primary btn-small" aria-label="Kirjaudu ulos">Kirjaudu
                             ulos</button>
                     </form>
+                    <a href="{{ url_for('auth.edit_profile') }}"
+                       class="profile-link"
+                       title="Muokkaa profiilia"
+                       aria-label="Muokkaa profiilia">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2" fill="none" />
+                            <path stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"
+                                  stroke-linejoin="round" d="M4 20c0-2.5 3.6-4.5 8-4.5s8 2 8 4.5" />
+                        </svg>
+                    </a>
                     {% else %}
-                    <form action="{{ url_for('auth.login') }}" method="get" style="display:inline;">
+                    <form action="{{ url_for('auth.login') }}" method="get">
                         <button type="submit" class="btn btn-primary btn-small" aria-label="Kirjaudu sisään">Kirjaudu
                             sisään</button>
                     </form>
