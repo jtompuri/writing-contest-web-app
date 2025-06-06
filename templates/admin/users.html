@@ -11,7 +11,7 @@
     <thead>
         <tr>
             <th scope="col" class="td-left">Nimi</th>
-            <th scope="col" class="td-left">Käyttäjänimi</th>
+            <th scope="col" class="td-left">Sähköposti</th>
             <th scope="col" class="td-center">Pääkäyttäjä</th>
             <th scope="col"></th>
         </tr>
@@ -20,7 +20,7 @@
                 <input type="text" name="name_search" value="{{ name_search or '' }}" placeholder="Etsi nimellä" maxlength="100">
             </td>
             <td>
-                <input type="text" name="username_search" value="{{ username_search or '' }}" placeholder="Etsi käyttäjätunnuksella" maxlength="100">
+                <input type="text" name="username_search" value="{{ username_search or '' }}" placeholder="Etsi sähköpostiosoitteella" maxlength="100">
             </td>
             <td>
                 <select name="super_user" class="form-box">
