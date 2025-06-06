@@ -54,7 +54,7 @@ Voit kirjautua demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja sala
 
 Jos luot tyhjän tietokannan, niin ensimmäisestä rekisteröidystä käyttäjästä tulee automaattisesti pääkäyttäjä, joka voi luoda, muokata ja poistaa käyttäjiä, kilpailuja ja kilpailutöitä.
 
-Voit luoda toisen käyttäjätunnuksen, jolla on peruskäyttäjän oikeudet. Peruskäyttäjä ei näe Ylläpito-välilehteä. Kirjautumaton käyttäjä ei näe Arvioi, Tekstisi ja Ylläpito-välilehtiä.
+Kirjautumaton käyttäjä ei näe Arvioi, Tekstisi ja Ylläpito-välilehtiä. Voit luoda toisen käyttäjätunnuksen, jolla on peruskäyttäjän oikeudet. Peruskäyttäjä ei näe Ylläpito-välilehteä. 
 
 ## Työn eteneminen
 
