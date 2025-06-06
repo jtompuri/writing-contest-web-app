@@ -25,8 +25,11 @@ $ sqlite3 --version
 
 Jos komentoa ei löydy, asenna `sqlite3`:
 ```
-Linux: $ sudo apt install sqlite3
-Mac: $ $brew install sqlite3
+Linux: 
+$ sudo apt install sqlite3
+
+Mac: 
+$ $brew install sqlite3
 ```
 
 Jos asennuksessa on ongelmia, voit asentaa kaikki riippuvuudet komennolla:
