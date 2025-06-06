@@ -38,6 +38,12 @@ Luo tietokanta demosisällöllä:
 $ sqlite3 database.db < init.sql
 ```
 
+
+Vaihtoehtoisesti luo tyhjä tietokanta:
+```
+$ sqlite3 database.db < schema.sql
+```
+
 Voit käynnistää sovelluksen näin:
 
 ```
