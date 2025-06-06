@@ -39,7 +39,7 @@ $ sqlite3 database.db < init.sql
 ```
 
 
-Vaihtoehtoisesti luo tyhjä tietokanta:
+Vaihtoehtoisesti luo lähes tyhjä tietokanta (vain kirjallisuuslajit luodaan valmiiksi):
 ```
 $ sqlite3 database.db < schema.sql
 ```
