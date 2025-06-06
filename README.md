@@ -32,7 +32,7 @@ Mac:
 $ $brew install sqlite3
 ```
 
-Jos asennuksessa on ongelmia, voit asentaa kaikki riippuvuudet komennolla:
+Jos asennuksessa on ongelmia, asenna kaikki riippuvuudet komennolla:
 ```
 $ pip install -r requirements.txt
 ```
