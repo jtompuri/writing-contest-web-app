@@ -10,7 +10,7 @@
             value="{{ session.get('form_data', {}).get('name', '') }}" required>
     </p>
     <p>
-        <label for="username">Sähköposti (käyttäjätunnus):</label>
+        <label for="username">Sähköposti:</label>
         <input type="email" name="username" id="username" maxlength="{{ FIELD_MAX_LENGTH }}"
             value="{{ session.get('form_data', {}).get('username', '') }}" required>
     </p>
