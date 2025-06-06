@@ -58,6 +58,10 @@ CREATE TABLE classes (
     value TEXT
 );
 
+INSERT INTO classes VALUES(1,'Runo','Runo');
+INSERT INTO classes VALUES(2,'Aforismi','Aforismi');
+INSERT INTO classes VALUES(3,'Essee','Essee');
+
 -- Indexes for performance. Comment out when benchmarking indexes.
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 CREATE INDEX IF NOT EXISTS idx_entries_contest_user ON entries(contest_id, user_id);
