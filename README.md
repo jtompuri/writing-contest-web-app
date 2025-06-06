@@ -11,8 +11,9 @@ $ pip install flask
 ```
 
 
-Luo virtuaaliympäristö (Linux/Mac):
+Luo virtuaaliympäristö (valinnainen):
 ```
+Linux/Mac:
 $ python3 -m venv venv 
 $ source venv/bin/activate
 ```
