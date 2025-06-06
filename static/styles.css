@@ -2,6 +2,7 @@
    Writing Contest Web App - Main Stylesheet
    --------------------------------------------------------------------------
    Structure:
+   - CSS Color Variables
    - Base & Typography
    - Layout & Containers
    - Logo & Navigation
@@ -9,25 +10,25 @@
    - Buttons
    - Forms
    - Tables
-   - Lists & Contest Components
    - Filters & Pagination
    - Responsive Design
+   - Review Cards
 
    Naming conventions:
    - .btn, .btn-primary, .btn-secondary, .btn-small: Button styles
    - .input-chars-XX: Input width for XX characters (e.g., .input-chars-30)
    - .form-box: Main form container
-   - .form-group: Spacing for label+input pairs
    - .admin-table: Admin tables
    - .filter-input: Filter/search fields
+   - .pill-tag: Tag/pill style for labels
 
    Guidelines:
    - Use semantic HTML and ARIA attributes for accessibility.
    - Use .btn classes for all buttons and button-like links.
    - Use .input-chars-XX for input sizing, not inline styles.
-   - Use .form-group for consistent form spacing.
    - Keep section comments for easy navigation.
    - Remove unused styles regularly.
+   - Use CSS variables for all color values for consistency and easy theming.
 
    For accessibility and responsive design, see section comments below.
    ========================================================================== */
