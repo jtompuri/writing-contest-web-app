@@ -22,11 +22,45 @@ def index():
     contests_for_entry = sql.get_contests_for_entry(3)
     contests_for_review = sql.get_contests_for_review(3)
     contests_for_results = sql.get_contests_for_results(3)
+
+    # Get winners for the latest contest with results
+    winners = []
+    latest_result = None
+    if contests_for_results:
+        # Find the latest contest with public_results == True
+        for c in contests_for_results:
+            if c["public_results"]:
+                latest_result = dict(c)  # Convert Row to dict
+                break
+        if latest_result:
+            winners = sql.get_contest_results(latest_result["id"])[:3]
+            for i in range(len(winners)):
+                winner = dict(winners[i])  # Convert Row to dict
+                winner["id"] = winner.get("entry_id", winner.get("id"))
+                # Only set contest-level fields if not present in the entry
+                for field in [
+                    "short_description", "class_value", "anonymity", "public_reviews",
+                    "public_results", "review_end", "collection_end", "total_entries"
+                ]:
+                    if field not in winner or winner[field] in (None, ""):
+                        winner[field] = latest_result.get(field, "")
+                winners[i] = winner  # Replace with dict
+
+    # After fetching winners and latest_result
+    for winner in winners:
+        if "review_end" not in winner and latest_result and "review_end" in latest_result:
+            winner["review_end"] = latest_result["review_end"]
+
+    today = date.today().isoformat()  # Add this line
+
     return render_template(
         "index.html",
         contests_for_entry=contests_for_entry,
         contests_for_review=contests_for_review,
-        contests_for_results=contests_for_results
+        contests_for_results=contests_for_results,
+        winners=winners,
+        latest_result=latest_result,
+        today=today  # Pass today to the template
     )
 
 
