@@ -50,11 +50,11 @@
     <div style="margin-top:0.5em; text-align: right;">
         <form action="{{ url_for('entries.edit_entry', entry_id=_contest.entry_id) }}" method="get" style="display:inline;">
             <input type="hidden" name="source" value="my_texts">
-            <button type="submit" class="btn btn-small">Muokkaa</button>
+            <button type="submit" class="btn btn-secondary btn-small">Muokkaa</button>
         </form>
         <form action="{{ url_for('entries.delete_entry', entry_id=_contest.entry_id) }}" method="post" style="display:inline;">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            <button type="submit" class="btn btn-small" onclick="return confirm('Haluatko varmasti poistaa tekstin?')">Poista</button>
+            <button type="submit" class="btn btn-secondary btn-small" onclick="return confirm('Haluatko varmasti poistaa tekstin?')">Poista</button>
         </form>
     </div>
     {% endif %}
