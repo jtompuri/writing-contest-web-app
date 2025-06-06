@@ -46,13 +46,14 @@ import db
 # -------------------------------
 
 
-def get_all_contests(limit=None, offset=None):
+def get_all_contests(limit=None, offset=None, title_search=None):
     """
     Retrieve all contests from the database, including their class information, ordered by collection end date.
 
     Args:
         limit (int, optional): Maximum number of contests to return.
         offset (int, optional): Number of contests to skip before starting to return results.
+        title_search (str, optional): Search term to filter contests by title.
 
     Returns:
         list: A list of contests.
@@ -62,9 +63,12 @@ def get_all_contests(limit=None, offset=None):
                contests.review_end, classes.value AS class_value
         FROM contests
         JOIN classes ON contests.class_id = classes.id
-        ORDER BY contests.collection_end DESC
     """
     params = []
+    if title_search:
+        query += " WHERE contests.title LIKE ?"
+        params.append(f"%{title_search}%")
+    query += " ORDER BY contests.collection_end DESC"
     if limit is not None:
         query += " LIMIT ?"
         params.append(limit)
@@ -185,7 +189,7 @@ def delete_contest(contest_id):
 
 def get_contests_for_entry(limit=None, offset=None):
     """
-    Retrieve contests available for entry, ordered by collection end date.
+    Retrieve contests available for entry, ordered by collection end date descending.
 
     Args:
         limit (int, optional): Maximum number of contests to return.
@@ -201,7 +205,7 @@ def get_contests_for_entry(limit=None, offset=None):
             FROM contests
             JOIN classes ON contests.class_id = classes.id
             WHERE contests.collection_end >= DATE('now')
-            ORDER BY contests.collection_end"""
+            ORDER BY contests.collection_end DESC"""
     if limit is not None:
         query += " LIMIT " + str(limit)
     if offset is not None:
@@ -211,7 +215,7 @@ def get_contests_for_entry(limit=None, offset=None):
 
 def get_contests_for_review(limit=None, offset=None):
     """
-    Retrieve contests available for review, ordered by collection end date.
+    Retrieve contests available for review, ordered by review end date descending.
 
     Args:
         limit (int, optional): Maximum number of contests to return.
@@ -229,7 +233,7 @@ def get_contests_for_review(limit=None, offset=None):
             WHERE contests.review_end >= DATE('now')
                 AND contests.collection_end < DATE('now')
                 AND contests.public_reviews = 1
-            ORDER BY contests.collection_end"""
+            ORDER BY contests.review_end DESC"""
     if limit is not None:
         query += " LIMIT " + str(limit)
     if offset is not None:
@@ -239,7 +243,7 @@ def get_contests_for_review(limit=None, offset=None):
 
 def get_contests_for_results(limit=None, offset=None):
     """
-    Retrieve contests with results available, ordered by collection end date.
+    Retrieve contests with results available, ordered by collection end date descending.
 
     Args:
         limit (int, optional): Maximum number of contests to return.
@@ -256,7 +260,7 @@ def get_contests_for_results(limit=None, offset=None):
             JOIN classes ON contests.class_id = classes.id
             WHERE contests.review_end < DATE('now')
                 AND contests.public_results = 1
-            ORDER BY contests.collection_end"""
+            ORDER BY contests.collection_end DESC"""
     if limit is not None:
         query += " LIMIT " + str(limit)
     if offset is not None:
@@ -264,15 +268,20 @@ def get_contests_for_results(limit=None, offset=None):
     return db.query(query)
 
 
-def get_contest_count():
+def get_contest_count(title_search=None):
     """
     Retrieve the total number of contests.
 
     Returns:
         int: The total number of contests.
     """
-    result = db.query("SELECT COUNT(*) FROM contests")
-    return result[0][0]
+    query = "SELECT COUNT(*) FROM contests"
+    params = []
+    if title_search:
+        query += " WHERE title LIKE ?"
+        params.append(f"%{title_search}%")
+    result = db.query(query, params)
+    return result[0][0] if result else 0
 
 
 def create_contest(title, class_id, short_description, long_description,
