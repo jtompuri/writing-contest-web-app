@@ -29,7 +29,7 @@ Linux:
 $ sudo apt install sqlite3
 
 Mac: 
-$ $brew install sqlite3
+$ brew install sqlite3
 ```
 
 Jos asennuksessa on ongelmia, asenna yhteensopivat versiot riippuvuuksista:
