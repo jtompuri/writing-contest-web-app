@@ -41,7 +41,7 @@ Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 	- [x] Käyttäjä pystyy etsimään tietokohteita hakusanalla tai muulla perusteella.
 - [x] README.md-tiedoston tulee kuvata, mikä on sovelluksen nykyinen tilanne.
 
-### Välipalautus 3 (15.6.2025)
+### Välipalautus 3 (15.6.2025) ✅
 
 - [x] Tavoitteena on, että sovelluksessa on ainakin seuraavat toiminnot:
 	- [x] Sovelluksessa on käyttäjäsivut, jotka näyttävät tilastoja ja käyttäjän lisäämät tietokohteet.
