@@ -19,11 +19,13 @@
     </p>
     <p>
         <label for="short_description">Lyhyt kuvaus:</label>
-        <input type="text" name="short_description" id="short_description" maxlength="{{ SHORT_DESCRIPTION_MAX_LENGTH }}" required>
+        <input type="text" name="short_description" id="short_description"
+            maxlength="{{ SHORT_DESCRIPTION_MAX_LENGTH }}" required>
     </p>
     <p>
         <label for="long_description">Pitkä kuvaus:</label>
-        <textarea name="long_description" id="long_description" rows="15" maxlength="{{ LONG_DESCRIPTION_MAX_LENGTH }}" required></textarea>
+        <textarea name="long_description" id="long_description" rows="15" maxlength="{{ LONG_DESCRIPTION_MAX_LENGTH }}"
+            required></textarea>
     </p>
     <fieldset style="margin-top: 1rem;">
         <legend class="visually-hidden">Asetukset</legend>
@@ -37,7 +39,7 @@
         </label>
         <label>
             <input type="checkbox" name="public_results" class="large-checkbox" aria-label="Tulokset ovat julkisia">
-            Tulokset julkisia: kaikki näkevät kilpailun tulokset 
+            Tulokset julkisia: kaikki näkevät kilpailun tulokset
         </label>
     </fieldset>
     <p>

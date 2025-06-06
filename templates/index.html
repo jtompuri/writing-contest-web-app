@@ -8,4 +8,51 @@
     <a href="{{ url_for('auth.register') }}">Rekisteröidy</a> ja
     <a href="{{ url_for('auth.login') }}">kirjaudu sisään</a> osallistuaksesi.
 </p>
+
+<section class="front-feature">
+    <h2>Uusin kilpailu</h2>
+    {% if contests_for_entry %}
+    {% set latest_contest = contests_for_entry[0] %}
+    <div class="contest-highlight">
+        <h3>{{ latest_contest.title }}</h3>
+        <p>{{ latest_contest.description }}</p>
+        <p><strong>Viimeinen osallistumispäivä:</strong> {{ latest_contest.collection_end }}</p>
+        <a href="{{ url_for('main.contest', contest_id=latest_contest.id) }}" class="btn btn-primary">Osallistu nyt</a>
+    </div>
+    {% else %}
+    <p>Ei käynnissä olevia kilpailuja juuri nyt.</p>
+    {% endif %}
+</section>
+
+<section class="front-feature">
+    <h2>Viimeisimmät tulokset</h2>
+    {% if contests_for_results %}
+    {% set latest_result = contests_for_results[0] %}
+    <div class="result-highlight">
+        <h3>{{ latest_result.title }}</h3>
+        <p><strong>Voittajat julkistettu:</strong> {{ latest_result.review_end }}</p>
+        <a href="{{ url_for('main.result', contest_id=latest_result.id) }}" class="btn btn-secondary">Katso tulokset</a>
+    </div>
+    {% else %}
+    <p>Ei julkaistuja tuloksia vielä.</p>
+    {% endif %}
+</section>
+
+<section class="front-feature">
+    <h2>Viimeisimmän kilpailun voittajat</h2>
+    {% if contests_for_results %}
+    {% set latest_result = contests_for_results[0] %}
+    {% set winners = sql.get_contest_results(latest_result.id)[:3] %}
+    <ol class="winner-list">
+        {% for winner in winners %}
+        <li>
+            <strong>{{ winner.placement }}. sija:</strong> {{ winner.author_name }} – <em>{{ winner.title }}</em>
+        </li>
+        {% endfor %}
+    </ol>
+    <a href="{{ url_for('main.result', contest_id=latest_result.id) }}" class="btn btn-secondary">Kaikki tulokset</a>
+    {% else %}
+    <p>Voittajat julkaistaan pian!</p>
+    {% endif %}
+</section>
 {% endblock %}

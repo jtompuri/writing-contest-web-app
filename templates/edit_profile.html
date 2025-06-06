@@ -34,7 +34,8 @@
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <h2>Poista käyttäjäprofiili</h2>
     <p>Voit poistaa käyttäjäprofiilisi pysyvästi. Tämä poistaa myös kaikki palveluun jättämäsi kilpailutyöt ja
-        arviot. Huomaa, että voit muokata ja poistaa kilpailutöitäsi kilpailun keräysvaiheen aikana <a href="{{ url_for('entries.my_texts') }}">Tekstisi-sivulla</a>.</p>
+        arviot. Huomaa, että voit muokata ja poistaa kilpailutöitäsi kilpailun keräysvaiheen aikana <a
+            href="{{ url_for('entries.my_texts') }}">Tekstisi-sivulla</a>.</p>
     <button type="submit" class="btn btn-secondary" style="background:#fff0f0;color:#a00;border:1px solid #a00;">Poista
         profiili pysyvästi</button>
     <small id="password-help">Varoitus: tätä toimenpidettä ei voi peruuttaa.</small>

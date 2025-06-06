@@ -17,13 +17,15 @@
     </p>
     <p>
         <label for="password1">Salasana:</label>
-        <input type="password" name="password1" id="password1" maxlength="{{ FIELD_MAX_LENGTH }}" minlength="{{ PASSWORD_MIN_LENGTH }}" required
-            aria-describedby="password-help" autocomplete="new-password" />
+        <input type="password" name="password1" id="password1" maxlength="{{ FIELD_MAX_LENGTH }}"
+            minlength="{{ PASSWORD_MIN_LENGTH }}" required aria-describedby="password-help"
+            autocomplete="new-password" />
         <small id="password-help">Vähintään 8 merkkiä pitkä.</small>
     </p>
     <p>
         <label for="password2">Salasana uudestaan:</label>
-        <input type="password" name="password2" id="password2" maxlength="{{ FIELD_MAX_LENGTH }}" required autocomplete="new-password" />
+        <input type="password" name="password2" id="password2" maxlength="{{ FIELD_MAX_LENGTH }}" required
+            autocomplete="new-password" />
     </p>
     <p>
         <button type="submit" class="btn btn-primary">Luo tunnus</button>
