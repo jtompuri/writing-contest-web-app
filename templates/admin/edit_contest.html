@@ -6,7 +6,7 @@
     <h1>Muokkaa kilpailua</h1>
     <p>
         <label for="title">Otsikko:</label>
-        <input type="text" name="title" id="title" minlength="{{ TITLE_MAX_LENGTH }}" required value="{{ contest.title }}">
+        <input type="text" name="title" id="title" maxlength="{{ TITLE_MAX_LENGTH }}" required value="{{ contest.title }}">
     </p>
     <p>
         <label for="class_id">Laji:</label>
@@ -21,12 +21,12 @@
     </p>
     <p>
         <label for="short_description">Lyhyt kuvaus:</label>
-        <input type="text" name="short_description" id="short_description" minlength="{{ SHORT_DESCRIPTION_MAX_LENGTH }}"
+        <input type="text" name="short_description" id="short_description" maxlength="{{ SHORT_DESCRIPTION_MAX_LENGTH }}"
             value="{{ contest.short_description }}" required>
     </p>
     <p>
         <label for="long_description">Pitkä kuvaus:</label>
-        <textarea name="long_description" id="long_description" rows="10" minlength="{{ LONG_DESCRIPTION_MAX_LENGTH }}"
+        <textarea name="long_description" id="long_description" rows="10" maxlength="{{ LONG_DESCRIPTION_MAX_LENGTH }}"
             required>{{ contest.long_description }}</textarea>
     </p>
     <fieldset>
@@ -63,14 +63,14 @@
     </p>
     {% if contest.private_key %}
     <p>
-        <label for="review_link">Arviointilinkki:</label>
+        <label for="review_link">Linkki arviointiin:</label>
         <input type="text" id="review_link" value="{{ url_for('entries.review', contest_id=contest.id, key=contest.private_key, _external=True) }}" readonly style="width:100%">
-        <small>Kopioi ja jaa tämä linkki arvioijille, jos arviointi ei ole julkinen.</small>
+        <small>Jaa tämä linkki arvioijille, jos arviointi ei ole julkinen.</small>
     </p>
     <p>
-        <label for="result_link">Tulossivu:</label>
+        <label for="result_link">Linkki tulossivuun:</label>
         <input type="text" id="result_link" value="{{ url_for('main.result', contest_id=contest.id, key=contest.private_key, _external=True) }}" readonly style="width:100%">
-        <small>Kopioi ja jaa tämä linkki niille, joiden haluat näkevän tulokset, jos tulokset eivät ole julkisia.</small>
+        <small>Jaa tämä linkki niille, joiden haluat näkevän tulokset, jos tulokset eivät ole julkisia.</small>
     </p>
     {% endif %}
     <p>
