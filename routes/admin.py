@@ -26,11 +26,17 @@ def admin():
     contest_count = sql.get_contest_count()
     user_count = users.get_user_count()
     entry_count = sql.get_entry_count()
+    contests_collection = sql.get_contests_for_entry(limit=3)
+    contests_review = sql.get_contests_for_review(limit=3)
+    contests_results = sql.get_contests_for_results(limit=3)
     return render_template(
         "admin/index.html",
         contest_count=contest_count,
         user_count=user_count,
-        entry_count=entry_count
+        entry_count=entry_count,
+        contests_collection=contests_collection,
+        contests_review=contests_review,
+        contests_results=contests_results
     )
 
 
@@ -42,8 +48,10 @@ def admin_contests():
     per_page = config.ADMIN_PER_PAGE
     offset = (page - 1) * per_page
 
-    contests = sql.get_all_contests(limit=per_page, offset=offset)
-    total = sql.get_contest_count()
+    title_search = request.args.get("title_search", "", type=str).strip()
+
+    contests = sql.get_all_contests(limit=per_page, offset=offset, title_search=title_search)
+    total = sql.get_contest_count(title_search=title_search)
 
     return render_template(
         "admin/contests.html",
@@ -52,7 +60,8 @@ def admin_contests():
         per_page=per_page,
         total=total,
         total_pages=total_pages(total, per_page),
-        base_url="/admin/contests?page="
+        base_url="/admin/contests?page=",
+        title_search=title_search
     )
 
 
@@ -64,8 +73,22 @@ def admin_users():
     per_page = config.ADMIN_PER_PAGE
     offset = (page - 1) * per_page
 
-    users_list = users.get_all_users(limit=per_page, offset=offset)
-    total = users.get_user_count()
+    name_search = request.args.get("name_search", "", type=str).strip()
+    username_search = request.args.get("username_search", "", type=str).strip()
+    super_user_filter = request.args.get("super_user", "")
+
+    users_list = users.get_all_users(
+        limit=per_page,
+        offset=offset,
+        name_search=name_search,
+        username_search=username_search,
+        super_user=super_user_filter
+    )
+    total = users.get_user_count(
+        name_search=name_search,
+        username_search=username_search,
+        super_user=super_user_filter
+    )
 
     return render_template(
         "admin/users.html",
@@ -74,7 +97,10 @@ def admin_users():
         per_page=per_page,
         total=total,
         total_pages=total_pages(total, per_page),
-        base_url="/admin/users?page="
+        base_url="/admin/users?page=",
+        name_search=name_search,
+        username_search=username_search,
+        super_user_filter=super_user_filter
     )
 
 
@@ -308,7 +334,7 @@ def update_user(user_id):
             if len(password) < 8:
                 flash("Salasanan on oltava vähintään 8 merkkiä pitkä.")
                 return redirect(url_for("admin.edit_user", user_id=user_id))
-            users.update_password(user_id, password)
+            users.update_user_password(user_id, password)
 
         flash("Käyttäjän tiedot päivitetty.")
         return redirect(url_for("admin.admin_users"))
