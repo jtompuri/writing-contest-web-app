@@ -23,7 +23,7 @@ Tarkista, että `sqlite3` on asennetuna:
 $ sqlite3 --version
 ```
 
-Jos `sqlite3` ei löydy, asenna:
+Jos `sqlite3` ei löydy, asenna se:
 ```
 Linux: 
 $ sudo apt install sqlite3
