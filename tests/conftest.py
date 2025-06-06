@@ -5,12 +5,17 @@ including the Flask test client.
 """
 
 import pytest
-from app import app
+from app import app as flask_app
 
 
 @pytest.fixture
-def client():
-    app.config['TESTING'] = True
-    app.config['SECRET_KEY'] = 'test_secret_key'
+def app():
+    flask_app.config['TESTING'] = True
+    flask_app.config['SECRET_KEY'] = 'test_secret_key'
+    return flask_app
+
+
+@pytest.fixture
+def client(app):
     with app.test_client() as client:
         yield client

@@ -63,8 +63,92 @@ class TestAdminRoutes:
         response = client.get('/admin/')
         assert response.status_code == 403
 
+    def test_admin_index_contest_phase_listings(self, client, monkeypatch):
+        # Mock contest data for each phase
+        contests_collection = [
+            {"id": 1, "title": "Keräysvaihe", "short_description": "Keräyskuvaus", "class_value": "Runo", "anonymity": 1, "public_reviews": 1, "public_results": 1, "collection_end": "2025-12-31", "review_end": "2026-01-31"}
+        ]
+        contests_review = [
+            {"id": 2, "title": "Arviointivaihe", "short_description": "Arviointikuvaus", "class_value": "Novelli", "anonymity": 0, "public_reviews": 0, "public_results": 1, "collection_end": "2024-12-31", "review_end": "2025-01-31"}
+        ]
+        contests_results = [
+            {"id": 3, "title": "Tulokset", "short_description": "Tuloksetkuvaus", "class_value": "Essee", "anonymity": 1, "public_reviews": 1, "public_results": 1, "collection_end": "2023-12-31", "review_end": "2024-01-31"}
+        ]
 
-class TestUserRoutes:
+        monkeypatch.setattr("sql.get_contests_for_entry", lambda *a, **kw: contests_collection)
+        monkeypatch.setattr("sql.get_contests_for_review", lambda *a, **kw: contests_review)
+        monkeypatch.setattr("sql.get_contests_for_results", lambda *a, **kw: contests_results)
+
+        with client.session_transaction() as sess:
+            sess['super_user'] = True
+
+        response = client.get('/admin/')
+        html = response.get_data(as_text=True)
+        assert "Keräysvaihe" in html
+        assert "Arviointivaihe" in html
+        assert "Tulokset" in html
+        assert "Keräyskuvaus" in html
+        assert "Arviointikuvaus" in html
+        assert "Tuloksetkuvaus" in html
+
+    def test_admin_index_shows_only_latest_three_per_phase(self, client, monkeypatch):
+        # Mock 5 contests, only 3 latest should be shown
+        contests_collection = [
+            {"id": i, "title": f"Keräys {i}", "short_description": f"Kuvaus {i}", "class_value": "Runo", "anonymity": 1, "public_reviews": 1, "public_results": 1, "collection_end": f"2025-12-{30-i}", "review_end": f"2026-01-{31-i}"} for i in range(5)
+        ]
+        monkeypatch.setattr("sql.get_contests_for_entry", lambda *a, **kw: contests_collection[:3])
+        monkeypatch.setattr("sql.get_contests_for_review", lambda *a, **kw: [])
+        monkeypatch.setattr("sql.get_contests_for_results", lambda *a, **kw: [])
+
+        with client.session_transaction() as sess:
+            sess['super_user'] = True
+
+        response = client.get('/admin/')
+        html = response.get_data(as_text=True)
+        assert "Keräys 0" in html
+        assert "Keräys 1" in html
+        assert "Keräys 2" in html
+        assert "Keräys 3" not in html
+        assert "Keräys 4" not in html
+
+    def test_admin_index_contest_details_rendered(self, client, monkeypatch):
+        contests_collection = [
+            {"id": 1, "title": "Testikisa", "short_description": "Lyhyt kuvaus", "class_value": "Runo", "anonymity": 1, "public_reviews": 0, "public_results": 1, "collection_end": "2025-12-31", "review_end": "2026-01-31"}
+        ]
+        monkeypatch.setattr("sql.get_contests_for_entry", lambda *a, **kw: contests_collection)
+        monkeypatch.setattr("sql.get_contests_for_review", lambda *a, **kw: [])
+        monkeypatch.setattr("sql.get_contests_for_results", lambda *a, **kw: [])
+
+        with client.session_transaction() as sess:
+            sess['super_user'] = True
+
+        response = client.get('/admin/')
+        html = response.get_data(as_text=True)
+        assert "Testikisa" in html
+        assert "Lyhyt kuvaus" in html
+        assert "Anonyymi arviointi" in html
+        assert "Tulokset julkisia" in html
+        assert "Ei-julkinen arviointi" in html
+
+    def test_admin_index_contest_links(self, client, monkeypatch):
+        contests_collection = [
+            {"id": 1, "title": "Linkkitesti", "short_description": "Kuvaus", "class_value": "Runo", "anonymity": 1, "public_reviews": 1, "public_results": 1, "collection_end": "2025-12-31", "review_end": "2026-01-31"}
+        ]
+        monkeypatch.setattr("sql.get_contests_for_entry", lambda *a, **kw: contests_collection)
+        monkeypatch.setattr("sql.get_contests_for_review", lambda *a, **kw: [])
+        monkeypatch.setattr("sql.get_contests_for_results", lambda *a, **kw: [])
+
+        with client.session_transaction() as sess:
+            sess['super_user'] = True
+
+        response = client.get('/admin/')
+        html = response.get_data(as_text=True)
+        # Use the actual route
+        from flask import url_for
+        with client.application.app_context():
+            contest_url = url_for('main.contest', contest_id=1)
+        assert f'href="{contest_url}"' in html
+
     def test_admin_users_edit_with_super_user(self, client):
         from app import app
         with app.app_context():
