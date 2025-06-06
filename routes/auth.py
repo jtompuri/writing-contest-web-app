@@ -103,3 +103,47 @@ def logout():
     check_csrf()
     session.clear()
     return redirect("/")
+
+
+@auth_bp.route("/profile/edit", methods=["GET", "POST"])
+def edit_profile():
+    if "user_id" not in session:
+        return redirect(url_for("auth.login"))
+    user = users.get_user(session["user_id"])
+    if not user:
+        flash("Käyttäjää ei löytynyt.")
+        return redirect("/")
+    if request.method == "POST":
+        check_csrf()
+        name = sanitize_input(request.form["name"])
+        password1 = request.form.get("password1", "")
+        password2 = request.form.get("password2", "")
+        errors = []
+        if not name or len(name) > 50:
+            errors.append("Nimi ei saa olla tyhjä tai liian pitkä.")
+        if password1 or password2:
+            if password1 != password2:
+                errors.append("Salasanat eivät täsmää.")
+            elif len(password1) < 8:
+                errors.append("Salasanan on oltava vähintään 8 merkkiä pitkä.")
+        if errors:
+            for error in errors:
+                flash(error)
+            return render_template("edit_profile.html", user=user)
+        users.update_user_name(user["id"], name)
+        if password1:
+            users.update_user_password(user["id"], password1)
+        flash("Profiili päivitetty.")
+        return redirect(url_for("auth.edit_profile"))
+    return render_template("edit_profile.html", user=user)
+
+
+@auth_bp.route("/profile/delete", methods=["POST"])
+def delete_profile():
+    if "user_id" not in session:
+        return redirect(url_for("auth.login"))
+    check_csrf()
+    users.delete_user(session["user_id"])
+    session.clear()
+    flash("Profiili poistettu pysyvästi.")
+    return redirect("/")

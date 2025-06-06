@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Muokkaa profiilia{% endblock %}
+{% block content %}
+<form action="{{ url_for('auth.edit_profile') }}" method="post" class="form-box">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    <h1>Muokkaa profiilia</h1>
+    <p>
+        <label for="username">Käyttäjätunnus:</label>
+        <input type="text" name="username" id="username" value="{{ user.username }}" maxlength="50" readonly
+            autocomplete="username" />
+        <small id="password-help">Käyttäjätunnusta ei voi muuttaa rekisteröitymisen jälkeen.</small>
+    </p>
+    <p>
+        <label for="name">Nimi tai nimimerkki:</label>
+        <input type="text" name="name" id="name" value="{{ user.name }}" maxlength="50" required autocomplete="name" />
+    </p>
+    <p>
+        <label for="password1">Uusi salasana:</label>
+        <input type="password" name="password1" id="password1" maxlength="50" minlength="8" autocomplete="new-password"
+            aria-describedby="password-help" />
+        <small id="password-help">Jätä tyhjäksi, jos et halua vaihtaa salasanaa. Vähintään 8 merkkiä pitkä.</small>
+    </p>
+    <p>
+        <label for="password2">Uusi salasana uudestaan:</label>
+        <input type="password" name="password2" id="password2" maxlength="50" autocomplete="new-password" />
+    </p>
+    <p>
+        <button type="submit" class="btn btn-primary">Tallenna muutokset</button>
+    </p>
+</form>
+<form action="{{ url_for('auth.delete_profile') }}" method="post"
+    onsubmit="return confirm('Haluatko varmasti poistaa profiilisi pysyvästi?');" class="form-box"
+    style="margin-top:2rem;">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    <h2>Poista käyttäjäprofiili</h2>
+    <p>Voit poistaa käyttäjäprofiilisi pysyvästi. Tämä poistaa myös kaikki palveluun jättämäsi kilpailutyöt ja
+        arviot. Huomaa, että voit muokata ja poistaa kilpailutöitäsi kilpailun keräysvaiheen aikana <a href="{{ url_for('entries.my_texts') }}">Tekstisi-sivulla</a>.</p>
+    <button type="submit" class="btn btn-secondary" style="background:#fff0f0;color:#a00;border:1px solid #a00;">Poista
+        profiili pysyvästi</button>
+    <small id="password-help">Varoitus: tätä toimenpidettä ei voi peruuttaa.</small>
+</form>
+{% endblock %}

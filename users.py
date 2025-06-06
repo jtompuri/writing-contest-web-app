@@ -11,7 +11,8 @@ Functions:
     get_user_count()
     get_super_user_count()
     update_user(user_id, name, username, is_super)
-    update_password(user_id, password)
+    update_user_name(user_id, name)
+    update_user_password(user_id, password)
     delete_user(user_id)
     is_super_user(user_id)
     check_login(username, password)
@@ -123,9 +124,24 @@ def update_user(user_id, name, username, is_super):
     db.execute(query, [name, username, is_super, user_id])
 
 
-def update_password(user_id, password):
+def update_user_name(user_id, name):
     """
-    Update a user's password.
+    Update the user's name.
+
+    Args:
+        user_id (int): The ID of the user.
+        name (str): The new name.
+
+    Returns:
+        None
+    """
+    query = "UPDATE users SET name = ? WHERE id = ?"
+    db.execute(query, [name, user_id])
+
+
+def update_user_password(user_id, password):
+    """
+    Update the user's password.
 
     Args:
         user_id (int): The ID of the user.
