@@ -3,10 +3,119 @@
 {% block content %}
 <h1>Ylläpito</h1>
 <section role="navigation" aria-label="Ylläpidon hallintalinkit">
-    <ul>
-        <li><a href="{{ url_for('admin.admin_contests') }}">Hallinnoi kilpailuja ({{ contest_count }})</a></li>
-        <li><a href="{{ url_for('admin.admin_users') }}">Hallinnoi käyttäjiä ({{ user_count }})</a></li>
-        <li><a href="{{ url_for('admin.admin_entries') }}">Hallinnoi kilpailutöitä ({{ entry_count }})</a></li>
-    </ul>
+    <nav class="admin-nav">
+        <a href="{{ url_for('admin.admin_contests') }}">
+            Kilpailut <span class="nav-count">({{ contest_count }})</span>
+        </a>
+        <a href="{{ url_for('admin.admin_users') }}">
+            Käyttäjät <span class="nav-count">({{ user_count }})</span>
+        </a>
+        <a href="{{ url_for('admin.admin_entries') }}">
+            Kilpailutyöt <span class="nav-count">({{ entry_count }})</span>
+        </a>
+    </nav>
 </section>
+
+<h2>Keräysvaiheessa olevat kilpailut</h2>
+{% if contests_collection %}
+<div class="cards">
+    {% for c in contests_collection %}
+    <div class="card" style="margin-bottom:1em;">
+        <div class="card-header">
+            <a href="{{ url_for('main.contest', contest_id=c.id) }}">
+                <strong>{{ c.title }}</strong>
+            </a>
+        </div>
+        <div style="margin: 0.5em 0; color: #555;">
+            {{ c.short_description }}
+        </div>
+        <div>
+            <span class="pill-tag">{{ c.class_value }}</span>
+            <span class="pill-tag">{% if c.anonymity %}Anonyymi arviointi{% else %}Ei-anonyymi arviointi{% endif
+                %}</span>
+            <span class="pill-tag">{% if c.public_reviews %}Julkinen arviointi{% else %}Ei-julkinen arviointi{% endif
+                %}</span>
+            <span class="pill-tag">{% if c.public_results %}Tulokset julkisia{% else %}Tulokset ei-julkisia{% endif
+                %}</span>
+        </div>
+        <div style="margin-top:0.5em;">
+            <em>
+                Keräys päättyy {{ c.collection_end|format_date }}
+            </em>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>Ei käynnissä olevia keräysvaiheen kilpailuja.</p>
+{% endif %}
+<p style="margin-top:0;"><a href="{{ url_for('admin.admin_contests') }}">Hallinnoi kilpailuja ({{ contest_count }}) &raquo;</a></p>
+<h2>Arviointivaiheessa olevat kilpailut</h2>
+{% if contests_review %}
+<div class="cards">
+    {% for c in contests_review %}
+    <div class="card" style="margin-bottom:1em;">
+        <div class="card-header">
+            <a href="{{ url_for('main.contest', contest_id=c.id) }}">
+                <strong>{{ c.title }}</strong>
+            </a>
+        </div>
+        <div style="margin: 0.5em 0; color: #555;">
+            {{ c.short_description }}
+        </div>
+        <div>
+            <span class="pill-tag">{{ c.class_value }}</span>
+            <span class="pill-tag">{% if c.anonymity %}Anonyymi arviointi{% else %}Ei-anonyymi arviointi{% endif
+                %}</span>
+            <span class="pill-tag">{% if c.public_reviews %}Julkinen arviointi{% else %}Ei-julkinen arviointi{% endif
+                %}</span>
+            <span class="pill-tag">{% if c.public_results %}Tulokset julkisia{% else %}Tulokset ei-julkisia{% endif
+                %}</span>
+        </div>
+        <div style="margin-top:0.5em;">
+            <em>
+                Arviointi päättyy {{ c.review_end|format_date }}
+            </em>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>Ei käynnissä olevia arviointivaiheen kilpailuja.</p>
+{% endif %}
+<p style="margin-top:0;"><a href="{{ url_for('admin.admin_users') }}">Hallinnoi käyttäjiä ({{ user_count }}) &raquo;</a></p>
+<h2>Viimeisimmät päättyneet kilpailut</h2>
+{% if contests_results %}
+<div class="cards">
+    {% for c in contests_results %}
+    <div class="card" style="margin-bottom:1em;">
+        <div class="card-header">
+            <a href="{{ url_for('main.contest', contest_id=c.id) }}">
+                <strong>{{ c.title }}</strong>
+            </a>
+        </div>
+        <div style="margin: 0.5em 0; color: #555;">
+            {{ c.short_description }}
+        </div>
+        <div>
+            <span class="pill-tag">{{ c.class_value }}</span>
+            <span class="pill-tag">{% if c.anonymity %}Anonyymi arviointi{% else %}Ei-anonyymi arviointi{% endif
+                %}</span>
+            <span class="pill-tag">{% if c.public_reviews %}Julkinen arviointi{% else %}Ei-julkinen arviointi{% endif
+                %}</span>
+            <span class="pill-tag">{% if c.public_results %}Tulokset julkisia{% else %}Tulokset ei-julkisia{% endif
+                %}</span>
+        </div>
+        <div style="margin-top:0.5em;">
+            <em>
+                Kilpailu päättyi {{ c.review_end|format_date }}
+            </em>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>Ei päättyneitä kilpailuja, joilla on julkaistut tulokset.</p>
+{% endif %}
+<p style="margin-top:0;"></p><a href="{{ url_for('admin.admin_entries') }}">Hallinnoi kilpailutöitä ({{ entry_count }}) &raquo;</a></p>
 {% endblock %}
