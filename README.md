@@ -22,7 +22,7 @@ Tarkista, että sinulla on `sqlite3` asennetuna, komennolla:
 $ sqlite3 --version
 ```
 
-Jos komentoa ei löydy, asenna se:
+Jos komentoa ei löydy, asenna `sqlite3`:
 ```
 Linux: $ sudo apt install sqlite3
 Mac: $ $brew install sqlite3
