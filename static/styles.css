@@ -240,7 +240,7 @@ footer {
     margin: 0 0 0 -4px;
     border: none;
     transition: background-color 0.2s;
-    display: inline-block;    
+    display: inline-block;
     color: var(--color-white);
 }
 
@@ -649,4 +649,44 @@ form.form-box input.input-chars-50 {
     letter-spacing: 0.01em;
     vertical-align: middle;
     white-space: nowrap;
+}
+
+/* =========================
+   Admin Panel Navigation
+   ========================= */
+
+.admin-nav {
+    display: flex;
+    gap: 1.5rem;
+    margin: 0.9em 0 1.5em 0;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+.admin-nav a {
+    display: flex;
+    align-items: center;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--color-black);
+    background: var(--color-bg);
+    border-radius: 999px;
+    padding: 0.2em 0.9em;
+    text-decoration: none;
+    border: 0;
+    transition: background 0.2s, color 0.2s;
+}
+
+.admin-nav a:hover,
+.admin-nav a:focus {
+    background: var(--color-primary-lighter);
+    text-decoration: none;
+}
+
+.admin-nav .nav-count {
+    margin-left: 0.5em;
+    font-size: 0.95em;
+    color: var(--color-primary);
+    font-weight: 400;
 }
