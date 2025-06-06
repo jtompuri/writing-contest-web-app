@@ -12,47 +12,66 @@
 <section class="front-feature">
     <h2>Uusin kilpailu</h2>
     {% if contests_for_entry %}
-    {% set latest_contest = contests_for_entry[0] %}
-    <div class="contest-highlight">
-        <h3>{{ latest_contest.title }}</h3>
-        <p>{{ latest_contest.description }}</p>
-        <p><strong>Viimeinen osallistumispäivä:</strong> {{ latest_contest.collection_end }}</p>
-        <a href="{{ url_for('main.contest', contest_id=latest_contest.id) }}" class="btn btn-primary">Osallistu nyt</a>
-    </div>
+        {% set latest_contest = contests_for_entry[0] %}
+        {% set _contest = latest_contest %}
+        {% set ns = namespace(contest_url=url_for('main.contest', contest_id=latest_contest.id)) %}
+        {% include "partials/_contest_card.html" %}
+        <p style="margin-top:1em;">
+            <a href="{{ url_for('main.contests') }}">Kaikki kilpailut &raquo;</a>
+        </p>
     {% else %}
-    <p>Ei käynnissä olevia kilpailuja juuri nyt.</p>
+        <p>Ei käynnissä olevia kilpailuja juuri nyt.</p>
     {% endif %}
 </section>
 
 <section class="front-feature">
     <h2>Viimeisimmät tulokset</h2>
     {% if contests_for_results %}
-    {% set latest_result = contests_for_results[0] %}
-    <div class="result-highlight">
-        <h3>{{ latest_result.title }}</h3>
-        <p><strong>Voittajat julkistettu:</strong> {{ latest_result.review_end }}</p>
-        <a href="{{ url_for('main.result', contest_id=latest_result.id) }}" class="btn btn-secondary">Katso tulokset</a>
-    </div>
+        {% set latest_result = contests_for_results[0] %}
+        {% set _contest = latest_result %}
+        {% set ns = namespace(contest_url=url_for('main.contest', contest_id=latest_result.id)) %}
+        {% include "partials/_contest_card.html" %}
+        <p style="margin-top:1em;">
+            <a href="{{ url_for('main.results') }}">Kaikki tulokset &raquo;</a>
+        </p>
     {% else %}
-    <p>Ei julkaistuja tuloksia vielä.</p>
+        <p>Ei julkaistuja tuloksia vielä.</p>
     {% endif %}
 </section>
 
 <section class="front-feature">
     <h2>Viimeisimmän kilpailun voittajat</h2>
-    {% if contests_for_results %}
-    {% set latest_result = contests_for_results[0] %}
-    {% set winners = sql.get_contest_results(latest_result.id)[:3] %}
-    <ol class="winner-list">
-        {% for winner in winners %}
-        <li>
-            <strong>{{ winner.placement }}. sija:</strong> {{ winner.author_name }} – <em>{{ winner.title }}</em>
-        </li>
+    {% if winners %}
+    <div class="cards">
+        {% for entry in winners %}
+        <div class="card">
+            <div class="card-header">
+                {{ loop.index }}.
+                <strong>{{ entry.author_name }}</strong> ({{ entry.points }} p.)
+                <span class="entry-index">
+                    {% if loop.index == 1 %}🥇🎉
+                    {% elif loop.index == 2 %}🥈
+                    {% elif loop.index == 3 %}🥉
+                    {% endif %}
+                </span>
+            </div>
+            <div class="entry-preview">
+                {% if entry.entry|length > 255 %}
+                {{ entry.entry[:255] | richtext }}...
+                <a href="{{ url_for('entries.entry', entry_id=entry.id, source='index', key=request.args.get('key'), idx=loop.index) }}"
+                    class="read-full-text">Lue koko teksti &raquo;</a>
+                {% else %}
+                {{ entry.entry | richtext }}
+                {% endif %}
+            </div>
+        </div>
         {% endfor %}
-    </ol>
-    <a href="{{ url_for('main.result', contest_id=latest_result.id) }}" class="btn btn-secondary">Kaikki tulokset</a>
+    </div>
+    <p style="margin-top:1em;">
+        <a href="{{ url_for('main.result', contest_id=latest_result.id) }}">Kaikki tulokset tästä kilpailusta &raquo;</a>
+    </p>
     {% else %}
-    <p>Voittajat julkaistaan pian!</p>
+    <p>Ei tuloksia tälle kilpailulle.</p>
     {% endif %}
 </section>
 {% endblock %}
