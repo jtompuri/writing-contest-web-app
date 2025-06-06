@@ -5,10 +5,10 @@
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <h1>Muokkaa profiilia</h1>
     <p>
-        <label for="username">Käyttäjätunnus:</label>
+        <label for="username">Sähköpostiosoite:</label>
         <input type="text" name="username" id="username" value="{{ user.username }}" maxlength="50" readonly
             autocomplete="username" />
-        <small id="password-help">Käyttäjätunnusta ei voi muuttaa rekisteröitymisen jälkeen.</small>
+        <small id="password-help">Sähköpostiosoitetta ei voi muuttaa rekisteröitymisen jälkeen.</small>
     </p>
     <p>
         <label for="name">Nimi tai nimimerkki:</label>

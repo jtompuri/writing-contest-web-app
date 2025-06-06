@@ -13,12 +13,12 @@
         <input type="text" name="name" id="name" value="{{ user.name }}" maxlength="{{ FIELD_MAX_LENGTH }}" required>
     </p>
     <p>
-        <label for="username">Sähköposti (käyttäjätunnus):</label>
+        <label for="username">Sähköposti:</label>
         <input type="email" name="username" id="username" value="{{ user.username }}" maxlength="{{ FIELD_MAX_LENGTH }}"
             required>
     </p>
     <p>
-        <label for="password">Uusi salasana (valinnainen):</label>
+        <label for="password">Uusi salasana:</label>
         <input type="password" name="password" id="password" maxlength="{{ FIELD_MAX_LENGTH }}"
             aria-describedby="password-help">
         <small id="password-help">Vähintään 8 merkkiä. Jos jätät tyhjäksi, salasana ei muutu.</small>
