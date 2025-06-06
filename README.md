@@ -56,23 +56,26 @@ Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 ### Pääkäyttäjä
 - Pääkäyttäjä luodaan automaattisesti. ✅
 - Pääkäyttäjä voi luoda, muokata ja poistaa käyttäjiä. ✅
-- Pääkäyttäjä voi luoda, muokata ja poistaa tekstejä. ✅
+- Pääkäyttäjä voi luoda, muokata ja poistaa kilpailutöitä. ✅
 - Pääkäyttäjä voi luoda, muokata ja poistaa kilpailuja. ✅
+- Pääkäyttäjä voi suodattaa kilpailutöitä kilpailun ja käyttäjän nimen perusteella. ✅
 - Pääkäyttäjä voi valita kilpailulle luokittelun: ✅
-	- arviointi: julkinen/piilotettu ✅
-	- tulokset: julkinen/piilotettu ✅
-	- luokka: runo/aforismi/essee ✅
-	- anonyymi: kyllä/ei. ✅
+    - Anonyymi arviointi: kirjoittaja ei ole tunnistettavissa ✅
+    - Avoin arviointi: kaikki saavat arvioida kilpailutöitä ✅
+    - Tulokset julkisia: kaikki näkevät kilpailun tulokset ✅
+	- Kirjallisuuslaji: runo/aforismi/essee ✅
 
 ### Käyttäjät
-- Käyttäjä voi luoda ✅, muokata ja poistaa tunnuksen.
+- Käyttäjä voi luoda, muokata ja poistaa tunnuksen. ✅
 - Käyttäjä voi kirjautua sisään sovellukseen. ✅
 - Käyttäjä näkee sovellukseen lisätyt kilpailut. ✅
 - Käyttäjä pystyy etsimään kilpailuja hakusanalla.
-- Käyttäjä voi lisätä✅, muokata✅ ja poistaa oman tekstin kirjoituskilpailuun.
-- Käyttäjä voi arvioida muiden tekstejä antamalla pistemäärän 1-5. ✅
-- Sovelluksessa on käyttäjäsivu kilpailuista, joihin käyttäjä on osallistunut, käyttäjän sijoituksen ja pistemäärän.
-- Käyttäjä voi tarkastella kilpailun tuloksia.✅
+- Käyttäjä voi lisätä, muokata ja poistaa oman tekstin. ✅
+- Tekstin muokkaus ja poisto on sallittu vain kilpailun keräysvaiheessa. ✅
+- Käyttäjä voi arvioida muiden kilpailutöitä antamalla pistemäärän 1-5. ✅
+- Sovelluksessa on käyttäjäsivu (Tekstisi) kilpailuista. ✅ 
+- Käyttäjäsivu on käyttäjän sijoitus ja pistemäärä päättyneiden kilpailujen osalta. ✅
+- Käyttäjä voi tarkastella kilpailun tuloksia. ✅
 
 ## Tietokantarakenne
 
