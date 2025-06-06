@@ -10,6 +10,29 @@ Asenna `flask`-kirjasto:
 $ pip install flask
 ```
 
+
+Luo virtuaaliympäristö (Linux/Mac):
+```
+$ python3 -m venv venv 
+$ source venv/bin/activate
+```
+
+Tarkista, että sinulla on `sqlite3` asennetuna, komennolla:
+```
+$ sqlite3 --version
+```
+
+Jos komentoa ei löydy, asenna se:
+```
+Linux: $ sudo apt install sqlite3
+Mac: $ $brew install sqlite3
+```
+
+Jos asennuksessa on ongelmia, voit asentaa kaikki riippuvuudet komennolla:
+```
+$ pip install -r requirements.txt
+```
+
 Luo tietokanta demosisällöllä:
 ```
 $ sqlite3 database.db < init.sql
