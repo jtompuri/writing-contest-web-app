@@ -61,19 +61,32 @@ def get_user(user_id):
     return result[0] if result else None
 
 
-def get_all_users(limit=None, offset=None):
+def get_all_users(limit=None, offset=None, name_search=None, username_search=None, super_user=None):
     """
     Retrieve all users from the database, ordered by their ID.
 
     Args:
         limit (int, optional): The maximum number of users to return.
         offset (int, optional): The number of users to skip before starting to return results.
+        name_search (str, optional): A search term to filter users by name.
+        username_search (str, optional): A search term to filter users by username.
+        super_user (bool or int, optional): A flag to filter users by super user status.
 
     Returns:
         list: A list of users.
     """
-    query = "SELECT id, name, username, super_user FROM users ORDER BY id"
+    query = "SELECT * FROM users WHERE 1=1"
     params = []
+    if name_search:
+        query += " AND name LIKE ?"
+        params.append(f"%{name_search}%")
+    if username_search:
+        query += " AND username LIKE ?"
+        params.append(f"%{username_search}%")
+    if super_user in ("0", "1"):
+        query += " AND super_user = ?"
+        params.append(int(super_user))
+    query += " ORDER BY id ASC"
     if limit is not None:
         query += " LIMIT ?"
         params.append(limit)
@@ -83,14 +96,30 @@ def get_all_users(limit=None, offset=None):
     return db.query(query, params)
 
 
-def get_user_count():
+def get_user_count(name_search=None, username_search=None, super_user=None):
     """
     Retrieve the total number of users.
+
+    Args:
+        name_search (str, optional): A search term to filter users by name.
+        username_search (str, optional): A search term to filter users by username.
+        super_user (bool or int, optional): A flag to filter users by super user status.
 
     Returns:
         int: The total number of users.
     """
-    result = db.query("SELECT COUNT(*) FROM users")
+    query = "SELECT COUNT(*) FROM users WHERE 1=1"
+    params = []
+    if name_search:
+        query += " AND name LIKE ?"
+        params.append(f"%{name_search}%")
+    if username_search:
+        query += " AND username LIKE ?"
+        params.append(f"%{username_search}%")
+    if super_user in ("0", "1"):
+        query += " AND super_user = ?"
+        params.append(int(super_user))
+    result = db.query(query, params)
     return result[0][0] if result else 0
 
 
