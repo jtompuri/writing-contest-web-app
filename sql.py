@@ -793,3 +793,18 @@ def get_results_contest_count():
     """
     result = db.query(query)
     return result[0][0] if result else 0
+
+
+def get_user_entry_count(user_id):
+    """
+    Retrieve the total number of entries submitted by a specific user.
+
+    Args:
+        user_id (int): The ID of the user.
+
+    Returns:
+        int: The number of entries submitted by the user.
+    """
+    query = "SELECT COUNT(*) AS count FROM entries WHERE user_id = ?"
+    result = db.query(query, [user_id])
+    return result[0]["count"] if result else 0

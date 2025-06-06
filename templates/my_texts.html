@@ -2,7 +2,11 @@
 {% block title %}Tekstisi – {{ SITE_TITLE }}{% endblock %}
 {% block content %}
 <h1>Omat tekstisi</h1>
-<p>Tällä sivulla on listattuna kaikki kilpailutyösi. Sijoitus ja pisteet näytetään päättyneiden kilpailujen osalta.</p>
+<p>
+    Tällä sivulla on listattuna kaikki kilpailutyösi ({{ total }} kpl). 
+    Vot muokata tai poistaa kilpailutöitä, kun kilpailu on keräysvaiheessa. 
+    Sijoitus ja pisteet näytetään vain päättyneiden kilpailujen osalta.
+</p>
 {% if all_entries %}
 <div class="cards">
     {% for entry in all_entries %}
@@ -16,7 +20,7 @@
             {% if entry.public_results %}
                 {% set ns = namespace(contest_url=url_for('main.result', contest_id=entry.contest_id)) %}
             {% else %}
-             {% set ns = namespace(contest_url=None) %}
+                {% set ns = namespace(contest_url=None) %}
             {% endif %}
             {% set _phase_text = "Kilpailu on päättynyt " ~ (entry.review_end|format_date) %}
         {% endif %}

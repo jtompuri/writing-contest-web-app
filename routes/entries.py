@@ -82,6 +82,7 @@ def my_texts():
         flash("Kirjaudu sisään nähdäksesi omat tekstisi.")
         return redirect(url_for("auth.login", next_page=request.path))
     entries = sql.get_user_entries_with_results(session["user_id"])
+    total = sql.get_user_entry_count(session["user_id"])
     today = date.today().isoformat()
 
     # Normalize: ensure each entry has .id for contest id
@@ -92,7 +93,6 @@ def my_texts():
             entry["id"] = entry["contest_id"]
         normalized_entries.append(entry)
 
-    total = len(normalized_entries)
     per_page = config.DEFAULT_PER_PAGE
     page = int(request.args.get("page", 1))
     start = (page - 1) * per_page
