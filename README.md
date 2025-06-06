@@ -18,7 +18,7 @@ $ python3 -m venv venv
 $ source venv/bin/activate
 ```
 
-Tarkista, että sinulla on `sqlite3` asennetuna, komennolla:
+Tarkista, että sinulla on `sqlite3` asennetuna:
 ```
 $ sqlite3 --version
 ```
@@ -32,7 +32,7 @@ Mac:
 $ $brew install sqlite3
 ```
 
-Jos asennuksessa on ongelmia, asenna kaikki riippuvuudet komennolla:
+Jos asennuksessa on ongelmia, asenna määrätyt versiot riippuvuuksista:
 ```
 $ pip install -r requirements.txt
 ```
