@@ -48,8 +48,8 @@
         <nav role="navigation" aria-label="Päävalikko" class="main-nav">
             <div class="container">
                 <ul class="main-nav-list">
-                    <li class="{% if request.path == '/' %}active{% endif %}">
-                        <a href="/" {% if request.path=='/' %}aria-current="page" {% endif %}>Etusivu</a>
+                    <li class="{% if request.path == '/' or source=='index' %}active{% endif %}">
+                        <a href="/" {% if request.path=='/' or source=='index' %}aria-current="page" {% endif %}>Etusivu</a>
                     </li>
                     <li class="{% if request.path.startswith('/contest') or source=='contest'%}active{% endif %}">
                         <a href="/contests" {% if request.path.startswith('/contests') or source=='contest' %}
