@@ -171,6 +171,8 @@ def edit_entry(entry_id):
             if source == "contest":
                 return redirect(url_for("main.contest", contest_id=entry["contest_id"]))
             return redirect(url_for("entries.my_texts"))
+        # Fallback for unknown actions
+        return redirect(url_for("entries.my_texts"))
 
 
 @entries_bp.route("/entry/<int:entry_id>/delete", methods=["POST"])
@@ -240,7 +242,8 @@ def review(contest_id):
             flash("Kaikki tekstit on arvioitava ja arvosanojen tulee olla välillä 0-5.")
             for error in errors:
                 flash(error)
-            return render_template("review.html", contest=contest, entries=entries)
+            user_reviews = sql.get_user_reviews_for_contest(contest_id, session["user_id"])
+            return render_template("review.html", contest=contest, entries=entries, user_reviews=user_reviews)
 
         for entry in entries:
             points = int(request.form[f"points_{entry['id']}"])
