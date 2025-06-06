@@ -33,13 +33,13 @@ Jos asennuksessa on ongelmia, voit asentaa kaikki riippuvuudet komennolla:
 $ pip install -r requirements.txt
 ```
 
-Luo tietokanta demosisällöllä:
+Vaihtoehto 1: Luo tietokanta demosisällöllä:
 ```
 $ sqlite3 database.db < init.sql
 ```
 
 
-Vaihtoehtoisesti luo lähes tyhjä tietokanta (vain kirjallisuuslajit luodaan valmiiksi):
+Vaihtoehto 2: Luo tyhjä tietokanta (vain kirjallisuuslajit luodaan valmiiksi):
 ```
 $ sqlite3 database.db < schema.sql
 ```
@@ -50,8 +50,12 @@ Voit käynnistää sovelluksen näin:
 $ flask run
 ```
 
-Voit kirjautua demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja salasanalla `admin`. Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä. Voit luoda demoon oman käyttäjätunnuksen, jolla on peruskäyttäjän oikeudet. Peruskäyttäjä ei näe Ylläpito-välilehteä. Kirjautumaton käyttäjä ei näe Arvioi, Tekstisi ja Ylläpito-välilehtiä.
-   
+Voit kirjautua demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja salasanalla `admin`. Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä. 
+
+Jos luot tyhjän tietokannan, niin ensimmäisestä rekisteröidystä käyttäjästä tulee automaattisesti pääkäyttäjä, joka voi luoda, muokata ja poistaa käyttäjiä, kilpailuja ja kilpailutöitä.
+
+Voit luoda toisen käyttäjätunnuksen, jolla on peruskäyttäjän oikeudet. Peruskäyttäjä ei näe Ylläpito-välilehteä. Kirjautumaton käyttäjä ei näe Arvioi, Tekstisi ja Ylläpito-välilehtiä.
+
 ## Työn eteneminen
 
 Työn etenemistä voi seurata alla olevasta tehtävälistasta.
