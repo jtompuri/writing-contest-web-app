@@ -6,7 +6,7 @@
     style="display:inline-block; margin-bottom: 1rem;" aria-label="Luo uusi käyttäjä">
     Luo uusi käyttäjä
 </a>
-<form method="get" action="{{ url_for('admin.admin_users') }}" class="form-box">
+<form method="get" action="{{ url_for('admin.admin_users') }}">
 <table class="admin-table" role="table" aria-label="Käyttäjälista">
     <thead>
         <tr>
@@ -17,13 +17,13 @@
         </tr>
         <tr>
             <td>
-                <input type="text" name="name_search" value="{{ name_search or '' }}" placeholder="Etsi nimellä" maxlength="100">
+                <input type="text" name="name_search" value="{{ name_search or '' }}" class="filter-input" placeholder="Etsi nimellä" maxlength="100">
             </td>
             <td>
-                <input type="text" name="username_search" value="{{ username_search or '' }}" placeholder="Etsi sähköpostiosoitteella" maxlength="100">
+                <input type="text" name="username_search" value="{{ username_search or '' }}" class="filter-input" placeholder="Etsi sähköpostiosoitteella" maxlength="100">
             </td>
             <td>
-                <select name="super_user" class="form-box">
+                <select name="super_user" class="filter-input">
                     <option value="" {% if not super_user_filter %}selected{% endif %}>Kaikki</option>
                     <option value="1" {% if super_user_filter == "1" %}selected{% endif %}>Kyllä</option>
                     <option value="0" {% if super_user_filter == "0" %}selected{% endif %}>Ei</option>
