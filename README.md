@@ -18,12 +18,12 @@ $ python3 -m venv venv
 $ source venv/bin/activate
 ```
 
-Tarkista, että sinulla on `sqlite3` asennetuna:
+Tarkista, että `sqlite3` on asennetuna:
 ```
 $ sqlite3 --version
 ```
 
-Jos komentoa ei löydy, asenna `sqlite3`:
+Jos `sqlite3` ei löydy, asenna:
 ```
 Linux: 
 $ sudo apt install sqlite3
@@ -32,7 +32,7 @@ Mac:
 $ $brew install sqlite3
 ```
 
-Jos asennuksessa on ongelmia, asenna määrätyt versiot riippuvuuksista:
+Jos asennuksessa on ongelmia, asenna yhteensopivat versiot riippuvuuksista:
 ```
 $ pip install -r requirements.txt
 ```
@@ -48,7 +48,7 @@ Vaihtoehto 2: Luo tyhjä tietokanta (vain kirjallisuuslajit luodaan valmiiksi):
 $ sqlite3 database.db < schema.sql
 ```
 
-Voit käynnistää sovelluksen näin:
+Voit käynnistää sovelluksen:
 
 ```
 $ flask run
