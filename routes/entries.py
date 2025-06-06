@@ -83,13 +83,21 @@ def my_texts():
         return redirect(url_for("auth.login", next_page=request.path))
     entries = sql.get_user_entries_with_results(session["user_id"])
     today = date.today().isoformat()
-    all_entries = entries
-    total = len(all_entries)
+
+    # Normalize: ensure each entry has .id for contest id
+    normalized_entries = []
+    for entry in entries:
+        entry = dict(entry)
+        if "contest_id" in entry:
+            entry["id"] = entry["contest_id"]
+        normalized_entries.append(entry)
+
+    total = len(normalized_entries)
     per_page = config.DEFAULT_PER_PAGE
     page = int(request.args.get("page", 1))
     start = (page - 1) * per_page
     end = start + per_page
-    paginated_entries = all_entries[start:end]
+    paginated_entries = normalized_entries[start:end]
     return render_template(
         "my_texts.html",
         all_entries=paginated_entries,
