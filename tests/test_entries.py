@@ -165,7 +165,7 @@ class TestEntryRoutes:
         with client.session_transaction() as sess:
             sess['user_id'] = 1
             sess['csrf_token'] = 'testtoken'
-        response = client.post('/contests/contest/1/add_entry', data={'csrf_token': 'testtoken'})
+        response = client.post('/contests/contest/1/add_entry', data={'csrf_token': 'testtoken'}, follow_redirects=True)
         assert 'Kaikki pakolliset kentät on täytettävä.'.encode('utf-8') in response.data or response.status_code in (200, 404)
 
     def test_edit_entry_requires_login(self, client):
