@@ -8,6 +8,18 @@
         {% if selected_contest_id %}
         {% set extra_params = extra_params + "&contest_id=" + selected_contest_id|string %}
         {% endif %}
+        {% if title_search %}
+        {% set extra_params = extra_params + "&title_search=" + title_search|urlencode %}
+        {% endif %}
+        {% if name_search %}
+        {% set extra_params = extra_params + "&name_search=" + name_search|urlencode %}
+        {% endif %}
+        {% if username_search %}
+        {% set extra_params = extra_params + "&username_search=" + username_search|urlencode %}
+        {% endif %}
+        {% if super_user %}
+        {% set extra_params = extra_params + "&super_user=" + super_user %}
+        {% endif %}
         {% if page > 1 %}
         <li>
             <a href="{{ base_url }}{{ page - 1 }}{{ extra_params }}" class="pagination-link">Edellinen</a>
