@@ -1,16 +1,15 @@
 {% extends "base.html" %}
 {% block title %}
 {% if source == "result" %}
-{{ entry.author_name }}{% if entry.points is defined %} ({{ entry.points }} p.){% endif %} – {{ entry.contest_title }} –
+{{ entry.author_name }}{% if entry.points is defined and entry.review_end is defined and entry.review_end <= now %} ({{ entry.points }} p.){% endif %} – {{ entry.contest_title }} –
 {{ SITE_TITLE }}
-{% elif not entry.anonymity or entry.review_end <= now %} {{ entry.author_name }}{% if entry.points is defined %} ({{
+{% elif not entry.anonymity or entry.review_end <= now %} {{ entry.author_name }}{% if entry.points is defined and entry.review_end is defined and entry.review_end <= now %} ({{
     entry.points }} p.){% endif %} – {{ entry.contest_title }} – {{ SITE_TITLE }} {% else %} {{ entry.class_value }}{%
     if idx %} {{ idx }}{% endif %} – {{ entry.contest_title }} – {{ SITE_TITLE }} {% endif %} {% endblock %} {% block
     content %} <h1>{{ entry.contest_title }}</h1>
     {% if source == "result" %}
-    <h2>{{ entry.author_name }}{% if entry.points is defined %} ({{ entry.points }} p.){% endif %}</h2>
-    {% elif not entry.anonymity or entry.review_end <= now %} <h2>{{ entry.author_name }}{% if entry.points is defined
-        %} ({{ entry.points }} p.){% endif %}</h2>
+    <h2>{{ entry.author_name }}{% if entry.points is defined and entry.review_end is defined and entry.review_end <= now %} ({{ entry.points }} p.){% endif %}</h2>
+    {% elif not entry.anonymity or entry.review_end <= now %} <h2>{{ entry.author_name }}{% if entry.points is defined and entry.review_end is defined and entry.review_end <= now %} ({{ entry.points }} p.){% endif %}</h2>
         {% else %}
         <h2>{% if idx %} {{ idx }}.{% endif %}</h2>
         {% endif %}
