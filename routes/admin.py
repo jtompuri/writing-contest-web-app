@@ -48,7 +48,8 @@ def admin_contests():
     per_page = config.ADMIN_PER_PAGE
     offset = (page - 1) * per_page
 
-    title_search = request.args.get("title_search", "", type=str).strip()
+    # Sanitize filter input
+    title_search = sanitize_input(request.args.get("title_search", "", type=str).strip())
 
     contests = sql.get_all_contests(limit=per_page, offset=offset, title_search=title_search)
     total = sql.get_contest_count(title_search=title_search)
@@ -73,9 +74,10 @@ def admin_users():
     per_page = config.ADMIN_PER_PAGE
     offset = (page - 1) * per_page
 
-    name_search = request.args.get("name_search", "", type=str).strip()
-    username_search = request.args.get("username_search", "", type=str).strip()
-    super_user_filter = request.args.get("super_user", "")
+    # Sanitize filter inputs
+    name_search = sanitize_input(request.args.get("name_search", "", type=str).strip())
+    username_search = sanitize_input(request.args.get("username_search", "", type=str).strip())
+    super_user_filter = sanitize_input(request.args.get("super_user", ""))
 
     users_list = users.get_all_users(
         limit=per_page,
@@ -111,8 +113,9 @@ def admin_entries():
     page = request.args.get("page", 1, type=int)
     per_page = config.ADMIN_PER_PAGE
 
+    # Sanitize filter inputs
     contest_id = request.args.get("contest_id", type=int)
-    user_search = request.args.get("user_search", "", type=str).strip()
+    user_search = sanitize_input(request.args.get("user_search", "", type=str).strip())
 
     offset = (page - 1) * per_page
 
