@@ -12,6 +12,7 @@ pip install flask
 
 
 Luo virtuaaliympäristö (valinnainen).
+
 Linux/Mac:
 ```
 python3 -m venv venv 
@@ -24,6 +25,7 @@ sqlite3 --version
 ```
 
 Jos `sqlite3` ei löydy, asenna se.
+
 Linux: 
 ```
 sudo apt install sqlite3
