@@ -11,47 +11,47 @@ $ pip install flask
 ```
 
 
-Luo virtuaaliympäristö (valinnainen):
-```
+Luo virtuaaliympäristö (valinnainen).
 Linux/Mac:
-$ python3 -m venv venv 
-$ source venv/bin/activate
+```
+python3 -m venv venv 
+source venv/bin/activate
 ```
 
 Tarkista, että `sqlite3` on asennetuna:
 ```
-$ sqlite3 --version
+sqlite3 --version
 ```
 
-Jos `sqlite3` ei löydy, asenna se:
-```
+Jos `sqlite3` ei löydy, asenna se.
 Linux: 
-$ sudo apt install sqlite3
-
+```
+sudo apt install sqlite3
+```
 Mac: 
-$ brew install sqlite3
+```
+brew install sqlite3
 ```
 
 Jos asennuksessa on ongelmia, asenna yhteensopivat versiot riippuvuuksista:
 ```
-$ pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 Vaihtoehto 1: Luo tietokanta demosisällöllä:
 ```
-$ sqlite3 database.db < init.sql
+sqlite3 database.db < init.sql
 ```
-
 
 Vaihtoehto 2: Luo tyhjä tietokanta (vain kirjallisuuslajit luodaan valmiiksi):
 ```
-$ sqlite3 database.db < schema.sql
+sqlite3 database.db < schema.sql
 ```
 
 Voit käynnistää sovelluksen:
 
 ```
-$ flask run
+flask run
 ```
 
 Voit kirjautua demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja salasanalla `admin`. Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä. 
