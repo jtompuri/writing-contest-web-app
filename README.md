@@ -7,7 +7,7 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 Asenna `flask`-kirjasto:
 
 ```
-$ pip install flask
+pip install flask
 ```
 
 
