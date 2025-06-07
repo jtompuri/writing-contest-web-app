@@ -3,26 +3,26 @@
 {% block content %}
 <form action="{{ url_for('auth.edit_profile') }}" method="post" class="form-box">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    <h1>Muokkaa profiilia</h1>
+    <h1>Muokkaa profiiliasi</h1>
     <p>
         <label for="username">Sähköpostiosoite:</label>
-        <input type="text" name="username" id="username" value="{{ user.username }}" maxlength="50" readonly
+        <input type="text" name="username" id="username" value="{{ user.username }}" class="input-chars-40" maxlength="50" readonly
             autocomplete="username" />
         <small id="password-help">Sähköpostiosoitetta ei voi muuttaa rekisteröitymisen jälkeen.</small>
     </p>
     <p>
         <label for="name">Nimi tai nimimerkki:</label>
-        <input type="text" name="name" id="name" value="{{ user.name }}" maxlength="50" required autocomplete="name" />
+        <input type="text" name="name" id="name" value="{{ user.name }}" class="input-chars-40" maxlength="50" required autocomplete="name" />
     </p>
     <p>
         <label for="password1">Uusi salasana:</label>
-        <input type="password" name="password1" id="password1" maxlength="50" minlength="8" autocomplete="new-password"
+        <input type="password" name="password1" id="password1" class="input-chars-30" maxlength="50" minlength="8" autocomplete="new-password"
             aria-describedby="password-help" />
         <small id="password-help">Vähintään 8 merkkiä pitkä. Jätä tyhjäksi, jos et halua vaihtaa salasanaa.</small>
     </p>
     <p>
         <label for="password2">Uusi salasana uudestaan:</label>
-        <input type="password" name="password2" id="password2" maxlength="50" autocomplete="new-password" />
+        <input type="password" name="password2" id="password2" class="input-chars-30" maxlength="50" autocomplete="new-password" />
     </p>
     <p>
         <button type="submit" class="btn btn-primary">Tallenna muutokset</button>
