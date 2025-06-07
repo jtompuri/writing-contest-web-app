@@ -6,38 +6,41 @@
     style="display:inline-block; margin-bottom: 1rem;" aria-label="Luo uusi käyttäjä">
     Luo uusi käyttäjä
 </a>
-<form method="get" action="{{ url_for('admin.admin_users') }}">
 <table class="admin-table" role="table" aria-label="Käyttäjälista">
-    <thead>
-        <tr>
-            <th scope="col" class="td-left">Nimi</th>
-            <th scope="col" class="td-left">Sähköposti</th>
-            <th scope="col" class="td-center">Pääkäyttäjä</th>
-            <th scope="col"></th>
-        </tr>
-        <tr>
-            <td>
-                <input type="text" name="name_search" value="{{ name_search or '' }}" class="filter-input" placeholder="Etsi nimellä" maxlength="100">
-            </td>
-            <td>
-                <input type="text" name="username_search" value="{{ username_search or '' }}" class="filter-input" placeholder="Etsi sähköpostiosoitteella" maxlength="100">
-            </td>
-            <td>
-                <select name="super_user" class="filter-input">
-                    <option value="" {% if not super_user_filter %}selected{% endif %}>Kaikki</option>
-                    <option value="1" {% if super_user_filter == "1" %}selected{% endif %}>Kyllä</option>
-                    <option value="0" {% if super_user_filter == "0" %}selected{% endif %}>Ei</option>
-                </select>
-            </td>
-            <td class="td-right">
-                <button type="submit" class="btn btn-secondary btn-small">Suodata</button>
-                <button type="button" class="btn btn-secondary btn-small"
-                    onclick="window.location.href='{{ url_for('admin.admin_users') }}'">
-                    Nollaa
-                </button>
-            </td>
-        </tr>
-    </thead>
+    <form method="get" action="{{ url_for('admin.admin_users') }}">
+        <thead>
+            <tr>
+                <th scope="col" class="td-left">Nimi</th>
+                <th scope="col" class="td-left">Sähköposti</th>
+                <th scope="col" class="td-center">Pääkäyttäjä</th>
+                <th scope="col"></th>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" name="name_search" value="{{ name_search or '' }}" class="filter-input"
+                        placeholder="Etsi nimellä" maxlength="100">
+                </td>
+                <td>
+                    <input type="text" name="username_search" value="{{ username_search or '' }}" class="filter-input"
+                        placeholder="Etsi sähköpostiosoitteella" maxlength="100">
+                </td>
+                <td>
+                    <select name="super_user" class="filter-input">
+                        <option value="" {% if not super_user_filter %}selected{% endif %}>Kaikki</option>
+                        <option value="1" {% if super_user_filter=="1" %}selected{% endif %}>Kyllä</option>
+                        <option value="0" {% if super_user_filter=="0" %}selected{% endif %}>Ei</option>
+                    </select>
+                </td>
+                <td class="td-right">
+                    <button type="submit" class="btn btn-secondary btn-small">Suodata</button>
+                    <button type="button" class="btn btn-secondary btn-small"
+                        onclick="window.location.href='{{ url_for('admin.admin_users') }}'">
+                        Nollaa
+                    </button>
+                </td>
+            </tr>
+        </thead>
+    </form>
     <tbody>
         {% for user in users %}
         <tr>
@@ -64,6 +67,5 @@
         {% endfor %}
     </tbody>
 </table>
-</form>
 {% include "partials/_pagination.html" %}
 {% endblock %}
