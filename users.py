@@ -34,16 +34,16 @@ def create_user(name, username, password, is_super):
         is_super (bool or int): Whether the user is a super user.
 
     Returns:
-        bool: True if user was created, False if username already exists.
+        int or None: The ID of the newly created user, or None if it fails.
     """
     password_hash = generate_password_hash(password)
     query = """INSERT INTO users (name, username, password_hash, super_user)
                 VALUES (?, ?, ?, ?)"""
     try:
         db.execute(query, [name, username, password_hash, is_super])
-        return True
+        return db.last_insert_id()
     except sqlite3.IntegrityError:
-        return False
+        return None
 
 
 def get_user(user_id):
