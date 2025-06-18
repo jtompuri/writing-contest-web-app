@@ -1,24 +1,27 @@
 import re
 from flask import abort, request, session
-import secrets
 from markupsafe import Markup
+
 
 def check_csrf():
     token = request.form.get("csrf_token")
     if not token or token != session.get("csrf_token"):
         abort(403)
 
+
 def sanitize_input(text):
     if not isinstance(text, str):
         return ""
     text = text.strip()
-    text = re.sub(r'<.*?>', '', text)  # Remove HTML tags
+    text = re.sub(r'<.*?>', '', text)
     text = re.sub(r'on\w+=".*?"', '', text, flags=re.IGNORECASE)
     text = re.sub(r'(javascript:|data:|vbscript:)', '', text, flags=re.IGNORECASE)
     return text
 
+
 def is_valid_email(email):
     return re.match(r"^[^@]+@[^@]+\.[^@]+$", email)
+
 
 def format_text(text, links_allowed=False):
     text = text.replace('\n', '<br />')
