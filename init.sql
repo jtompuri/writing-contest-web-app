@@ -3183,9 +3183,6 @@ CREATE TABLE classes (
 INSERT INTO classes VALUES(1,'Runo','Runo');
 INSERT INTO classes VALUES(2,'Aforismi','Aforismi');
 INSERT INTO classes VALUES(3,'Essee','Essee');
-INSERT INTO classes VALUES(4,'Runo','Runo');
-INSERT INTO classes VALUES(5,'Aforismi','Aforismi');
-INSERT INTO classes VALUES(6,'Essee','Essee');
 CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_entries_contest_user ON entries(contest_id, user_id);
 CREATE INDEX idx_entries_user_id ON entries(user_id);
