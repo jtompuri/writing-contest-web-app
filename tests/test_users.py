@@ -10,11 +10,15 @@ class TestUserFunctions:
     def test_create_user_success(self, monkeypatch):
         """Test successful user creation."""
         mock_execute = MagicMock()
+        # Mock last_insert_id to avoid the context error and return a predictable ID
+        mock_last_id = MagicMock(return_value=1)
         monkeypatch.setattr(db, "execute", mock_execute)
+        monkeypatch.setattr(db, "last_insert_id", mock_last_id)
 
         result = users.create_user("Test User", "test@example.com", "password123", 0)
 
-        assert result is True
+        # The function should now return the ID from last_insert_id
+        assert result == 1
         mock_execute.assert_called_once()
         # Check that the password was hashed using the new default method
         assert mock_execute.call_args[0][1][2].startswith("scrypt:")
@@ -26,7 +30,8 @@ class TestUserFunctions:
 
         result = users.create_user("Test User", "test@example.com", "password123", 0)
 
-        assert result is False
+        # The function now returns None on failure
+        assert result is None
 
     def test_get_user_found(self, monkeypatch):
         """Test retrieving a user that exists."""

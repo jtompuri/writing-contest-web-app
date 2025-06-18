@@ -68,7 +68,7 @@ class TestSqlFunctions:
         # Check that the generated SQL string contains the placeholders
         assert "LIMIT ?" in generated_sql
         assert "OFFSET ?" in generated_sql
-        
+
         # Check that the parameters list contains the correct values
         assert params == [10, 5]
 

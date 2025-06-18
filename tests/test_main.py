@@ -270,7 +270,7 @@ class TestMainCoverage:
         """Test the contest page logic when a logged-in user has an existing entry."""
         with client.session_transaction() as session:
             session['user_id'] = 1
-        
+
         # Provide a complete mock object for the contest
         mock_contest = {
             "id": 1, "collection_end": "2999-12-31", "review_end": "2999-12-31",
