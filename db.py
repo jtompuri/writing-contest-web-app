@@ -13,8 +13,6 @@ Functions:
 import sqlite3
 from flask import g, current_app
 
-DATABASE = "database.db"
-
 
 def get_connection():
     """
@@ -29,7 +27,9 @@ def get_connection():
     """
     if "db" not in g:
         try:
-            g.db = sqlite3.connect(DATABASE, timeout=5)
+            # This is the critical change: use the config from the current app.
+            db_path = current_app.config["DATABASE"]
+            g.db = sqlite3.connect(db_path, timeout=5)
             g.db.execute("PRAGMA foreign_keys = ON")
             g.db.row_factory = sqlite3.Row
         except sqlite3.Error as e:

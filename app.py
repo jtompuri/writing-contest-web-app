@@ -38,7 +38,8 @@ from routes.admin import admin_bp
 from routes.entries import entries_bp
 
 app = Flask(__name__)
-app.secret_key = config.secret_key
+# Load all uppercase variables from the config object
+app.config.from_object(config)
 app.teardown_appcontext(db.close_connection)
 
 # Register blueprints

@@ -11,7 +11,7 @@ Attributes:
     PASSWORD_MIN_LENGTH (int): Minimum password length for user accounts.
 """
 
-secret_key = "8d394187c116a65f83ed7e0ee4ecf915"
+SECRET_KEY = "8d394187c116a65f83ed7e0ee4ecf915"
 SITE_TITLE = "Kirjoituskilpailut"
 DATABASE = "database.db"
 DEFAULT_PER_PAGE = 5
