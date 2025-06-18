@@ -450,10 +450,8 @@ def create_entry(contest_id, user_id, content):
     Returns:
         None
     """
-    query = """
-        INSERT INTO entries (contest_id, user_id, entry)
-        VALUES (?, ?, ?)
-    """
+    query = """INSERT INTO entries (contest_id, user_id, entry)
+             VALUES (?, ?, ?)"""
     db.execute(query, [contest_id, user_id, content])
 
 
@@ -469,10 +467,8 @@ def save_entry(contest_id, user_id, entry):
     Returns:
         None
     """
-    query = """
-        INSERT INTO entries (contest_id, user_id, entry)
-        VALUES (?, ?, ?)
-    """
+    query = """INSERT INTO entries (contest_id, user_id, entry)
+             VALUES (?, ?, ?)"""
     db.execute(query, [contest_id, user_id, entry])
 
 
