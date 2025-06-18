@@ -59,10 +59,18 @@ class TestSqlFunctions:
         mock_query = MagicMock()
         monkeypatch.setattr(db, "query", mock_query)
         func(limit=10, offset=5)
-        # Check that the generated SQL string contains LIMIT and OFFSET
-        generated_sql = mock_query.call_args[0][0]
-        assert "LIMIT 10" in generated_sql
-        assert "OFFSET 5" in generated_sql
+
+        # Get the arguments the mock was called with
+        call_args = mock_query.call_args
+        generated_sql = call_args[0][0]
+        params = call_args[0][1]
+
+        # Check that the generated SQL string contains the placeholders
+        assert "LIMIT ?" in generated_sql
+        assert "OFFSET ?" in generated_sql
+        
+        # Check that the parameters list contains the correct values
+        assert params == [10, 5]
 
     # Contest Counts
     def test_get_contest_count_with_search(self, monkeypatch):

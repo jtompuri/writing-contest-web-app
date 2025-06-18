@@ -206,11 +206,14 @@ def get_contests_for_entry(limit=None, offset=None):
             JOIN classes ON contests.class_id = classes.id
             WHERE contests.collection_end >= DATE('now')
             ORDER BY contests.collection_end DESC"""
+    params = []
     if limit is not None:
-        query += " LIMIT " + str(limit)
+        query += " LIMIT ?"
+        params.append(limit)
     if offset is not None:
-        query += " OFFSET " + str(offset)
-    return db.query(query)
+        query += " OFFSET ?"
+        params.append(offset)
+    return db.query(query, params)
 
 
 def get_contests_for_review(limit=None, offset=None):
@@ -234,11 +237,14 @@ def get_contests_for_review(limit=None, offset=None):
                 AND contests.collection_end < DATE('now')
                 AND contests.public_reviews = 1
             ORDER BY contests.review_end DESC"""
+    params = []
     if limit is not None:
-        query += " LIMIT " + str(limit)
+        query += " LIMIT ?"
+        params.append(limit)
     if offset is not None:
-        query += " OFFSET " + str(offset)
-    return db.query(query)
+        query += " OFFSET ?"
+        params.append(offset)
+    return db.query(query, params)
 
 
 def get_contests_for_results(limit=None, offset=None):
@@ -261,11 +267,14 @@ def get_contests_for_results(limit=None, offset=None):
             WHERE contests.review_end < DATE('now')
                 AND contests.public_results = 1
             ORDER BY contests.collection_end DESC"""
+    params = []
     if limit is not None:
-        query += " LIMIT " + str(limit)
+        query += " LIMIT ?"
+        params.append(limit)
     if offset is not None:
-        query += " OFFSET " + str(offset)
-    return db.query(query)
+        query += " OFFSET ?"
+        params.append(offset)
+    return db.query(query, params)
 
 
 def get_contest_count(title_search=None):
