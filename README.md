@@ -4,7 +4,7 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 
 ## Sovelluksen asennus
 
-Luo virtuaaliympäristö (valinnainen).
+Luo virtuaaliympäristö:
 
 Linux/Mac:
 ```
