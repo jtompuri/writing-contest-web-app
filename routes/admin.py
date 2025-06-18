@@ -327,37 +327,50 @@ def edit_user(user_id):
 
 @admin_bp.route("/users/update/<int:user_id>", methods=["POST"])
 def update_user(user_id):
+    check_csrf()  # Add CSRF check for security
     if not session.get("super_user"):
         abort(403)
+
+    user = users.get_user(user_id)
+    if not user:
+        abort(404)  # Abort if user not found
 
     name = sanitize_input(request.form.get("name", ""))
     username = sanitize_input(request.form.get("username", ""))
     is_super = 1 if request.form.get("is_super") == "on" else 0
-    password = sanitize_input(request.form.get("password", ""))
+    password = request.form.get("password", "")
 
+    # --- Validation Logic ---
     if not name or not username:
         flash("Nimi ja käyttäjätunnus ovat pakollisia.")
-        return redirect(url_for("admin.edit_user", user_id=user_id))
+        return render_template("admin/edit_user.html", user=user)
 
     if not is_valid_email(username):
-        session["form_data"] = {"name": name, "username": username}
         flash("Virhe: Sähköpostiosoite ei ole kelvollinen.")
-        return redirect(url_for("admin.edit_user", user_id=user_id))
+        return render_template("admin/edit_user.html", user=user)
+
+    if password and len(password) < config.PASSWORD_MIN_LENGTH:
+        flash(f"Salasanan on oltava vähintään {config.PASSWORD_MIN_LENGTH} merkkiä pitkä.")
+        return render_template("admin/edit_user.html", user=user)
+    # --- End Validation ---
 
     try:
+        # Update user details
         users.update_user(user_id, name, username, is_super)
 
         if password:
-            if len(password) < 8:
-                flash("Salasanan on oltava vähintään 8 merkkiä pitkä.")
-                return redirect(url_for("admin.edit_user", user_id=user_id))
             users.update_user_password(user_id, password)
 
         flash("Käyttäjän tiedot päivitetty.")
-        return redirect(url_for("admin.admin_users"))
     except sqlite3.IntegrityError:
         flash("Käyttäjätunnus on jo käytössä.")
-        return redirect(url_for("admin.edit_user", user_id=user_id))
+        return render_template("admin/edit_user.html", user=user)
+    except Exception as e:
+        print(f"Error updating user: {e}")
+        flash("Käyttäjän tietoja ei voitu päivittää.")
+        return render_template("admin/edit_user.html", user=user)
+
+    return redirect(url_for("admin.admin_users"))
 
 
 @admin_bp.route("/users/delete/<int:user_id>", methods=["POST"])
@@ -366,16 +379,29 @@ def delete_user(user_id):
     if not session.get("super_user"):
         abort(403)
 
-    if int(user_id) == int(session.get("user_id", -1)):
+    # Prevent deleting oneself
+    if int(user_id) == session.get("user_id", -1):
         flash("Et voi poistaa omaa tunnustasi.")
         return redirect(url_for("admin.admin_users"))
 
-    if users.is_super_user(user_id):
+    user_to_delete = users.get_user(user_id)
+    if not user_to_delete:
+        # This handles the case of trying to delete a non-existent user
+        flash("Käyttäjää ei löytynyt.")
+        return redirect(url_for("admin.admin_users"))
+
+    # Prevent deleting a superuser
+    if user_to_delete['super_user']:
         flash("Pääkäyttäjiä ei voi poistaa.")
         return redirect(url_for("admin.admin_users"))
 
-    users.delete_user(user_id)
-    flash("Käyttäjä on poistettu.")
+    try:
+        users.delete_user(user_id)
+        flash("Käyttäjä on poistettu.")
+    except Exception as e:
+        print(f"Error deleting user: {e}")
+        flash("Käyttäjää ei voitu poistaa.")
+
     return redirect(url_for("admin.admin_users"))
 
 
