@@ -655,4 +655,4 @@ class TestEntryAndReview:
         )
         assert response.status_code in (200, 302, 404)
         if response.status_code == 200:
-            assert 'arvosanojen tulee olla välillä 0-5' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
+            assert 'arvosanojen tulee olla välillä 0-5' in response.get_data(as_text=True) or 'Arvosanan tulee olla välillä 0–5' in response.get_data(as_text=True)

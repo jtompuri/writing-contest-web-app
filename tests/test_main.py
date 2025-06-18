@@ -154,6 +154,48 @@ class TestPublicRoutes:
         response = client.get('/thispagedoesnotexist')
         assert response.status_code == 404
 
+    def test_results_page_filters_private_contests(self, client, monkeypatch):
+        """Test that the main results page does not show private contests without a key."""
+        # This mocks a mix of public and private contests
+        fake_contests = [
+            {"id": 1, "title": "Public Results Contest", "public_results": True, "private_key": "", "review_end": "2025-01-31", "collection_end": "2025-01-15"},
+            {"id": 2, "title": "Private Results Contest", "public_results": False, "private_key": "secret1", "review_end": "2025-01-31", "collection_end": "2025-01-15"}
+        ]
+        monkeypatch.setattr("sql.get_contests_for_results", lambda limit, offset: fake_contests)
+        monkeypatch.setattr("sql.get_results_contest_count", lambda: len(fake_contests))
+
+        response = client.get('/results')
+        assert response.status_code == 200
+        assert b"Public Results Contest" in response.data
+        assert b"Private Results Contest" not in response.data
+
+    def test_reviews_page_filters_private_contests(self, client, monkeypatch):
+        """Test that the main reviews page does not show private contests without a key."""
+        # This mocks a mix of public and private contests
+        fake_contests = [
+            {"id": 1, "title": "Public Review Contest", "public_reviews": True, "private_key": "", "review_end": "2025-01-31", "collection_end": "2025-01-15"},
+            {"id": 2, "title": "Private Review Contest", "public_reviews": False, "private_key": "secret2", "review_end": "2025-01-31", "collection_end": "2025-01-15"}
+        ]
+        monkeypatch.setattr("sql.get_contests_for_review", lambda limit, offset: fake_contests)
+        monkeypatch.setattr("sql.get_review_contest_count", lambda: len(fake_contests))
+
+        response = client.get('/reviews')
+        assert response.status_code == 200
+        assert b"Public Review Contest" in response.data
+        assert b"Private Review Contest" not in response.data
+
+    def test_reviews_page_shows_private_contest_with_key(self, client, monkeypatch):
+        """Test that the reviews page shows a private contest when the correct key is provided."""
+        fake_contests = [
+            {"id": 2, "title": "Private Review Contest", "public_reviews": False, "private_key": "secret2", "review_end": "2025-01-31", "collection_end": "2025-01-15"}
+        ]
+        monkeypatch.setattr("sql.get_contests_for_review", lambda limit, offset: fake_contests)
+        monkeypatch.setattr("sql.get_review_contest_count", lambda: len(fake_contests))
+
+        response = client.get('/reviews?key=secret2')
+        assert response.status_code == 200
+        assert b"Private Review Contest" in response.data
+
 
 class TestContestRoutes:
     def test_contest_detail_valid(self, client):
@@ -163,187 +205,3 @@ class TestContestRoutes:
     def test_contest_detail_invalid(self, client):
         response = client.get('/contests/contest/999999')
         assert response.status_code == 404
-
-    def test_admin_contests_create_post(self, client):
-        with client.session_transaction() as session:
-            session['super_user'] = True
-            session['csrf_token'] = 'test_token'
-        response = client.post(
-            '/admin/contests/create',
-            data={
-                'csrf_token': 'test_token',
-                'title': 'Test Contest',
-                'class_id': 1,
-                'short_description': 'Short desc',
-                'long_description': 'Long desc',
-                'collection_end': '2025-12-31',
-                'review_end': '2026-01-31'
-            }
-        )
-        assert response.status_code in (302, 200, 400)
-
-    def test_admin_contests_delete_post(self, client):
-        with client.session_transaction() as session:
-            session['super_user'] = True
-            session['csrf_token'] = 'test_token'
-        response = client.post(
-            '/admin/contests/delete/1',
-            data={'csrf_token': 'test_token'}
-        )
-        assert response.status_code in (302, 200, 404)
-
-    def test_admin_edit_contest_with_super_user(self, client):
-        with client.session_transaction() as session:
-            session['super_user'] = True
-        response = client.get('/admin/contests/edit/1')
-        assert response.status_code in (200, 404)
-
-    def test_admin_edit_contest_without_super_user(self, client):
-        response = client.get('/admin/contests/edit/1')
-        assert response.status_code == 403
-
-    def test_admin_update_contest_with_super_user(self, client):
-        with client.session_transaction() as session:
-            session['super_user'] = True
-            session['csrf_token'] = 'test_token'
-        response = client.post(
-            '/admin/contests/update/1',
-            data={
-                'csrf_token': 'test_token',
-                'title': 'Updated Title',
-                'class_id': 1,
-                'short_description': 'Short desc',
-                'long_description': 'Long desc',
-                'collection_end': '2025-12-31',
-                'review_end': '2026-01-31'
-            }
-        )
-        assert response.status_code in (302, 200, 404)
-
-    def test_admin_update_contest_without_super_user(self, client):
-        response = client.post(
-            '/admin/contests/update/1',
-            data={
-                'csrf_token': 'test_token',
-                'title': 'Updated Title',
-                'class_id': 1,
-                'short_description': 'Short desc',
-                'long_description': 'Long desc',
-                'collection_end': '2025-12-31',
-                'review_end': '2026-01-31'
-            }
-        )
-        assert response.status_code == 403
-
-    def test_admin_new_contest_with_super_user(self, client):
-        with client.session_transaction() as session:
-            session['super_user'] = True
-        response = client.get('/admin/contests/new')
-        assert response.status_code == 200
-
-    def test_admin_new_contest_without_super_user(self, client):
-        response = client.get('/admin/contests/new')
-        assert response.status_code == 403
-
-    def test_admin_create_contest_short_description_too_long(self, client):
-        with client.session_transaction() as session:
-            session['super_user'] = True
-            session['csrf_token'] = 'test_token'
-        long_desc = 'a' * 256
-        response = client.post(
-            '/admin/contests/create',
-            data={
-                'csrf_token': 'test_token',
-                'title': 'Test',
-                'class_id': 1,
-                'short_description': long_desc,
-                'long_description': 'Valid',
-                'collection_end': '2025-12-31',
-                'review_end': '2026-01-31'
-            },
-            follow_redirects=True
-        )
-        assert response.status_code == 200
-        assert '255' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
-
-    def test_admin_create_contest_long_description_too_long(self, client):
-        with client.session_transaction() as session:
-            session['super_user'] = True
-            session['csrf_token'] = 'test_token'
-        long_desc = 'a' * 2001
-        response = client.post(
-            '/admin/contests/create',
-            data={
-                'csrf_token': 'test_token',
-                'title': 'Test',
-                'class_id': 1,
-                'short_description': 'Valid',
-                'long_description': long_desc,
-                'collection_end': '2025-12-31',
-                'review_end': '2026-01-31'
-            },
-            follow_redirects=True
-        )
-        assert response.status_code == 200
-        assert '2000' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
-
-    def test_admin_create_contest_missing_fields(self, client):
-        with client.session_transaction() as session:
-            session['super_user'] = True
-            session['csrf_token'] = 'test_token'
-        response = client.post(
-            '/admin/contests/create',
-            data={
-                'csrf_token': 'test_token',
-                'title': '',
-                'class_id': 1,
-                'short_description': '',
-                'long_description': '',
-                'collection_end': '',
-                'review_end': ''
-            },
-            follow_redirects=True
-        )
-        assert response.status_code == 200
-
-    def test_admin_update_contest_short_description_too_long(self, client):
-        with client.session_transaction() as session:
-            session['super_user'] = True
-            session['csrf_token'] = 'test_token'
-        long_desc = 'a' * 256
-        response = client.post(
-            '/admin/contests/update/1',
-            data={
-                'csrf_token': 'test_token',
-                'title': 'Test',
-                'class_id': 1,
-                'short_description': long_desc,
-                'long_description': 'Valid',
-                'collection_end': '2025-12-31',
-                'review_end': '2026-01-31'
-            },
-            follow_redirects=True
-        )
-        assert response.status_code == 200
-        assert '255' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
-
-    def test_admin_update_contest_long_description_too_long(self, client):
-        with client.session_transaction() as session:
-            session['super_user'] = True
-            session['csrf_token'] = 'test_token'
-        long_desc = 'a' * 2001
-        response = client.post(
-            '/admin/contests/update/1',
-            data={
-                'csrf_token': 'test_token',
-                'title': 'Test',
-                'class_id': 1,
-                'short_description': 'Valid',
-                'long_description': long_desc,
-                'collection_end': '2025-12-31',
-                'review_end': '2026-01-31'
-            },
-            follow_redirects=True
-        )
-        assert response.status_code == 200
-        assert '2000' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)

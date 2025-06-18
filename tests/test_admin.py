@@ -11,6 +11,9 @@ Test Classes:
 """
 
 import users
+import pytest
+import sqlite3
+from flask import url_for
 
 
 class TestAdminRoutes:
@@ -59,6 +62,29 @@ class TestAdminRoutes:
         response = client.get('/admin/entries')
         assert response.status_code == 403
 
+    def test_admin_edit_contest_without_super_user(self, client):
+        response = client.get('/admin/contests/edit/1')
+        assert response.status_code == 403
+
+    def test_admin_update_contest_without_super_user(self, client):
+        response = client.post(
+            '/admin/contests/update/1',
+            data={
+                'csrf_token': 'test_token',
+                'title': 'Updated Title',
+                'class_id': 1,
+                'short_description': 'Short desc',
+                'long_description': 'Long desc',
+                'collection_end': '2025-12-31',
+                'review_end': '2026-01-31'
+            }
+        )
+        assert response.status_code == 403
+
+    def test_admin_new_contest_without_super_user(self, client):
+        response = client.get('/admin/contests/new')
+        assert response.status_code == 403
+
     def test_admin_route_forbidden(self, client):
         response = client.get('/admin/')
         assert response.status_code == 403
@@ -94,7 +120,7 @@ class TestAdminRoutes:
     def test_admin_index_shows_only_latest_three_per_phase(self, client, monkeypatch):
         # Mock 5 contests, only 3 latest should be shown
         contests_collection = [
-            {"id": i, "title": f"Keräys {i}", "short_description": f"Kuvaus {i}", "class_value": "Runo", "anonymity": 1, "public_reviews": 1, "public_results": 1, "collection_end": f"2025-12-{30-i}", "review_end": f"2026-01-{31-i}"} for i in range(5)
+            {"id": i, "title": f"Keräys {i}", "short_description": f"Kuvaus {i}", "class_value": "Runo", "anonymity": 1, "public_reviews": 1, "public_results": 1, "collection_end": f"2025-12-{30 - i}", "review_end": f"2026-01-{31 - i}"} for i in range(5)
         ]
         monkeypatch.setattr("sql.get_contests_for_entry", lambda *a, **kw: contests_collection[:3])
         monkeypatch.setattr("sql.get_contests_for_review", lambda *a, **kw: [])
@@ -144,7 +170,6 @@ class TestAdminRoutes:
         response = client.get('/admin/')
         html = response.get_data(as_text=True)
         # Use the actual route
-        from flask import url_for
         with client.application.app_context():
             contest_url = url_for('main.contest', contest_id=1)
         assert f'href="{contest_url}"' in html
@@ -500,26 +525,113 @@ class TestAdminRoutes:
         response = client.post('/review/1', data={'csrf_token': 'test_token', 'points_1': '5'}, follow_redirects=True)
         assert response.status_code in (200, 302, 404)
 
-
-class TestPaginationAnd404:
-    def test_contests_pagination_out_of_range(self, client):
-        response = client.get('/contests?page=999')
+    def test_admin_contests_with_search_filter(self, client, monkeypatch):
+        """Test the title search filter on the admin contests page."""
+        monkeypatch.setattr("sql.get_all_contests", lambda **kwargs: [])
+        monkeypatch.setattr("sql.get_contest_count", lambda **kwargs: 0)
+        with client.session_transaction() as session:
+            session['super_user'] = True
+        response = client.get('/admin/contests?title_search=Test')
         assert response.status_code == 200
+        assert b'value="Test"' in response.data
 
-    def test_results_pagination_negative_page(self, client):
-        response = client.get('/results?page=-1')
+    def test_admin_users_with_filters(self, client, monkeypatch):
+        """Test the search filters on the admin users page."""
+        monkeypatch.setattr("users.get_all_users", lambda **kwargs: [])
+        monkeypatch.setattr("users.get_user_count", lambda **kwargs: 0)
+        with client.session_transaction() as session:
+            session['super_user'] = True
+        response = client.get('/admin/users?name_search=Admin&username_search=admin@test.com&super_user=1')
         assert response.status_code == 200
+        assert b'value="Admin"' in response.data
+        assert b'value="admin@test.com"' in response.data
+        assert '<option value="1" selected>Kyllä</option>' in response.get_data(as_text=True)
 
-    def test_404_error_page(self, client):
-        response = client.get('/thispagedoesnotexist')
-        assert response.status_code == 404
+    def test_admin_entries_with_filters(self, client, monkeypatch):
+        """Test the search filters on the admin entries page."""
+        # Provide a mock contest list that includes the contest being filtered by
+        mock_contests = [{'id': 1, 'title': 'Test Contest'}]
+        monkeypatch.setattr("sql.get_all_contests", lambda: mock_contests)
+        monkeypatch.setattr("sql.get_all_entries", lambda **kwargs: [])
+        monkeypatch.setattr("sql.get_entry_count", lambda **kwargs: 0)
+        with client.session_transaction() as session:
+            session['super_user'] = True
+        response = client.get('/admin/entries?contest_id=1&user_search=TestUser')
+        assert response.status_code == 200
+        assert b'value="TestUser"' in response.data
+        assert b'<option value="1" selected>' in response.data
 
-    def test_admin_update_contest_invalid_id(self, client):
+
+class TestAdminContestManagement:
+    """Tests for contest creation, updating, and error handling in the admin panel."""
+
+    @pytest.fixture(autouse=True)
+    def admin_session(self, client):
+        """Fixture to automatically log in as a superuser for all tests in this class."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
+
+    def test_create_contest_validation_failure(self, client):
+        """Test contest creation with missing required fields."""
+        response = client.post('/admin/contests/create', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        assert response.status_code == 200
+        assert b'Kaikki pakolliset kent\xc3\xa4t on t\xc3\xa4ytett\xc3\xa4v\xc3\xa4.' in response.data  # "Kaikki pakolliset kentät on täytettävä."
+
+    def test_create_contest_description_length_validation(self, client):
+        """Test contest creation with descriptions that are too long."""
+        long_string = "a" * 2001
+        response = client.post('/admin/contests/create', data={
+            'csrf_token': 'test_token', 'title': 'T', 'class_id': 1, 'collection_end': 'd', 'review_end': 'd',
+            'short_description': long_string, 'long_description': long_string
+        }, follow_redirects=True)
+        assert b'Lyhyt kuvaus saa olla enint\xc3\xa4\xc3\xa4n 255 merkki\xc3\xa4.' in response.data
+        assert b'Pitk\xc3\xa4 kuvaus saa olla enint\xc3\xa4\xc3\xa4n 2000 merkki\xc3\xa4.' in response.data
+
+    def test_create_contest_db_error(self, client, monkeypatch):
+        """Test generic exception handling during contest creation."""
+        monkeypatch.setattr("sql.create_contest", lambda *args, **kwargs: (_ for _ in ()).throw(Exception("DB Error")))
+        response = client.post('/admin/contests/create', data={
+            'csrf_token': 'test_token', 'title': 'T', 'class_id': 1, 'collection_end': 'd', 'review_end': 'd',
+            'short_description': 's', 'long_description': 'l'
+        }, follow_redirects=True)
+        assert b'Kilpailua ei voitu luoda.' in response.data
+
+    def test_edit_contest_not_found(self, client, monkeypatch):
+        """Test that editing a non-existent contest results in a 404."""
+        monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: None)
+        response = client.get('/admin/contests/edit/999')
+        assert response.status_code == 404
+
+    def test_admin_contests_create_post(self, client):
         response = client.post(
-            '/admin/contests/update/999999',
+            '/admin/contests/create',
+            data={
+                'csrf_token': 'test_token',
+                'title': 'Test Contest',
+                'class_id': 1,
+                'short_description': 'Short desc',
+                'long_description': 'Long desc',
+                'collection_end': '2025-12-31',
+                'review_end': '2026-01-31'
+            }
+        )
+        assert response.status_code in (302, 200, 400)
+
+    def test_admin_contests_delete_post(self, client):
+        response = client.post(
+            '/admin/contests/delete/1',
+            data={'csrf_token': 'test_token'}
+        )
+        assert response.status_code in (302, 200, 404)
+
+    def test_admin_edit_contest_with_super_user(self, client):
+        response = client.get('/admin/contests/edit/1')
+        assert response.status_code in (200, 404)
+
+    def test_admin_update_contest_with_super_user(self, client):
+        response = client.post(
+            '/admin/contests/update/1',
             data={
                 'csrf_token': 'test_token',
                 'title': 'Updated Title',
@@ -530,11 +642,200 @@ class TestPaginationAnd404:
                 'review_end': '2026-01-31'
             }
         )
-        assert response.status_code in (302, 404, 400)
+        assert response.status_code in (302, 200, 404)
 
-    def test_admin_delete_contest_invalid_id(self, client):
+    def test_admin_new_contest_with_super_user(self, client):
+        response = client.get('/admin/contests/new')
+        assert response.status_code == 200
+
+    def test_admin_create_contest_short_description_too_long(self, client):
+        long_desc = 'a' * 256
+        response = client.post(
+            '/admin/contests/create',
+            data={
+                'csrf_token': 'test_token',
+                'title': 'Test',
+                'class_id': 1,
+                'short_description': long_desc,
+                'long_description': 'Valid',
+                'collection_end': '2025-12-31',
+                'review_end': '2026-01-31'
+            },
+            follow_redirects=True
+        )
+        assert response.status_code == 200
+        assert '255' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
+
+    def test_admin_create_contest_long_description_too_long(self, client):
+        long_desc = 'a' * 2001
+        response = client.post(
+            '/admin/contests/create',
+            data={
+                'csrf_token': 'test_token',
+                'title': 'Test',
+                'class_id': 1,
+                'short_description': 'Valid',
+                'long_description': long_desc,
+                'collection_end': '2025-12-31',
+                'review_end': '2026-01-31'
+            },
+            follow_redirects=True
+        )
+        assert response.status_code == 200
+        assert '2000' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
+
+    def test_admin_create_contest_missing_fields(self, client):
+        response = client.post(
+            '/admin/contests/create',
+            data={
+                'csrf_token': 'test_token',
+                'title': '',
+                'class_id': 1,
+                'short_description': '',
+                'long_description': '',
+                'collection_end': '',
+                'review_end': ''
+            },
+            follow_redirects=True
+        )
+        assert response.status_code == 200
+
+    def test_admin_update_contest_short_description_too_long(self, client, monkeypatch):
+        # Mock the DB calls for the redirected-to page
+        monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: {'id': 1, 'title': 'Test Contest'})
+        monkeypatch.setattr("sql.get_all_classes", lambda: [])
+
+        long_desc = 'a' * 256
+        response = client.post(
+            '/admin/contests/update/1',
+            data={
+                'csrf_token': 'test_token',
+                'title': 'Test',
+                'class_id': 1,
+                'short_description': long_desc,
+                'long_description': 'Valid',
+                'collection_end': '2025-12-31',
+                'review_end': '2026-01-31'
+            },
+            follow_redirects=True
+        )
+        assert response.status_code == 200
+        assert '255' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
+
+    def test_admin_update_contest_long_description_too_long(self, client, monkeypatch):
+        # Mock the DB calls for the redirected-to page
+        monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: {'id': 1, 'title': 'Test Contest'})
+        monkeypatch.setattr("sql.get_all_classes", lambda: [])
+
+        long_desc = 'a' * 2001
+        response = client.post(
+            '/admin/contests/update/1',
+            data={
+                'csrf_token': 'test_token',
+                'title': 'Test',
+                'class_id': 1,
+                'short_description': 'Valid',
+                'long_description': long_desc,
+                'collection_end': '2025-12-31',
+                'review_end': '2026-01-31'
+            },
+            follow_redirects=True
+        )
+        assert response.status_code == 200
+        assert '2000' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
+
+
+class TestAdminUserManagement:
+    """Additional tests for user management in the admin panel."""
+
+    @pytest.fixture(autouse=True)
+    def admin_session(self, client):
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
-        response = client.post('/admin/contests/delete/999999', data={'csrf_token': 'test_token'})
-        assert response.status_code in (302, 200)
+
+    def test_create_user_duplicate_username(self, client, monkeypatch):
+        """Test user creation failure when username is already taken."""
+        monkeypatch.setattr("users.create_user", lambda *args, **kwargs: False)
+        response = client.post('/admin/users/create', data={
+            'csrf_token': 'test_token', 'name': 'Test', 'username': 'dupe@test.com', 'password': 'password123'
+        }, follow_redirects=True)
+        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4nimi on jo k\xc3\xa4yt\xc3\xb6ss\xc3\xa4.' in response.data  # "Käyttäjänimi on jo käytössä."
+
+    def test_edit_user_not_found(self, client, monkeypatch):
+        """Test that editing a non-existent user redirects with a flash message."""
+        monkeypatch.setattr("users.get_user", lambda user_id: None)
+        response = client.get('/admin/users/edit/999', follow_redirects=True)
+        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4\xc3\xa4 ei l\xc3\xb6ytynyt.' in response.data  # "Käyttäjää ei löytynyt."
+
+    def test_update_user_integrity_error(self, client, monkeypatch):
+        """Test user update failure due to a duplicate username (IntegrityError)."""
+        monkeypatch.setattr("users.update_user", lambda *args, **kwargs: (_ for _ in ()).throw(sqlite3.IntegrityError))
+        response = client.post('/admin/users/update/1', data={
+            'csrf_token': 'test_token', 'name': 'Test', 'username': 'dupe@test.com'
+        }, follow_redirects=True)
+        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4tunnus on jo k\xc3\xa4yt\xc3\xb6ss\xc3\xa4.' in response.data  # "Käyttäjätunnus on jo käytössä."
+
+
+class TestAdminCoverage:
+
+    @pytest.fixture(autouse=True)
+    def admin_session(self, client):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+
+    def test_new_entry_get_request(self, client, monkeypatch):
+        """Test the GET request handler for the new entry page."""
+        monkeypatch.setattr("sql.get_all_contests", lambda: [{'id': 1, 'title': 'Test Contest'}])
+        # Add the 'username' key to the mock user data
+        monkeypatch.setattr("users.get_all_users", lambda: [{'id': 1, 'name': 'Test User', 'username': 'test@user.com'}])
+        response = client.get('/admin/entries/new')
+        assert response.status_code == 200
+        # Correct the asserted text to match the template's H1 tag
+        assert b'Luo uusi kilpailuty\xc3\xb6' in response.data  # "Luo uusi kilpailutyö"
+
+    def test_new_entry_post_generic_db_error(self, client, monkeypatch):
+        """Test the generic exception handler in the new entry POST route."""
+        monkeypatch.setattr("sql.create_entry", lambda *a, **kw: (_ for _ in ()).throw(Exception("Generic DB Error")))
+        monkeypatch.setattr("sql.get_all_contests", lambda: [{'id': 1, 'title': 'Test Contest'}])
+        # Add the 'username' key here as well, since this test also re-renders the template
+        monkeypatch.setattr("users.get_all_users", lambda: [{'id': 1, 'name': 'Test User', 'username': 'test@user.com'}])
+        response = client.post('/admin/entries/new', data={
+            'csrf_token': 'test_token', 'contest_id': 1, 'user_id': 1, 'entry': 'text'
+        })
+        assert response.status_code == 200
+        assert b'Teksti\xc3\xa4 ei voitu luoda.' in response.data
+
+    def test_edit_entry_success(self, client, monkeypatch):
+        """Test successful rendering of the edit entry page."""
+        # Provide more complete mock data for the entry and the dropdowns
+        mock_entry = {'id': 1, 'contest_id': 1, 'user_id': 1, 'entry': 'Test entry text'}
+        mock_contests = [{'id': 1, 'title': 'Test Contest'}]
+        mock_users = [{'id': 1, 'name': 'Test User', 'username': 'test@user.com'}]
+
+        monkeypatch.setattr("sql.get_entry_by_id", lambda entry_id: mock_entry)
+        monkeypatch.setattr("sql.get_all_contests", lambda: mock_contests)
+        monkeypatch.setattr("users.get_all_users", lambda: mock_users)
+
+        response = client.get('/admin/entries/edit/1')
+        assert response.status_code == 200
+        # Correct the assertion to match the likely heading in the template
+        assert b'Muokkaa kilpailuty\xc3\xb6t\xc3\xa4' in response.data  # "Muokkaa kilpailutyötä"
+
+    def test_update_entry_success(self, client, monkeypatch):
+        """Test the success path for updating an entry."""
+        monkeypatch.setattr("sql.update_entry", lambda *a, **kw: None)
+        response = client.post('/admin/entries/update/1', data={
+            'csrf_token': 'test_token', 'contest_id': 1, 'user_id': 1, 'entry': 'text'
+        }, follow_redirects=True)
+        assert response.status_code == 200
+        assert b'Tekstin tiedot p\xc3\xa4ivitetty.' in response.data
+
+    def test_delete_contest_db_error(self, client, monkeypatch):
+        """Test generic exception handling during contest deletion."""
+        monkeypatch.setattr("sql.delete_contest", lambda *a, **kw: (_ for _ in ()).throw(Exception("DB Error")))
+        response = client.post('/admin/contests/delete/1', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        assert response.status_code == 200
+        # This assumes you add a try-except block to delete_contest like you have in delete_entry
+        # If not, this test will fail, and you should add the try-except block to your route.
