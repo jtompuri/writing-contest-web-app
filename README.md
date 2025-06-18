@@ -5,62 +5,60 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 ## Sovelluksen asennus
 
 1. Luo virtuaaliympäristö:
-```bash
-python3 -m venv venv 
-```
+	```bash
+	python3 -m venv venv 
+	```
 
-Linux/Mac:
-```bash
-source venv/bin/activate
-```
+	Linux/Mac:
+	```bash
+	source venv/bin/activate
+	```
 
-Windows:
-```bash
-venv\Scripts\activate
-```
+	Windows:
+	```bash
+	venv\Scripts\activate
+	```
 
 2. Asenna `flask`-kirjasto:
-
-```bash
-pip install flask
-```
+	```bash
+	pip install flask
+	```
 
 3. Tarkista, että `sqlite3` on asennetuna:
-```bash
-sqlite3 --version
-```
+	```bash
+	sqlite3 --version
+	```
 
-Jos `sqlite3` ei löydy, asenna se.
+	Jos `sqlite3` ei löydy, asenna se.
 
-Linux: 
-```bash
-sudo apt install sqlite3
-```
+	Linux: 
+	```bash
+	sudo apt install sqlite3
+	```
 
-Mac: 
-```bash
-brew install sqlite3
-```
+	Mac: 
+	```bash
+	brew install sqlite3
+	```
 
 4. Vaihtoehto 1: Luo tietokanta demosisällöllä:
-```bash
-sqlite3 database.db < init.sql
-```
+	```bash
+	sqlite3 database.db < init.sql
+	```
 
-Vaihtoehto 2: Luo tyhjä tietokanta (vain kirjallisuuslajit luodaan valmiiksi):
-```bash
-sqlite3 database.db < schema.sql
-```
+	Vaihtoehto 2: Luo tyhjä tietokanta (vain kirjallisuuslajit luodaan valmiiksi):
+	```bash
+	sqlite3 database.db < schema.sql
+	```
 
 5. Voit käynnistää sovelluksen:
-
-```bash
-flask run
-```
-tai
-```bash
-flask run --debug
-```
+	```bash
+	flask run
+	```
+	tai
+	```bash
+	flask run --debug
+	```
 
 Voit kirjautua demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja salasanalla `admin`. Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä. 
 
