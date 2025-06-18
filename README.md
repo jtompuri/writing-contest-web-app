@@ -4,13 +4,6 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 
 ## Sovelluksen asennus
 
-Asenna `flask`-kirjasto:
-
-```
-pip install flask
-```
-
-
 Luo virtuaaliympäristö (valinnainen).
 
 Linux/Mac:
@@ -19,41 +12,51 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-Tarkista, että `sqlite3` on asennetuna:
+Asenna `flask`-kirjasto:
+
+```bash
+pip install flask
 ```
+
+Tarkista, että `sqlite3` on asennetuna:
+```bash
 sqlite3 --version
 ```
 
 Jos `sqlite3` ei löydy, asenna se.
 
 Linux: 
-```
+```bash
 sudo apt install sqlite3
 ```
 Mac: 
-```
+```bash
 brew install sqlite3
 ```
 
 Jos asennuksessa on ongelmia, asenna yhteensopivat versiot riippuvuuksista:
-```
+```bash
 pip install -r requirements.txt
 ```
 
 Vaihtoehto 1: Luo tietokanta demosisällöllä:
-```
+```bash
 sqlite3 database.db < init.sql
 ```
 
 Vaihtoehto 2: Luo tyhjä tietokanta (vain kirjallisuuslajit luodaan valmiiksi):
-```
+```bash
 sqlite3 database.db < schema.sql
 ```
 
 Voit käynnistää sovelluksen:
 
-```
+```bash
 flask run
+```
+tai
+```bash
+flask run --debug
 ```
 
 Voit kirjautua demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja salasanalla `admin`. Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä. 
