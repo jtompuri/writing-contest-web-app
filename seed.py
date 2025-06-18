@@ -132,7 +132,7 @@ def populate_db():
         review_end_dt = collection_end_dt + timedelta(days=random.randint(1, 29))
         collection_end = collection_end_dt.strftime("%Y-%m-%d")
         review_end = review_end_dt.strftime("%Y-%m-%d")
-        private_key = secrets.token_urlsafe(16)  # <-- Add review key
+        private_key = secrets.token_urlsafe(16)
         cur.execute(
             "INSERT INTO contests (title, class_id, short_description, "
             "long_description, anonymity, public_reviews, public_results, "
@@ -155,7 +155,7 @@ def populate_db():
         review_end_dt = collection_end_dt + timedelta(days=random.randint(1, 365))
         collection_end = collection_end_dt.strftime("%Y-%m-%d")
         review_end = review_end_dt.strftime("%Y-%m-%d")
-        private_key = secrets.token_urlsafe(16)  # <-- Add review key
+        private_key = secrets.token_urlsafe(16)
         cur.execute(
             "INSERT INTO contests (title, class_id, short_description, "
             "long_description, anonymity, public_reviews, public_results, "
