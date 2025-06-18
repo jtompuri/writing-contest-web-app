@@ -4,7 +4,7 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 
 ## Sovelluksen asennus
 
-Luo virtuaaliympäristö:
+1. Luo virtuaaliympäristö:
 ```bash
 python3 -m venv venv 
 ```
@@ -19,13 +19,13 @@ Windows:
 venv\Scripts\activate
 ```
 
-Asenna `flask`-kirjasto:
+2. Asenna `flask`-kirjasto:
 
 ```bash
 pip install flask
 ```
 
-Tarkista, että `sqlite3` on asennetuna:
+3. Tarkista, että `sqlite3` on asennetuna:
 ```bash
 sqlite3 --version
 ```
@@ -47,7 +47,7 @@ Jos asennuksessa on ongelmia, asenna yhteensopivat versiot riippuvuuksista:
 pip install -r requirements.txt
 ```
 
-Vaihtoehto 1: Luo tietokanta demosisällöllä:
+4. Vaihtoehto 1: Luo tietokanta demosisällöllä:
 ```bash
 sqlite3 database.db < init.sql
 ```
@@ -57,7 +57,7 @@ Vaihtoehto 2: Luo tyhjä tietokanta (vain kirjallisuuslajit luodaan valmiiksi):
 sqlite3 database.db < schema.sql
 ```
 
-Voit käynnistää sovelluksen:
+5. Voit käynnistää sovelluksen:
 
 ```bash
 flask run
