@@ -5,11 +5,18 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 ## Sovelluksen asennus
 
 Luo virtuaaliympäristö:
+```bash
+python3 -m venv venv 
+```
 
 Linux/Mac:
-```
-python3 -m venv venv 
+```bash
 source venv/bin/activate
+```
+
+Windows:
+```bash
+venv\Scripts\activate
 ```
 
 Asenna `flask`-kirjasto:
@@ -29,6 +36,7 @@ Linux:
 ```bash
 sudo apt install sqlite3
 ```
+
 Mac: 
 ```bash
 brew install sqlite3
