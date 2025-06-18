@@ -5,8 +5,10 @@
 <p>
     Kirjoitatko runoja, aforismeja tai esseitä? Tutustu käynnissä oleviin kirjoituskilpailuihin ja osallistu!
     Aloita tutustumalla päättyneiden kilpailujen tuloksiin.
-    <a href="{{ url_for('auth.register') }}">Rekisteröidy</a> ja
-    <a href="{{ url_for('auth.login') }}">kirjaudu sisään</a> osallistuaksesi.
+    {% if not session.user_id %}
+        <a href="{{ url_for('auth.register') }}">Rekisteröidy</a> tai
+        <a href="{{ url_for('auth.login') }}">kirjaudu sisään</a> osallistuaksesi.
+    {% endif %}
 </p>
 
 <section class="front-feature">
