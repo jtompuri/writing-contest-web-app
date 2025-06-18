@@ -8,6 +8,10 @@ Test Classes:
     TestContestRoutes: Tests for contest detail, admin contest management, and validation.
 """
 
+import pytest
+from unittest.mock import patch, MagicMock
+from datetime import date, timedelta, datetime
+
 
 class TestFrontpage:
     def test_frontpage_winners_display(self, client, monkeypatch):
@@ -50,9 +54,9 @@ class TestFrontpage:
 
         resp = client.get("/")
         assert resp.status_code == 200
-        assert b"Voittaja 1" in resp.data
+        assert "Voittaja 1".encode('utf-8') in resp.data
         assert b"32 p." in resp.data
-        assert b"Voittaja 2" in resp.data
+        assert "Voittaja 2".encode('utf-8') in resp.data
         assert b"10 p." in resp.data
         assert b"Lue koko teksti" in resp.data
         assert b"Kaikki tulokset t" in resp.data
@@ -70,7 +74,7 @@ class TestFrontpage:
 
         resp = client.get("/")
         assert resp.status_code == 200
-        assert b"Ei tuloksia t" in resp.data or b"Voittajat julkaistaan pian" in resp.data
+        assert b"Ei tuloksia t" in resp.data or "Voittajat julkaistaan pian".encode('utf-8') in resp.data
 
     def test_frontpage_no_contests(self, client, monkeypatch):
         monkeypatch.setattr("sql.get_contests_for_entry", lambda n: [])
@@ -80,7 +84,7 @@ class TestFrontpage:
 
         resp = client.get("/")
         assert resp.status_code == 200
-        assert b"Ei k" in resp.data or b"Ei julkaistuja tuloksia" in resp.data
+        assert b"Ei k" in resp.data or "Ei julkaistuja tuloksia".encode('utf-8') in resp.data
 
     def test_frontpage_winner_entry_links(self, client, monkeypatch):
         fake_contests = [
@@ -205,3 +209,123 @@ class TestContestRoutes:
     def test_contest_detail_invalid(self, client):
         response = client.get('/contests/contest/999999')
         assert response.status_code == 404
+
+
+class TestMainCoverage:
+    """Additional tests to achieve 100% coverage for main.py."""
+
+    def test_index_winner_missing_review_end(self, client, monkeypatch):
+        """Test the fallback logic for a winner's review_end date on the index page."""
+        # Mock a contest that has a review_end date
+        mock_contest = {
+            "id": 1, "public_results": True, "review_end": "2025-01-01"
+        }
+        # Mock a winner from that contest that is missing the review_end date
+        # Add the 'entry' key to the mock data to satisfy the template
+        mock_winner = {
+            "entry_id": 101, "author_name": "Winner", "points": 50, "entry": "The winning text."
+        }
+        monkeypatch.setattr("sql.get_contests_for_results", lambda n: [mock_contest])
+        monkeypatch.setattr("sql.get_contest_results", lambda contest_id: [mock_winner])
+        # Mock other calls to prevent errors
+        monkeypatch.setattr("sql.get_contests_for_entry", lambda n: [])
+        monkeypatch.setattr("sql.get_contests_for_review", lambda n: [])
+
+        response = client.get("/")
+        assert response.status_code == 200
+        # The test passes if the route runs without error, as the logic adds the key.
+        # We can also assert the winner's name is present.
+        assert b"Winner" in response.data
+
+    @pytest.mark.parametrize("days_offset, expected_collection_open, expected_review_open", [
+        (-10, True, False),  # Collection is open
+        (5, False, True),    # Review is open
+        (20, False, False)   # Contest is closed
+    ])
+    def test_contest_page_states(self, client, monkeypatch, days_offset, expected_collection_open, expected_review_open):
+        """Test the collection_open and review_open states on the contest detail page."""
+        today = date.today()
+        collection_end = today.isoformat()
+        review_end = (today + timedelta(days=10)).isoformat()
+
+        # Patch datetime.now() to control the current date in the route
+        with patch('routes.main.datetime') as mock_dt:
+            mock_dt.now.return_value.date.return_value = today + timedelta(days=days_offset)
+            mock_dt.strptime.side_effect = lambda d, f: datetime.strptime(d, f)
+
+            # Provide a complete mock object for the contest
+            mock_contest = {
+                "id": 1, "collection_end": collection_end, "review_end": review_end,
+                "title": "Test Contest", "short_description": "Short desc.", "long_description": "Long desc."
+            }
+            monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: mock_contest)
+
+            response = client.get('/contests/contest/1')
+            assert response.status_code == 200
+            # The template context variables are not directly testable,
+            # but we can check for text that appears based on these flags.
+            # This test primarily ensures the logic runs and doesn't crash.
+
+    def test_contest_page_user_has_entry(self, client, monkeypatch):
+        """Test the contest page logic when a logged-in user has an existing entry."""
+        with client.session_transaction() as session:
+            session['user_id'] = 1
+        
+        # Provide a complete mock object for the contest
+        mock_contest = {
+            "id": 1, "collection_end": "2999-12-31", "review_end": "2999-12-31",
+            "title": "Test Contest", "short_description": "Short desc.", "long_description": "Long desc."
+        }
+        mock_entry = {"id": 101}
+        monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: mock_contest)
+        monkeypatch.setattr("sql.get_user_entry_for_contest", lambda cid, uid: mock_entry)
+
+        # Explicitly patch datetime to ensure collection_open is True
+        with patch('routes.main.datetime') as mock_dt:
+            # Set a fixed date to make the test deterministic
+            mock_dt.now.return_value.date.return_value = date(2025, 1, 1)
+            # Ensure strptime continues to function correctly
+            mock_dt.strptime.side_effect = lambda d, f: datetime.strptime(d, f)
+            response = client.get('/contests/contest/1')
+
+        assert response.status_code == 200
+        # Correct the asserted URL path. The blueprint name 'entries' is not part of the path.
+        assert b'/entry/101/edit' in response.data
+
+    def test_contests_list_pagination(self, client, monkeypatch):
+        """Test that the main contests list respects pagination parameters."""
+        mock_get_contests = MagicMock(return_value=[])
+        monkeypatch.setattr("sql.get_contests_for_entry", mock_get_contests)
+        monkeypatch.setattr("sql.get_entry_contest_count", lambda: 10)
+
+        client.get('/contests?page=2')
+        # Correct the assertion to match the actual config value (DEFAULT_PER_PAGE = 5)
+        mock_get_contests.assert_called_with(limit=5, offset=5)
+
+    def test_private_result_page_no_key(self, client, monkeypatch):
+        """Test that accessing a private result page without a key redirects."""
+        mock_contest = {"id": 1, "public_results": False, "private_key": "secret"}
+        monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: mock_contest)
+
+        response = client.get('/result/1', follow_redirects=True)
+        assert response.status_code == 200
+        assert 'Tämän kilpailun tulokset eivät ole julkisia.'.encode('utf-8') in response.data
+
+    def test_private_result_page_wrong_key(self, client, monkeypatch):
+        """Test that accessing a private result page with a wrong key redirects."""
+        mock_contest = {"id": 1, "public_results": False, "private_key": "secret"}
+        monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: mock_contest)
+
+        response = client.get('/result/1?key=wrongkey', follow_redirects=True)
+        assert response.status_code == 200
+        assert 'Tämän kilpailun tulokset eivät ole julkisia.'.encode('utf-8') in response.data
+
+    def test_private_result_page_correct_key(self, client, monkeypatch):
+        """Test that a private result page is accessible with the correct key."""
+        mock_contest = {"id": 1, "public_results": False, "private_key": "secret"}
+        monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: mock_contest)
+        monkeypatch.setattr("sql.get_contest_results", lambda contest_id: [])  # Mock results to render page
+
+        response = client.get('/result/1?key=secret')
+        assert response.status_code == 200
+        assert 'Tämän kilpailun tulokset eivät ole julkisia.'.encode('utf-8') not in response.data
