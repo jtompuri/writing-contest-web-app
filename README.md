@@ -42,11 +42,6 @@ Mac:
 brew install sqlite3
 ```
 
-Jos asennuksessa on ongelmia, asenna yhteensopivat versiot riippuvuuksista:
-```bash
-pip install -r requirements.txt
-```
-
 4. Vaihtoehto 1: Luo tietokanta demosisällöllä:
 ```bash
 sqlite3 database.db < init.sql
