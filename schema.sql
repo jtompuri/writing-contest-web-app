@@ -6,34 +6,34 @@ DROP TABLE IF EXISTS classes;
 
 CREATE TABLE users (
     id INTEGER PRIMARY KEY,
-    name TEXT,
-    username TEXT UNIQUE,
-    password_hash TEXT,
-    super_user BOOLEAN,
+    name TEXT NOT NULL,
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    super_user BOOLEAN NOT NULL DEFAULT 0,
     created DATETIME DEFAULT (DATETIME('now'))
 );
 
 CREATE TABLE contests (
     id INTEGER PRIMARY KEY,
-    title TEXT,
-    class_id INTEGER,
+    title TEXT NOT NULL,
+    class_id INTEGER NOT NULL,
     short_description TEXT,
     long_description TEXT,
-    anonymity BOOLEAN,
-    public_reviews BOOLEAN,
-    public_results BOOLEAN,
-    collection_end DATE,
-    review_end DATE,
-    private_key TEXT,
+    anonymity BOOLEAN NOT NULL DEFAULT 0,
+    public_reviews BOOLEAN NOT NULL DEFAULT 0,
+    public_results BOOLEAN NOT NULL DEFAULT 0,
+    collection_end DATE NOT NULL,
+    review_end DATE NOT NULL,
+    private_key TEXT NOT NULL,
     created DATETIME DEFAULT (DATETIME('now')),
     FOREIGN KEY (class_id) REFERENCES classes(id) ON DELETE CASCADE
 );
 
 CREATE TABLE entries (
     id INTEGER PRIMARY KEY,
-    contest_id INTEGER,
-    user_id INTEGER,
-    entry TEXT,
+    contest_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    entry TEXT NOT NULL,
     created DATETIME DEFAULT (DATETIME('now')),
     FOREIGN KEY (contest_id) REFERENCES contests(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -42,9 +42,9 @@ CREATE TABLE entries (
 
 CREATE TABLE reviews (
     id INTEGER PRIMARY KEY,
-    entry_id INTEGER,
-    user_id INTEGER,
-    points INTEGER,
+    entry_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    points INTEGER NOT NULL,
     review TEXT,
     created DATETIME DEFAULT (DATETIME('now')),
     FOREIGN KEY (entry_id) REFERENCES entries(id) ON DELETE CASCADE,
@@ -54,8 +54,8 @@ CREATE TABLE reviews (
 
 CREATE TABLE classes (
     id INTEGER PRIMARY KEY,
-    title TEXT,
-    value TEXT
+    title TEXT NOT NULL,
+    value TEXT NOT NULL
 );
 
 INSERT INTO classes VALUES(1,'Runo','Runo');
