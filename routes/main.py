@@ -126,14 +126,20 @@ def results():
     total = sql.get_results_contest_count()
     today = date.today().isoformat()
 
+    key = request.args.get("key")
+    visible_contests = [
+        c for c in contests if c["public_results"] or (key and c["private_key"] == key)
+    ]
+
     return render_template(
         "results.html",
-        contests=contests,
+        contests=visible_contests,
         page=page,
         per_page=per_page,
         total=total,
         base_url="/results?page=",
-        today=today
+        today=today,
+        key=key
     )
 
 
@@ -146,13 +152,19 @@ def reviews():
     contests = sql.get_contests_for_review(limit=per_page, offset=offset)
     total = sql.get_review_contest_count()
 
+    key = request.args.get("key")
+    visible_contests = [
+        c for c in contests if c["public_reviews"] or (key and c["private_key"] == key)
+    ]
+
     return render_template(
         "reviews.html",
-        contests=contests,
+        contests=visible_contests,
         page=page,
         per_page=per_page,
         total=total,
-        base_url="/reviews?page="
+        base_url="/reviews?page=",
+        key=key
     )
 
 

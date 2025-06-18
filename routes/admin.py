@@ -157,23 +157,28 @@ def create_contest():
         abort(403)
 
     form = request.form
-    title = sanitize_input(form["title"])
-    class_id = int(form["class_id"])
-    short_description = sanitize_input(form["short_description"])
-    long_description = sanitize_input(form["long_description"])
-    collection_end = form["collection_end"]
-    review_end = form["review_end"]
+    title = sanitize_input(form.get("title", ""))
+    class_id_str = form.get("class_id", "")
+    short_description = sanitize_input(form.get("short_description", ""))
+    long_description = sanitize_input(form.get("long_description", ""))
+    collection_end = form.get("collection_end", "")
+    review_end = form.get("review_end", "")
 
+    class_id = int(class_id_str) if class_id_str.isdigit() else None
+
+    errors = []
     if (not title or not class_id or not collection_end or not review_end or not short_description or not long_description):
-        flash("Kaikki pakolliset kentät on täytettävä.")
-        return redirect(url_for("admin.new_contest"))
+        errors.append("Kaikki pakolliset kentät on täytettävä.")
 
     if len(short_description) > 255:
-        flash("Lyhyt kuvaus saa olla enintään 255 merkkiä.")
-        return redirect(url_for("admin.new_contest"))
+        errors.append("Lyhyt kuvaus saa olla enintään 255 merkkiä.")
 
     if len(long_description) > 2000:
-        flash("Pitkä kuvaus saa olla enintään 2000 merkkiä.")
+        errors.append("Pitkä kuvaus saa olla enintään 2000 merkkiä.")
+
+    if errors:
+        for error in errors:
+            flash(error)
         return redirect(url_for("admin.new_contest"))
 
     anonymity = 1 if form.get("anonymity") == "on" else 0
@@ -201,8 +206,12 @@ def delete_contest(contest_id):
     check_csrf()
     if not session.get("super_user"):
         abort(403)
-    sql.delete_contest(contest_id)
-    flash("Kilpailu on poistettu.")
+    try:
+        sql.delete_contest(contest_id)
+        flash("Kilpailu on poistettu.")
+    except Exception as e:
+        print(f"Virhe kilpailun poistossa: {e}")
+        flash("Kilpailua ei voitu poistaa.")
     return redirect(url_for("admin.admin_contests"))
 
 
@@ -224,24 +233,29 @@ def update_contest(contest_id):
         abort(403)
 
     form = request.form
-    title = sanitize_input(form["title"])
-    class_id = int(form["class_id"])
-    short_description = sanitize_input(form["short_description"])
-    long_description = sanitize_input(form["long_description"])
-    collection_end = form["collection_end"]
-    review_end = form["review_end"]
+    title = sanitize_input(form.get("title", ""))
+    class_id_str = form.get("class_id", "")
+    short_description = sanitize_input(form.get("short_description", ""))
+    long_description = sanitize_input(form.get("long_description", ""))
+    collection_end = form.get("collection_end", "")
+    review_end = form.get("review_end", "")
 
+    class_id = int(class_id_str) if class_id_str.isdigit() else None
+
+    errors = []
     if (not title or not class_id or not collection_end or not review_end or not short_description or not long_description):
-        flash("Kaikki pakolliset kentät on täytettävä.")
-        return redirect(url_for("admin.edit_contest", contest_id=contest_id))
+        errors.append("Kaikki pakolliset kentät on täytettävä.")
 
     if len(short_description) > 255:
-        flash("Lyhyt kuvaus saa olla enintään 255 merkkiä.")
-        return redirect(url_for("admin.new_contest"))
+        errors.append("Lyhyt kuvaus saa olla enintään 255 merkkiä.")
 
     if len(long_description) > 2000:
-        flash("Pitkä kuvaus saa olla enintään 2000 merkkiä.")
-        return redirect(url_for("admin.new_contest"))
+        errors.append("Pitkä kuvaus saa olla enintään 2000 merkkiä.")
+
+    if errors:
+        for error in errors:
+            flash(error)
+        return redirect(url_for("admin.edit_contest", contest_id=contest_id))
 
     anonymity = 1 if form.get("anonymity") == "on" else 0
     public_reviews = 1 if form.get("public_reviews") == "on" else 0
@@ -270,9 +284,9 @@ def create_user():
     if not session.get("super_user"):
         abort(403)
 
-    name = sanitize_input(request.form["name"])
-    username = sanitize_input(request.form["username"])
-    password = request.form["password"]
+    name = sanitize_input(request.form.get("name", ""))
+    username = sanitize_input(request.form.get("username", ""))
+    password = request.form.get("password", "")
     is_super = 1 if request.form.get("is_super") == "on" else 0
 
     session["form_data"] = {
@@ -316,8 +330,8 @@ def update_user(user_id):
     if not session.get("super_user"):
         abort(403)
 
-    name = sanitize_input(request.form["name"])
-    username = sanitize_input(request.form["username"])
+    name = sanitize_input(request.form.get("name", ""))
+    username = sanitize_input(request.form.get("username", ""))
     is_super = 1 if request.form.get("is_super") == "on" else 0
     password = sanitize_input(request.form.get("password", ""))
 
@@ -417,8 +431,8 @@ def create_entry():
     if not session.get("super_user"):
         abort(403)
 
-    contest_id = request.form["contest_id"]
-    user_id = request.form["user_id"]
+    contest_id = request.form.get("contest_id")
+    user_id = request.form.get("user_id")
     entry_text = sanitize_input(request.form.get("entry", ""))
 
     if not contest_id or not user_id or not entry_text:
@@ -453,8 +467,8 @@ def update_entry(entry_id):
     if not session.get("super_user"):
         abort(403)
 
-    contest_id = request.form["contest_id"]
-    user_id = request.form["user_id"]
+    contest_id = request.form.get("contest_id")
+    user_id = request.form.get("user_id")
     entry_text = sanitize_input(request.form.get("entry", ""))
 
     if not contest_id or not user_id or not entry_text:

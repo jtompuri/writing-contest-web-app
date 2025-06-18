@@ -142,8 +142,11 @@ def edit_entry(entry_id):
     if not entry or entry["user_id"] != session["user_id"]:
         abort(403)
     contest = sql.get_contest_by_id(entry["contest_id"])
-    today = date.today().isoformat()
-    if contest["collection_end"] <= today:
+    if not contest:
+        flash("Kilpailua ei löytynyt.")
+        return redirect(url_for("entries.my_texts"))
+    collection_end = datetime.strptime(contest["collection_end"], "%Y-%m-%d").date()
+    if collection_end < date.today():
         flash("Et voi enää muokata tätä tekstiä.")
         return redirect(url_for("entries.my_texts"))
     source = request.args.get("source") or request.form.get("source", "")
@@ -181,6 +184,7 @@ def edit_entry(entry_id):
             return redirect(url_for("entries.my_texts"))
         # Fallback for unknown actions
         return redirect(url_for("entries.my_texts"))
+    return redirect(url_for("entries.my_texts"))
 
 
 @entries_bp.route("/entry/<int:entry_id>/delete", methods=["POST"])
@@ -192,7 +196,7 @@ def delete_entry(entry_id):
         abort(403)
     contest = sql.get_contest_by_id(entry["contest_id"])
     today = date.today().isoformat()
-    if contest["collection_end"] <= today:
+    if not contest or contest["collection_end"] <= today:
         flash("Et voi enää poistaa tätä tekstiä.")
         return redirect(url_for("entries.my_texts"))
     sql.delete_entry(entry_id)
