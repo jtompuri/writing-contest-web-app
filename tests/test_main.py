@@ -212,7 +212,6 @@ class TestContestRoutes:
 
 
 class TestMainCoverage:
-    """Additional tests to achieve 100% coverage for main.py."""
 
     def test_index_winner_missing_review_end(self, client, monkeypatch):
         """Test the fallback logic for a winner's review_end date on the index page."""

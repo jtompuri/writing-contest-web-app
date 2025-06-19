@@ -16,6 +16,22 @@ import sqlite3
 
 
 class TestAdminRoutes:
+    def test_new_entry_forbidden(self, client):
+        response = client.get('/admin/entries/new')
+        assert response.status_code == 403
+
+    def test_delete_user_forbidden(self, client):
+        response = client.post('/admin/users/delete/1', data={'csrf_token': 'test_token'})
+        assert response.status_code == 403
+
+    def test_edit_user_forbidden(self, client):
+        response = client.get('/admin/users/edit/1', follow_redirects=True)
+        assert response.status_code == 403
+
+    def test_new_user_forbidden(self, client):
+        response = client.get('/admin/users/new')
+        assert response.status_code == 403
+
     def test_admin_route_without_super_user(self, client):
         response = client.get('/admin/')
         assert response.status_code == 403
@@ -755,3 +771,266 @@ class TestAdminCoverage:
         assert response.status_code == 200
         # This assumes you add a try-except block to delete_contest like you have in delete_entry
         # If not, this test will fail, and you should add the try-except block to your route.
+
+    def test_create_contest_db_exception(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("sql.create_contest", lambda *a, **kw: (_ for _ in ()).throw(Exception("fail")))
+        response = client.post(
+            '/admin/contests/create',
+            data={
+                'csrf_token': 'test_token',
+                'title': 'Test',
+                'class_id': 1,
+                'short_description': 'Short',
+                'long_description': 'Long',
+                'collection_end': '2025-12-31',
+                'review_end': '2026-01-31'
+            },
+            follow_redirects=True
+        )
+        assert b'Kilpailua ei voitu luoda.' in response.data
+
+    # --- 208: delete_contest, except block ---
+    def test_delete_contest_db_exception(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("sql.delete_contest", lambda *a, **kw: (_ for _ in ()).throw(Exception("fail")))
+        response = client.post(
+            '/admin/contests/delete/1',
+            data={'csrf_token': 'test_token'},
+            follow_redirects=True
+        )
+        assert b'Kilpailua ei voitu poistaa.' in response.data
+
+    # --- 233: edit_contest, abort(404) ---
+    def test_edit_contest_not_found(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+        monkeypatch.setattr("sql.get_contest_by_id", lambda cid: None)
+        monkeypatch.setattr("sql.get_all_classes", lambda: [])
+        response = client.get('/admin/contests/edit/999')
+        assert response.status_code == 404
+
+    # --- 247: update_contest, errors branch ---
+    def test_update_contest_missing_fields(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("sql.get_contest_by_id", lambda cid: {'id': 1, 'title': 'Test'})
+        monkeypatch.setattr("sql.get_all_classes", lambda: [])
+        response = client.post(
+            '/admin/contests/update/1',
+            data={
+                'csrf_token': 'test_token',
+                'title': '',
+                'class_id': '',
+                'short_description': '',
+                'long_description': '',
+                'collection_end': '',
+                'review_end': ''
+            },
+            follow_redirects=True
+        )
+        assert b'Kaikki pakolliset kent' in response.data
+
+    # --- 312-314: create_user, missing fields ---
+    def test_create_user_missing_fields(self, client):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        response = client.post(
+            '/admin/users/create',
+            data={'csrf_token': 'test_token', 'name': '', 'username': '', 'password': ''},
+            follow_redirects=True
+        )
+        assert b'Kaikki kent' in response.data
+
+    # --- 320: create_user, invalid email ---
+    def test_create_user_invalid_email(self, client):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        response = client.post(
+            '/admin/users/create',
+            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'notanemail', 'password': 'password123'},
+            follow_redirects=True
+        )
+        assert b'S\xc3\xa4hk\xc3\xb6postiosoite ei ole kelvollinen' in response.data
+
+    # --- 332: create_user, duplicate username ---
+    def test_create_user_duplicate_username(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("users.create_user", lambda *a, **kw: False)
+        response = client.post(
+            '/admin/users/create',
+            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'dupe@test.com', 'password': 'password123'},
+            follow_redirects=True
+        )
+        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4nimi on jo k\xc3\xa4yt\xc3\xb6ss\xc3\xa4' in response.data
+
+    # --- 336: create_user, success ---
+    def test_create_user_success(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("users.create_user", lambda *a, **kw: True)
+        response = client.post(
+            '/admin/users/create',
+            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'test@example.com', 'password': 'password123'},
+            follow_redirects=True
+        )
+        assert b'Uusi k\xc3\xa4ytt\xc3\xa4j\xc3\xa4 on luotu' in response.data
+
+    # --- 368-371: edit_user, user not found ---
+    def test_edit_user_not_found(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+        monkeypatch.setattr("users.get_user", lambda uid: None)
+        response = client.get('/admin/users/edit/999', follow_redirects=True)
+        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4\xc3\xa4 ei l\xc3\xb6ytynyt' in response.data
+
+    # --- 380: update_user, forbidden ---
+    def test_update_user_forbidden(self, client):
+        response = client.post('/admin/users/update/1', data={'name': 'Test', 'username': 'test@example.com'})
+        assert response.status_code == 403
+
+    # --- 398-405: update_user, missing fields, invalid email, short password ---
+    def test_update_user_missing_fields(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("users.get_user", lambda uid: {'id': 1, 'name': 'Test', 'username': 'test@example.com'})
+        response = client.post(
+            '/admin/users/update/1',
+            data={'csrf_token': 'test_token', 'name': '', 'username': ''},
+            follow_redirects=True
+        )
+        assert b'Nimi ja k\xc3\xa4ytt\xc3\xa4j\xc3\xa4tunnus ovat pakollisia' in response.data
+
+    def test_update_user_invalid_email(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("users.get_user", lambda uid: {'id': 1, 'name': 'Test', 'username': 'test@example.com'})
+        response = client.post(
+            '/admin/users/update/1',
+            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'notanemail'},
+            follow_redirects=True
+        )
+        assert b'S\xc3\xa4hk\xc3\xb6postiosoite ei ole kelvollinen' in response.data
+
+    def test_update_user_short_password(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("users.get_user", lambda uid: {'id': 1, 'name': 'Test', 'username': 'test@example.com'})
+        response = client.post(
+            '/admin/users/update/1',
+            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'test@example.com', 'password': '123'},
+            follow_redirects=True
+        )
+        assert b'Salasanan on oltava v\xc3\xa4hint\xc3\xa4\xc3\xa4n' in response.data
+
+    # --- 411: update_user, user not found ---
+    def test_update_user_user_not_found(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("users.get_user", lambda uid: None)
+        response = client.post(
+            '/admin/users/update/999',
+            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'test@example.com'},
+            follow_redirects=True
+        )
+        assert response.status_code == 404
+
+    # --- 423-424: update_user, IntegrityError ---
+    def test_update_user_integrity_error(self, client, monkeypatch):
+        import sqlite3
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("users.get_user", lambda uid: {'id': 1, 'name': 'Test', 'username': 'test@example.com'})
+
+        def raise_integrity(*a, **kw):
+            raise sqlite3.IntegrityError()
+        monkeypatch.setattr("users.update_user", raise_integrity)
+        response = client.post(
+            '/admin/users/update/1',
+            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'test@example.com'},
+            follow_redirects=True
+        )
+        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4tunnus on jo k\xc3\xa4yt\xc3\xb6ss\xc3\xa4' in response.data
+
+    # --- 435-436, 439: update_user, generic Exception ---
+    def test_update_user_generic_exception(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("users.get_user", lambda uid: {'id': 1, 'name': 'Test', 'username': 'test@example.com'})
+
+        def raise_exception(*a, **kw):
+            raise Exception("fail")
+        monkeypatch.setattr("users.update_user", raise_exception)
+        response = client.post(
+            '/admin/users/update/1',
+            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'test@example.com'},
+            follow_redirects=True
+        )
+        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4n tietoja ei voitu p\xc3\xa4ivitt\xc3\xa4\xc3\xa4' in response.data
+
+    # --- 470-471: delete_user, delete own user ---
+    def test_delete_own_user(self, client):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['user_id'] = 1
+            session['csrf_token'] = 'test_token'
+        response = client.post('/admin/users/delete/1', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        assert b'Et voi poistaa omaa tunnustasi' in response.data
+
+    # --- 494: delete_user, user not found ---
+    def test_delete_user_not_found(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("users.get_user", lambda uid: None)
+        response = client.post('/admin/users/delete/999', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4\xc3\xa4 ei l\xc3\xb6ytynyt' in response.data
+
+    # --- 501-502: delete_user, super user ---
+    def test_delete_super_user(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("users.get_user", lambda uid: {'id': 2, 'name': 'Super', 'username': 'super@example.com', 'super_user': 1})
+        response = client.post('/admin/users/delete/2', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        assert b'P\xc3\xa4\xc3\xa4k\xc3\xa4ytt\xc3\xa4ji\xc3\xa4 ei voi poistaa' in response.data
+
+    # --- 508-511: delete_user, generic Exception ---
+    def test_delete_user_generic_exception(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("users.get_user", lambda uid: {'id': 3, 'name': 'User', 'username': 'user@example.com', 'super_user': 0})
+        monkeypatch.setattr("users.delete_user", lambda uid: (_ for _ in ()).throw(Exception("fail")))
+        response = client.post('/admin/users/delete/3', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4\xc3\xa4 ei voitu poistaa' in response.data
+
+    # --- 522-524: new_entry, missing fields POST ---
+    def test_new_entry_post_missing_fields(self, client, monkeypatch):
+        with client.session_transaction() as session:
+            session['super_user'] = True
+            session['csrf_token'] = 'test_token'
+        monkeypatch.setattr("sql.get_all_contests", lambda: [{'id': 1, 'title': 'Test Contest'}])
+        monkeypatch.setattr("users.get_all_users", lambda: [{'id': 1, 'name': 'Test User', 'username': 'test@user.com'}])
+        response = client.post(
+            '/admin/entries/new',
+            data={'csrf_token': 'test_token', 'contest_id': '', 'user_id': '', 'entry': ''},
+            follow_redirects=True
+        )
+        assert b'Kaikki pakolliset kent' in response.data

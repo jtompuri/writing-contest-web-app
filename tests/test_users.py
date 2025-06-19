@@ -148,6 +148,17 @@ class TestUserFunctions:
 
         mock_execute.assert_called_with("DELETE FROM users WHERE id = ?", [1])
 
+    def test_get_user_count_with_username_search(self, monkeypatch):
+        """Test get_user_count with username_search filter."""
+        mock_query = MagicMock(return_value=[[3]])
+        monkeypatch.setattr(db, "query", mock_query)
+
+        users.get_user_count(username_search="testuser")
+
+        expected_query = "SELECT COUNT(*) FROM users WHERE 1=1 AND username LIKE ?"
+        expected_params = ["%testuser%"]
+        mock_query.assert_called_with(expected_query, expected_params)
+
     def test_is_super_user(self, monkeypatch):
         """Test is_super_user for a super user."""
         monkeypatch.setattr(db, "query", lambda *args: [{"super_user": 1}])

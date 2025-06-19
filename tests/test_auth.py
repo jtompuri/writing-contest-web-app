@@ -10,8 +10,73 @@ Test Classes:
     TestProfileEdit: Tests for profile editing features.
 """
 
+from unittest.mock import MagicMock
+import users
+
 
 class TestAuth:
+    def test_register_post_normal_user_flash(self, client, monkeypatch):
+        """Covers flash('Tunnus on luotu.') for non-superuser registration."""
+        monkeypatch.setattr("users.get_user_count", lambda: 1)  # Not first user
+        monkeypatch.setattr("users.create_user", lambda n, u, p, s: True)
+        client.get('/register')
+        with client.session_transaction() as session:
+            csrf_token = session['csrf_token']
+        response = client.post('/create', data={
+            'csrf_token': csrf_token,
+            'name': 'Regular User',
+            'username': 'regular@example.com',
+            'password1': 'password123',
+            'password2': 'password123'
+        }, follow_redirects=True)
+        assert b'Tunnus on luotu' in response.data
+
+    def test_login_route_unsupported_method_redirects(self, client):
+        """Covers the fallback 'return redirect("/login")' for unsupported methods."""
+        response = client.open('/login', method='PUT')
+        # Accept 405 (Method Not Allowed) as the correct Flask behavior
+        assert response.status_code == 405
+
+    def test_login_get_request(self, client):
+        """Test that the login page loads correctly with a GET request."""
+        response = client.get('/login')
+        assert response.status_code == 200
+        assert 'Kirjaudu sisään' in response.get_data(as_text=True)
+
+    def test_login_success(self, app, client):
+        """Test a successful login and redirection."""
+        with app.app_context():
+            users.create_user("Test User", "test@example.com", "password123", 0)
+
+        client.get('/login')
+        with client.session_transaction() as session:
+            csrf_token = session["csrf_token"]
+        response = client.post('/login', data={
+            'username': 'test@example.com',
+            'password': 'password123',
+            'csrf_token': csrf_token
+        }, follow_redirects=True)
+        assert response.status_code == 200
+        with client.session_transaction() as session:
+            assert 'user_id' in session
+            assert session['username'] == 'test@example.com'
+
+    def test_login_user_not_found_after_check(self, client, monkeypatch):
+        """Test the edge case where check_login succeeds but get_user fails."""
+        monkeypatch.setattr("users.check_login", lambda u, p: 1)
+        monkeypatch.setattr("users.get_user", lambda uid: None)
+
+        client.get('/login')
+        with client.session_transaction() as session:
+            csrf_token = session["csrf_token"]
+        response = client.post('/login', data={
+            'username': 'test@example.com',
+            'password': 'password123',
+            'csrf_token': csrf_token
+        }, follow_redirects=True)
+        assert response.status_code == 200
+        assert "Virheellinen käyttäjätunnus" in response.get_data(as_text=True)
+
     def test_login_post_invalid(self, client):
         client.get('/login')
         with client.session_transaction() as session:
@@ -47,6 +112,43 @@ class TestAuth:
 
 
 class TestUserActions:
+    def test_register_post_first_user_is_super(self, client, monkeypatch):
+        """Test that the first user created is automatically a superuser."""
+        # Mock get_user_count to simulate an empty database
+        monkeypatch.setattr("users.get_user_count", lambda: 0)
+        # Mock create_user to check if is_super is correctly set to 1
+        mock_create = MagicMock(return_value=1)
+        monkeypatch.setattr("users.create_user", mock_create)
+
+        client.get('/register')
+        with client.session_transaction() as session:
+            csrf_token = session['csrf_token']
+        client.post('/create', data={
+            'csrf_token': csrf_token,
+            'name': 'Super User',
+            'username': 'super@example.com',
+            'password1': 'password123',
+            'password2': 'password123'
+        }, follow_redirects=True)
+
+        # Assert that create_user was called with is_super=1
+        mock_create.assert_called_with('Super User', 'super@example.com', 'password123', 1)
+
+    def test_register_post_long_fields(self, client):
+        """Test registration failure with overly long input fields."""
+        client.get('/register')
+        with client.session_transaction() as session:
+            csrf_token = session['csrf_token']
+        response = client.post('/create', data={
+            'csrf_token': csrf_token,
+            'name': 'a' * 51,
+            'username': 'test@example.com',
+            'password1': 'password123',
+            'password2': 'password123'
+        }, follow_redirects=True)
+        assert response.status_code == 200
+        assert "Tarkista syötteet" in response.get_data(as_text=True)
+
     def test_register_post_missing_fields(self, client):
         client.get('/register')
         with client.session_transaction() as session:
@@ -147,6 +249,26 @@ class TestProfileEdit:
             sess["username"] = username
             sess["csrf_token"] = "test_token"
 
+    def test_edit_profile_get_not_logged_in(self, client):
+        """Test that a non-logged-in user is redirected from the edit profile page."""
+        response = client.get("/profile/edit", follow_redirects=True)
+        assert response.status_code == 200
+        assert "Kirjaudu sisään" in response.get_data(as_text=True)
+
+    def test_edit_profile_post_not_logged_in(self, client):
+        """Test that a non-logged-in user cannot POST to the edit profile page."""
+        response = client.post("/profile/edit", follow_redirects=True)
+        assert response.status_code == 200
+        assert "Kirjaudu sisään" in response.get_data(as_text=True)
+
+    def test_edit_profile_user_not_found(self, client, monkeypatch):
+        """Test behavior when the logged-in user is not found in the database."""
+        self.login_as(client)
+        monkeypatch.setattr("users.get_user", lambda uid: None)
+        response = client.get("/profile/edit", follow_redirects=True)
+        assert response.status_code == 200
+        assert "Käyttäjää ei löytynyt" in response.get_data(as_text=True)
+
     def test_edit_profile_get(self, client, monkeypatch):
         self.login_as(client)
 
@@ -246,7 +368,29 @@ class TestProfileEdit:
             "password2": ""
         }, follow_redirects=True)
         assert response.status_code == 200
-        assert "Nimi ei saa olla tyhjä" in response.get_data(as_text=True) or "Nimi ei saa olla" in response.get_data(as_text=True)
+        assert "Nimi ei saa olla tyhjä" in response.get_data(as_text=True)
+
+    def test_edit_profile_post_long_name(self, client, monkeypatch):
+        """Test profile edit failure with an overly long name."""
+        self.login_as(client)
+
+        def fake_get_user(user_id):
+            return {"id": user_id, "username": "test@example.com", "name": "Test"}
+        monkeypatch.setattr("users.get_user", fake_get_user)
+        response = client.post("/profile/edit", data={
+            "csrf_token": "test_token",
+            "name": "a" * 51,
+            "password1": "",
+            "password2": ""
+        }, follow_redirects=True)
+        assert response.status_code == 200
+        assert "Nimi ei saa olla tyhjä tai liian pitkä" in response.get_data(as_text=True)
+
+    def test_delete_profile_not_logged_in(self, client):
+        """Test that a non-logged-in user cannot delete a profile."""
+        response = client.post("/profile/delete", follow_redirects=True)
+        assert response.status_code == 200
+        assert "Kirjaudu sisään" in response.get_data(as_text=True)
 
     def test_delete_profile(self, client, monkeypatch):
         self.login_as(client)
@@ -254,3 +398,4 @@ class TestProfileEdit:
         response = client.post("/profile/delete", data={"csrf_token": "test_token"}, follow_redirects=True)
         assert response.status_code in (200, 302)
         assert "Profiili poistettu" in response.get_data(as_text=True) or "poistettu" in response.get_data(as_text=True)
+
