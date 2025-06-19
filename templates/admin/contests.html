@@ -7,8 +7,6 @@
     Luo uusi kilpailu
 </a>
 
-
-
 <table class="admin-table">
     <form method="get" action="{{ url_for('admin.admin_contests') }}">
         <thead>
@@ -21,7 +19,7 @@
             <tr>
                 <td>
                     <input type="text" class="filter-input" name="title_search" id="title_search"
-                        placeholder="Etsi otsikolla" value="{{ title_search or '' }}" class="filter-input"
+                        placeholder="Etsi otsikolla" value="{{ title_search or '' }}"
                         maxlength="100" title="Kilpailun otsikko">
                 </td>
                 <td></td>

@@ -2,15 +2,15 @@
 <html lang="fi">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Kirjoituskilpailut{% endblock %}</title>
-    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 
 <body>
     <div class="page-wrapper">
-        <header class="logo-bar" role="banner">
+        <header class="logo-bar">
             <div class="container logo-bar-inner">
                 {% if request.path != '/' %}
                 <a href="{{ url_for('main.index') }}" class="logo-title"
@@ -45,7 +45,7 @@
                 </div>
             </div>
         </header>
-        <nav role="navigation" aria-label="Päävalikko" class="main-nav">
+        <nav aria-label="Päävalikko" class="main-nav">
             <div class="container">
                 <ul class="main-nav-list">
                     <li class="{% if request.path == '/' or source=='index' %}active{% endif %}">
@@ -80,7 +80,7 @@
                 </ul>
             </div>
         </nav>
-        <main class="content-box container" role="main">
+        <main class="content-box container">
             {% with messages = get_flashed_messages() %}
             {% if messages %}
             <div class="flash-messages">
@@ -94,7 +94,7 @@
             {% endwith %}
             {% block content %}{% endblock %}
         </main>
-        <footer role="contentinfo">
+        <footer>
             <div class="container">
                 <p>&copy; 2025 Janne Tompuri</p>
             </div>
