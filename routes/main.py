@@ -46,11 +46,6 @@ def index():
                         winner[field] = latest_result.get(field, "")
                 winners[i] = winner  # Replace with dict
 
-    # After fetching winners and latest_result
-    for winner in winners:
-        if "review_end" not in winner and latest_result and "review_end" in latest_result:
-            winner["review_end"] = latest_result["review_end"]
-
     today = date.today().isoformat()  # Add this line
 
     return render_template(

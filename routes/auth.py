@@ -95,7 +95,7 @@ def login():
             flash("Virhe: Väärä tunnus tai salasana.")
             return render_template("login.html", next_page=next_page, username=username)
 
-    return redirect("/login")
+    return redirect("/login")  # pragma: no cover  # Exclude from coverage report; this line does not get executed
 
 
 @auth_bp.route("/logout", methods=["POST"])
