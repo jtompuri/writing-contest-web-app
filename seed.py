@@ -33,7 +33,8 @@ INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_entries_contest_user "
     "ON entries(contest_id, user_id);",
     "CREATE INDEX IF NOT EXISTS idx_entries_user_id ON entries(user_id);",
-    "CREATE INDEX IF NOT EXISTS idx_entries_contest_id ON entries(contest_id);",
+    "CREATE INDEX IF NOT EXISTS idx_entries_contest_id "
+    "ON entries(contest_id);",
     "CREATE INDEX IF NOT EXISTS idx_reviews_entry_id ON reviews(entry_id);",
     "CREATE INDEX IF NOT EXISTS idx_reviews_user_id ON reviews(user_id);",
     "CREATE INDEX IF NOT EXISTS idx_contests_class_id ON contests(class_id);"
@@ -85,7 +86,8 @@ def populate_db():
     cur = conn.cursor()
 
     # Classes
-    class_values = [("Runo", "Runo"), ("Aforismi", "Aforismi"), ("Essee", "Essee")]
+    class_values = [("Runo", "Runo"), ("Aforismi",
+                                       "Aforismi"), ("Essee", "Essee")]
     for i, (title, value) in enumerate(class_values):
         cur.execute(
             "INSERT INTO classes (title, value) VALUES (?, ?)",
@@ -118,7 +120,7 @@ def populate_db():
     today = datetime.now()
     finished_count = int(CONTEST_COUNT * 0.3)  # 30% finished contests
 
-    # Finished contests (collection_end and review_end in the past, public_results=1)
+    # Finished contests
     for i in range(finished_count):
         title = f"Contest {i + 1}"
         class_id = random.randint(1, CLASS_COUNT)
@@ -129,16 +131,19 @@ def populate_db():
         public_results = 1  # Results are public
         # Ended in the past
         collection_end_dt = today - timedelta(days=random.randint(30, 365))
-        review_end_dt = collection_end_dt + timedelta(days=random.randint(1, 29))
+        review_end_dt = collection_end_dt + \
+            timedelta(days=random.randint(1, 29))
         collection_end = collection_end_dt.strftime("%Y-%m-%d")
         review_end = review_end_dt.strftime("%Y-%m-%d")
         private_key = secrets.token_urlsafe(16)
         cur.execute(
             "INSERT INTO contests (title, class_id, short_description, "
             "long_description, anonymity, public_reviews, public_results, "
-            "collection_end, review_end, private_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "collection_end, review_end, private_key) VALUES (?, ?, ?, ?, ?, "
+            "?, ?, ?, ?, ?)",
             (title, class_id, short_description, long_description, anonymity,
-             public_reviews, public_results, collection_end, review_end, private_key)
+             public_reviews, public_results, collection_end, review_end,
+             private_key)
         )
 
     # Ongoing/future contests (collection_end/review_end in future or ongoing)
@@ -152,16 +157,19 @@ def populate_db():
         public_results = random.randint(0, 1)
         # Some ongoing, some in future
         collection_end_dt = today + timedelta(days=random.randint(-10, 365))
-        review_end_dt = collection_end_dt + timedelta(days=random.randint(1, 365))
+        review_end_dt = collection_end_dt + \
+            timedelta(days=random.randint(1, 365))
         collection_end = collection_end_dt.strftime("%Y-%m-%d")
         review_end = review_end_dt.strftime("%Y-%m-%d")
         private_key = secrets.token_urlsafe(16)
         cur.execute(
             "INSERT INTO contests (title, class_id, short_description, "
             "long_description, anonymity, public_reviews, public_results, "
-            "collection_end, review_end, private_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "collection_end, review_end, private_key) VALUES (?, ?, ?, ?, ?, "
+            "?, ?, ?, ?, ?)",
             (title, class_id, short_description, long_description, anonymity,
-             public_reviews, public_results, collection_end, review_end, private_key)
+             public_reviews, public_results, collection_end, review_end,
+             private_key)
         )
 
     # Entries
@@ -198,6 +206,50 @@ def populate_db():
             (entry_id, user_id, points, review)
         )
         attempts += 1
+
+    # --- Ensure at least one contest is in review period ---
+    today = datetime.now()
+    class_id = 1
+    short_description = "Demo contest with open review period."
+    long_description = "This contest is always in review period for demo " \
+                       "purposes."
+    anonymity = 0
+    public_reviews = 1
+    public_results = 0
+    collection_end = (today - timedelta(days=1)).strftime("%Y-%m-%d")
+    review_end = (today + timedelta(days=7)).strftime("%Y-%m-%d")
+    private_key = secrets.token_urlsafe(16)
+    cur.execute(
+        "INSERT INTO contests (title, class_id, short_description, "
+        "long_description, anonymity, public_reviews, public_results, "
+        "collection_end, review_end, private_key) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (
+            "Demo Review Contest",
+            class_id,
+            short_description,
+            long_description,
+            anonymity,
+            public_reviews,
+            public_results,
+            collection_end,
+            review_end,
+            private_key
+        )
+    )
+    # Get the id of the inserted demo contest
+    demo_contest_id = cur.lastrowid
+
+    # Add a few entries for the demo contest (by unique users)
+    demo_user_ids = [i + 2 for i in range(3)]  # users 2, 3, 4
+    for i, user_id in enumerate(demo_user_ids):
+        entry = (f"Demo entry {i + 1} for review contest.\n\n" +
+                 random_lorem(200))
+        cur.execute(
+            "INSERT INTO entries (contest_id, user_id, entry) "
+            "VALUES (?, ?, ?)",
+            (demo_contest_id, user_id, entry)
+        )
 
     conn.commit()
     conn.close()
