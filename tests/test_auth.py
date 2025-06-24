@@ -17,7 +17,8 @@ import users
 class TestAuth:
     def test_register_post_normal_user_flash(self, client, monkeypatch):
         """Covers flash('Tunnus on luotu.') for non-superuser registration."""
-        monkeypatch.setattr("users.get_user_count", lambda: 1)  # Not first user
+        monkeypatch.setattr("users.get_user_count",
+                            lambda: 1)  # Not first user
         monkeypatch.setattr("users.create_user", lambda n, u, p, s: True)
         client.get('/register')
         with client.session_transaction() as session:
@@ -46,7 +47,8 @@ class TestAuth:
     def test_login_success(self, app, client):
         """Test a successful login and redirection."""
         with app.app_context():
-            users.create_user("Test User", "test@example.com", "password123", 0)
+            users.create_user(
+                "Test User", "test@example.com", "password123", 0)
 
         client.get('/login')
         with client.session_transaction() as session:
@@ -132,7 +134,8 @@ class TestUserActions:
         }, follow_redirects=True)
 
         # Assert that create_user was called with is_super=1
-        mock_create.assert_called_with('Super User', 'super@example.com', 'password123', 1)
+        mock_create.assert_called_with(
+            'Super User', 'super@example.com', 'password123', 1)
 
     def test_register_post_long_fields(self, client):
         """Test registration failure with overly long input fields."""
@@ -175,7 +178,8 @@ class TestUserActions:
             'password2': 'password321'
         }, follow_redirects=True)
         assert response.status_code == 200
-        assert 'salasanat' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
+        assert 'salasanat' in response.get_data(
+            as_text=True) or 'Virhe' in response.get_data(as_text=True)
 
     def test_register_post_short_password(self, client):
         client.get('/register')
@@ -189,7 +193,8 @@ class TestUserActions:
             'password2': 'short'
         }, follow_redirects=True)
         assert response.status_code == 200
-        assert 'salasanan on oltava' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
+        assert 'salasanan on oltava' in response.get_data(
+            as_text=True) or 'Virhe' in response.get_data(as_text=True)
 
     def test_register_post_invalid_email(self, client):
         client.get('/register')
@@ -203,7 +208,8 @@ class TestUserActions:
             'password2': 'password123'
         }, follow_redirects=True)
         assert response.status_code == 200
-        assert 'Sähköpostiosoite' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
+        assert 'Sähköpostiosoite' in response.get_data(
+            as_text=True) or 'Virhe' in response.get_data(as_text=True)
 
     def test_login_post_missing_fields(self, client):
         client.get('/login')
@@ -215,7 +221,8 @@ class TestUserActions:
             'password': ''
         })
         assert response.status_code in (200, 403)
-        assert b'Virhe' in response.data or 'Väärä'.encode('utf-8') in response.data or b'error' in response.data.lower()
+        assert b'Virhe' in response.data or 'Väärä'.encode(
+            'utf-8') in response.data or b'error' in response.data.lower()
 
     def test_register_post_duplicate_email(self, client):
         client.get('/register')
@@ -239,7 +246,8 @@ class TestUserActions:
             'password2': 'password123'
         }, follow_redirects=True)
         assert response.status_code == 200
-        assert 'varattu' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
+        assert 'varattu' in response.get_data(
+            as_text=True) or 'Virhe' in response.get_data(as_text=True)
 
 
 class TestProfileEdit:
@@ -309,7 +317,8 @@ class TestProfileEdit:
 
         def fake_update_user_password(user_id, password):
             assert password == "uusiSalasana123"
-        monkeypatch.setattr("users.update_user_password", fake_update_user_password)
+        monkeypatch.setattr("users.update_user_password",
+                            fake_update_user_password)
         response = client.post("/profile/edit", data={
             "csrf_token": "test_token",
             "name": "Test",
@@ -334,7 +343,8 @@ class TestProfileEdit:
             "password2": "salasana2"
         }, follow_redirects=True)
         assert response.status_code == 200
-        assert "Salasanat eivät täsmää" in response.get_data(as_text=True) or "salasanat" in response.get_data(as_text=True)
+        assert "Salasanat eivät täsmää" in response.get_data(
+            as_text=True) or "salasanat" in response.get_data(as_text=True)
 
     def test_edit_profile_post_short_password(self, client, monkeypatch):
         self.login_as(client)
@@ -351,7 +361,8 @@ class TestProfileEdit:
             "password2": "short"
         }, follow_redirects=True)
         assert response.status_code == 200
-        assert "Salasanan on oltava vähintään 8 merkkiä pitkä" in response.get_data(as_text=True) or "salasanan on oltava" in response.get_data(as_text=True)
+        assert "Salasanan on oltava vähintään 8 merkkiä pitkä" in response.get_data(
+            as_text=True) or "salasanan on oltava" in response.get_data(as_text=True)
 
     def test_edit_profile_post_invalid_name(self, client, monkeypatch):
         self.login_as(client)
@@ -384,7 +395,8 @@ class TestProfileEdit:
             "password2": ""
         }, follow_redirects=True)
         assert response.status_code == 200
-        assert "Nimi ei saa olla tyhjä tai liian pitkä" in response.get_data(as_text=True)
+        assert "Nimi ei saa olla tyhjä tai liian pitkä" in response.get_data(
+            as_text=True)
 
     def test_delete_profile_not_logged_in(self, client):
         """Test that a non-logged-in user cannot delete a profile."""
@@ -395,7 +407,8 @@ class TestProfileEdit:
     def test_delete_profile(self, client, monkeypatch):
         self.login_as(client)
         monkeypatch.setattr("users.delete_user", lambda user_id: True)
-        response = client.post("/profile/delete", data={"csrf_token": "test_token"}, follow_redirects=True)
+        response = client.post(
+            "/profile/delete", data={"csrf_token": "test_token"}, follow_redirects=True)
         assert response.status_code in (200, 302)
-        assert "Profiili poistettu" in response.get_data(as_text=True) or "poistettu" in response.get_data(as_text=True)
-
+        assert "Profiili poistettu" in response.get_data(
+            as_text=True) or "poistettu" in response.get_data(as_text=True)

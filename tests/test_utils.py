@@ -5,7 +5,8 @@ email validation, date formatting, text formatting, and pagination logic
 in the Writing Contest Web App.
 
 Test Classes:
-    TestUtils: Tests for sanitize_input, is_valid_email, format_date, format_text, and total_pages.
+    TestUtils: Tests for sanitize_input, is_valid_email, format_date,
+               format_text, and total_pages.
 """
 
 from app import format_date
@@ -14,7 +15,8 @@ from utils import sanitize_input, is_valid_email, format_text, total_pages
 
 class TestUtils:
     def test_sanitize_input(self):
-        assert sanitize_input('<script>alert("test")</script>') == 'alert("test")'
+        assert sanitize_input(
+            '<script>alert("test")</script>') == 'alert("test")'
         assert sanitize_input('  clean text  ') == 'clean text'
         assert sanitize_input(123) == ''
 

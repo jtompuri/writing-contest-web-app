@@ -24,7 +24,8 @@ class TestSqlFunctions:
     def test_add_contest(self, monkeypatch):
         mock_execute = MagicMock()
         monkeypatch.setattr(db, "execute", mock_execute)
-        sql.add_contest("T", 1, "s", "l", True, True, True, "d1", "d2", "d3", "d4")
+        sql.add_contest("T", 1, "s", "l", True, True,
+                        True, "d1", "d2", "d3", "d4")
         assert mock_execute.called
 
     def test_get_contest_by_id_not_found(self, monkeypatch):
@@ -41,12 +42,14 @@ class TestSqlFunctions:
         mock_execute = MagicMock()
         monkeypatch.setattr(db, "execute", mock_execute)
         sql.delete_contest(1)
-        mock_execute.assert_called_with("DELETE FROM contests WHERE id = ?", [1])
+        mock_execute.assert_called_with(
+            "DELETE FROM contests WHERE id = ?", [1])
 
     def test_create_contest(self, monkeypatch):
         mock_execute = MagicMock()
         monkeypatch.setattr(db, "execute", mock_execute)
-        sql.create_contest("T", 1, "s", "l", True, True, True, "d1", "d2", "key")
+        sql.create_contest("T", 1, "s", "l", True, True,
+                           True, "d1", "d2", "key")
         assert mock_execute.called
 
     # Contest Listings
@@ -110,7 +113,8 @@ class TestSqlFunctions:
     def test_get_all_entries_with_all_filters(self, monkeypatch):
         mock_query = MagicMock()
         monkeypatch.setattr(db, "query", mock_query)
-        sql.get_all_entries(limit=10, offset=5, contest_id=1, user_search="Test")
+        sql.get_all_entries(limit=10, offset=5,
+                            contest_id=1, user_search="Test")
         assert "contests.id = ?" in mock_query.call_args[0][0]
         assert "users.name LIKE ?" in mock_query.call_args[0][0]
         assert "LIMIT ? OFFSET ?" in mock_query.call_args[0][0]
@@ -129,7 +133,8 @@ class TestSqlFunctions:
         mock_execute = MagicMock()
         monkeypatch.setattr(db, "execute", mock_execute)
         sql.delete_entry(1)
-        mock_execute.assert_called_with("DELETE FROM entries WHERE id = ?", [1])
+        mock_execute.assert_called_with(
+            "DELETE FROM entries WHERE id = ?", [1])
 
     # Entry Helpers
     def test_entry_exists(self, monkeypatch):
@@ -178,7 +183,8 @@ class TestSqlFunctions:
         assert sql.get_review_count(1) == 5
 
     def test_get_user_reviews_for_contest(self, monkeypatch):
-        mock_rows = [{"entry_id": 10, "points": 5}, {"entry_id": 12, "points": 3}]
+        mock_rows = [{"entry_id": 10, "points": 5},
+                     {"entry_id": 12, "points": 3}]
         monkeypatch.setattr(db, "query", lambda *a: mock_rows)
         reviews = sql.get_user_reviews_for_contest(1, 1)
         assert reviews == {10: 5, 12: 3}
@@ -188,7 +194,8 @@ class TestSqlFunctions:
         mock_query = MagicMock()
         monkeypatch.setattr(db, "query", mock_query)
         sql.get_all_classes()
-        mock_query.assert_called_with("SELECT id, value FROM classes ORDER BY value")
+        mock_query.assert_called_with(
+            "SELECT id, value FROM classes ORDER BY value")
 
     def test_get_class_by_id_not_found(self, monkeypatch):
         monkeypatch.setattr(db, "query", lambda *a: [])

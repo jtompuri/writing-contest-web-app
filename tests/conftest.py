@@ -1,4 +1,5 @@
-"""Pytest configuration and shared fixtures for the Writing Contest Web App tests.
+"""Pytest configuration and shared fixtures for the Writing Contest Web App
+tests.
 
 This module provides fixtures and setup code used across multiple test modules,
 including the Flask test client.

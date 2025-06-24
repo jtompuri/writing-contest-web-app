@@ -1,13 +1,14 @@
 """Tests for the admin blueprint and related admin features.
 
-This module contains unit tests for the admin panel routes, including access control,
-user management, contest management, entry management, and pagination/error handling
-in the Writing Contest Web App.
+This module contains unit tests for the admin panel routes, including access
+control, user management, contest management, entry management, and
+pagination/error handling in the Writing Contest Web App.
 
 Test Classes:
     TestAdminRoutes: Tests for admin dashboard and access control.
     TestUserRoutes: Tests for admin user management (CRUD, permissions, CSRF).
-    TestPaginationAnd404: Tests for pagination and 404/error handling in admin and public routes.
+    TestPaginationAnd404: Tests for pagination and 404/error handling in admin
+                          and public routes.
 """
 
 import users
@@ -21,7 +22,8 @@ class TestAdminRoutes:
         assert response.status_code == 403
 
     def test_delete_user_forbidden(self, client):
-        response = client.post('/admin/users/delete/1', data={'csrf_token': 'test_token'})
+        response = client.post('/admin/users/delete/1',
+                               data={'csrf_token': 'test_token'})
         assert response.status_code == 403
 
     def test_edit_user_forbidden(self, client):
@@ -107,18 +109,24 @@ class TestAdminRoutes:
     def test_admin_index_contest_phase_listings(self, client, monkeypatch):
         # Mock contest data for each phase
         contests_collection = [
-            {"id": 1, "title": "Keräysvaihe", "short_description": "Keräyskuvaus", "class_value": "Runo", "anonymity": 1, "public_reviews": 1, "public_results": 1, "collection_end": "2025-12-31", "review_end": "2026-01-31"}
+            {"id": 1, "title": "Keräysvaihe", "short_description": "Keräyskuvaus", "class_value": "Runo", "anonymity": 1,
+                "public_reviews": 1, "public_results": 1, "collection_end": "2025-12-31", "review_end": "2026-01-31"}
         ]
         contests_review = [
-            {"id": 2, "title": "Arviointivaihe", "short_description": "Arviointikuvaus", "class_value": "Novelli", "anonymity": 0, "public_reviews": 0, "public_results": 1, "collection_end": "2024-12-31", "review_end": "2025-01-31"}
+            {"id": 2, "title": "Arviointivaihe", "short_description": "Arviointikuvaus", "class_value": "Novelli", "anonymity": 0,
+                "public_reviews": 0, "public_results": 1, "collection_end": "2024-12-31", "review_end": "2025-01-31"}
         ]
         contests_results = [
-            {"id": 3, "title": "Tulokset", "short_description": "Tuloksetkuvaus", "class_value": "Essee", "anonymity": 1, "public_reviews": 1, "public_results": 1, "collection_end": "2023-12-31", "review_end": "2024-01-31"}
+            {"id": 3, "title": "Tulokset", "short_description": "Tuloksetkuvaus", "class_value": "Essee", "anonymity": 1,
+                "public_reviews": 1, "public_results": 1, "collection_end": "2023-12-31", "review_end": "2024-01-31"}
         ]
 
-        monkeypatch.setattr("sql.get_contests_for_entry", lambda *a, **kw: contests_collection)
-        monkeypatch.setattr("sql.get_contests_for_review", lambda *a, **kw: contests_review)
-        monkeypatch.setattr("sql.get_contests_for_results", lambda *a, **kw: contests_results)
+        monkeypatch.setattr("sql.get_contests_for_entry",
+                            lambda *a, **kw: contests_collection)
+        monkeypatch.setattr("sql.get_contests_for_review",
+                            lambda *a, **kw: contests_review)
+        monkeypatch.setattr("sql.get_contests_for_results",
+                            lambda *a, **kw: contests_results)
 
         with client.session_transaction() as sess:
             sess['super_user'] = True
@@ -135,7 +143,8 @@ class TestAdminRoutes:
         # Mock all contest-fetching and count functions to ensure a truly empty state
         monkeypatch.setattr("sql.get_contests_for_entry", lambda *a, **kw: [])
         monkeypatch.setattr("sql.get_contests_for_review", lambda *a, **kw: [])
-        monkeypatch.setattr("sql.get_contests_for_results", lambda *a, **kw: [])
+        monkeypatch.setattr("sql.get_contests_for_results",
+                            lambda *a, **kw: [])
         # Make mocks more robust by accepting any arguments
         monkeypatch.setattr("sql.get_contest_count", lambda *a, **kw: 0)
         monkeypatch.setattr("users.get_user_count", lambda *a, **kw: 0)
@@ -157,9 +166,11 @@ class TestAdminRoutes:
         contests_collection = [
             {"id": i, "title": f"Keräys {i}", "short_description": f"Kuvaus {i}", "class_value": "Runo", "anonymity": 1, "public_reviews": 1, "public_results": 1, "collection_end": f"2025-12-{30 - i}", "review_end": f"2026-01-{31 - i}"} for i in range(5)
         ]
-        monkeypatch.setattr("sql.get_contests_for_entry", lambda *a, **kw: contests_collection[:3])
+        monkeypatch.setattr("sql.get_contests_for_entry",
+                            lambda *a, **kw: contests_collection[:3])
         monkeypatch.setattr("sql.get_contests_for_review", lambda *a, **kw: [])
-        monkeypatch.setattr("sql.get_contests_for_results", lambda *a, **kw: [])
+        monkeypatch.setattr("sql.get_contests_for_results",
+                            lambda *a, **kw: [])
 
         with client.session_transaction() as sess:
             sess['super_user'] = True
@@ -174,11 +185,14 @@ class TestAdminRoutes:
 
     def test_admin_index_contest_details_rendered(self, client, monkeypatch):
         contests_collection = [
-            {"id": 1, "title": "Testikisa", "short_description": "Lyhyt kuvaus", "class_value": "Runo", "anonymity": 1, "public_reviews": 0, "public_results": 1, "collection_end": "2025-12-31", "review_end": "2026-01-31"}
+            {"id": 1, "title": "Testikisa", "short_description": "Lyhyt kuvaus", "class_value": "Runo", "anonymity": 1,
+                "public_reviews": 0, "public_results": 1, "collection_end": "2025-12-31", "review_end": "2026-01-31"}
         ]
-        monkeypatch.setattr("sql.get_contests_for_entry", lambda *a, **kw: contests_collection)
+        monkeypatch.setattr("sql.get_contests_for_entry",
+                            lambda *a, **kw: contests_collection)
         monkeypatch.setattr("sql.get_contests_for_review", lambda *a, **kw: [])
-        monkeypatch.setattr("sql.get_contests_for_results", lambda *a, **kw: [])
+        monkeypatch.setattr("sql.get_contests_for_results",
+                            lambda *a, **kw: [])
 
         with client.session_transaction() as sess:
             sess['super_user'] = True
@@ -193,11 +207,14 @@ class TestAdminRoutes:
 
     def test_admin_index_contest_links(self, client, monkeypatch):
         contests_collection = [
-            {"id": 1, "title": "Linkkitesti", "short_description": "Kuvaus", "class_value": "Runo", "anonymity": 1, "public_reviews": 1, "public_results": 1, "collection_end": "2025-12-31", "review_end": "2026-01-31"}
+            {"id": 1, "title": "Linkkitesti", "short_description": "Kuvaus", "class_value": "Runo", "anonymity": 1,
+                "public_reviews": 1, "public_results": 1, "collection_end": "2025-12-31", "review_end": "2026-01-31"}
         ]
-        monkeypatch.setattr("sql.get_contests_for_entry", lambda *a, **kw: contests_collection)
+        monkeypatch.setattr("sql.get_contests_for_entry",
+                            lambda *a, **kw: contests_collection)
         monkeypatch.setattr("sql.get_contests_for_review", lambda *a, **kw: [])
-        monkeypatch.setattr("sql.get_contests_for_results", lambda *a, **kw: [])
+        monkeypatch.setattr("sql.get_contests_for_results",
+                            lambda *a, **kw: [])
 
         with client.session_transaction() as sess:
             sess['super_user'] = True
@@ -210,7 +227,8 @@ class TestAdminRoutes:
     def test_admin_users_edit_with_super_user(self, app, client):
         # Manually push an application context to perform database operations
         with app.app_context():
-            edit_user_id = users.create_user('EditMe', 'editme@example.com', 'password123', 0)
+            edit_user_id = users.create_user(
+                'EditMe', 'editme@example.com', 'password123', 0)
             assert edit_user_id is not None
 
         with client.session_transaction() as session:
@@ -220,7 +238,8 @@ class TestAdminRoutes:
 
     def test_admin_users_edit_with_super_user_valid_and_invalid(self, app, client):
         with app.app_context():
-            edit_user_id = users.create_user('EditMe2', 'editme2@example.com', 'password123', 0)
+            edit_user_id = users.create_user(
+                'EditMe2', 'editme2@example.com', 'password123', 0)
             assert edit_user_id is not None
 
         with client.session_transaction() as session:
@@ -232,7 +251,8 @@ class TestAdminRoutes:
 
     def test_admin_users_update_with_super_user(self, app, client):
         with app.app_context():
-            update_user_id = users.create_user('UpdateMe', 'updateme@example.com', 'password123', 0)
+            update_user_id = users.create_user(
+                'UpdateMe', 'updateme@example.com', 'password123', 0)
             assert update_user_id is not None
 
         with client.session_transaction() as session:
@@ -250,7 +270,8 @@ class TestAdminRoutes:
 
     def test_admin_users_update_missing_fields(self, app, client):
         with app.app_context():
-            update_user_id = users.create_user('UpdateMe2', 'updateme2@example.com', 'password123', 0)
+            update_user_id = users.create_user(
+                'UpdateMe2', 'updateme2@example.com', 'password123', 0)
             assert update_user_id is not None
 
         with client.session_transaction() as session:
@@ -265,7 +286,8 @@ class TestAdminRoutes:
 
     def test_admin_users_update_invalid_email(self, app, client):
         with app.app_context():
-            update_user_id = users.create_user('UpdateMe3', 'updateme3@example.com', 'password123', 0)
+            update_user_id = users.create_user(
+                'UpdateMe3', 'updateme3@example.com', 'password123', 0)
             assert update_user_id is not None
 
         with client.session_transaction() as session:
@@ -274,13 +296,15 @@ class TestAdminRoutes:
         response = client.post(
             f'/admin/users/update/{update_user_id}',
             # Add CSRF token to form data
-            data={'name': 'Name', 'username': 'not-an-email', 'csrf_token': 'test_token'}
+            data={'name': 'Name', 'username': 'not-an-email',
+                  'csrf_token': 'test_token'}
         )
         assert response.status_code in (302, 200, 400)
 
     def test_admin_users_update_short_password(self, app, client):
         with app.app_context():
-            update_user_id = users.create_user('UpdateMe4', 'updateme4@example.com', 'password123', 0)
+            update_user_id = users.create_user(
+                'UpdateMe4', 'updateme4@example.com', 'password123', 0)
             assert update_user_id is not None
 
         with client.session_transaction() as session:
@@ -289,13 +313,15 @@ class TestAdminRoutes:
         response = client.post(
             f'/admin/users/update/{update_user_id}',
             # Add CSRF token to form data
-            data={'name': 'Name', 'username': 'test@example.com', 'password': 'short', 'csrf_token': 'test_token'}
+            data={'name': 'Name', 'username': 'test@example.com',
+                  'password': 'short', 'csrf_token': 'test_token'}
         )
         assert response.status_code in (302, 200, 400)
 
     def test_admin_users_update_without_super_user(self, app, client):
         with app.app_context():
-            update_user_id = users.create_user('UpdateMe5', 'updateme5@example.com', 'password123', 0)
+            update_user_id = users.create_user(
+                'UpdateMe5', 'updateme5@example.com', 'password123', 0)
             assert update_user_id is not None
 
         response = client.post(
@@ -306,37 +332,44 @@ class TestAdminRoutes:
 
     def test_admin_users_delete_with_super_user(self, app, client):
         with app.app_context():
-            delete_user_id = users.create_user('DeleteMe', 'deleteme@example.com', 'password123', 0)
+            delete_user_id = users.create_user(
+                'DeleteMe', 'deleteme@example.com', 'password123', 0)
             assert delete_user_id is not None
 
         with client.session_transaction() as session:
             session['super_user'] = True
             session['user_id'] = 1
             session['csrf_token'] = 'test_token'
-        response = client.post(f'/admin/users/delete/{delete_user_id}', data={'csrf_token': 'test_token'})
+        response = client.post(
+            f'/admin/users/delete/{delete_user_id}', data={'csrf_token': 'test_token'})
         assert response.status_code in (302, 200)
-        response = client.post('/admin/users/delete/999999', data={'csrf_token': 'test_token'})
+        response = client.post('/admin/users/delete/999999',
+                               data={'csrf_token': 'test_token'})
         assert response.status_code in (302, 200)
 
     def test_admin_users_delete_without_super_user(self, app, client):
         with app.app_context():
-            delete_user_id = users.create_user('DeleteMe2', 'deleteme2@example.com', 'password123', 0)
+            delete_user_id = users.create_user(
+                'DeleteMe2', 'deleteme2@example.com', 'password123', 0)
             assert delete_user_id is not None
 
         # No super_user in session
-        response = client.post(f'/admin/users/delete/{delete_user_id}', data={'csrf_token': 'test_token'})
+        response = client.post(
+            f'/admin/users/delete/{delete_user_id}', data={'csrf_token': 'test_token'})
         assert response.status_code == 403
 
     def test_admin_users_delete_invalid_csrf(self, app, client):
         with app.app_context():
-            delete_user_id = users.create_user('DeleteMe3', 'deleteme3@example.com', 'password123', 0)
+            delete_user_id = users.create_user(
+                'DeleteMe3', 'deleteme3@example.com', 'password123', 0)
             assert delete_user_id is not None
 
         with client.session_transaction() as session:
             session['super_user'] = True
             session['user_id'] = 1
             session['csrf_token'] = 'test_token'
-        response = client.post(f'/admin/users/delete/{delete_user_id}', data={'csrf_token': 'wrong_token'})
+        response = client.post(
+            f'/admin/users/delete/{delete_user_id}', data={'csrf_token': 'wrong_token'})
         assert response.status_code in (400, 403)
 
     def test_admin_create_user_missing_fields(self, client):
@@ -345,7 +378,8 @@ class TestAdminRoutes:
             session['csrf_token'] = 'test_token'
         response = client.post(
             '/admin/users/create',
-            data={'csrf_token': 'test_token', 'name': '', 'username': '', 'password': ''}
+            data={'csrf_token': 'test_token', 'name': '',
+                  'username': '', 'password': ''}
         )
         assert response.status_code in (302, 200, 400)
 
@@ -355,14 +389,16 @@ class TestAdminRoutes:
             session['csrf_token'] = 'test_token'
         response = client.post(
             '/admin/users/create',
-            data={'csrf_token': 'test_token', 'name': 'Name', 'username': 'not-an-email', 'password': 'password123'}
+            data={'csrf_token': 'test_token', 'name': 'Name',
+                  'username': 'not-an-email', 'password': 'password123'}
         )
         assert response.status_code in (302, 200, 400)
 
     def test_admin_create_user_without_super_user(self, client):
         response = client.post(
             '/admin/users/create',
-            data={'csrf_token': 'test_token', 'name': 'Name', 'username': 'test@example.com', 'password': 'password123'}
+            data={'csrf_token': 'test_token', 'name': 'Name',
+                  'username': 'test@example.com', 'password': 'password123'}
         )
         assert response.status_code == 403
 
@@ -385,7 +421,8 @@ class TestAdminRoutes:
     def test_admin_update_user_duplicate_username(self, app, client):
         with app.app_context():
             users.create_user('User1', 'dupe@example.com', 'password123', 0)
-            update_user_id = users.create_user('User2', 'dupe2@example.com', 'password123', 0)
+            update_user_id = users.create_user(
+                'User2', 'dupe2@example.com', 'password123', 0)
             assert update_user_id is not None
 
         with client.session_transaction() as session:
@@ -394,36 +431,44 @@ class TestAdminRoutes:
         response = client.post(
             f'/admin/users/update/{update_user_id}',
             # Add CSRF token to form data
-            data={'name': 'User2', 'username': 'dupe@example.com', 'csrf_token': 'test_token'},
+            data={'name': 'User2', 'username': 'dupe@example.com',
+                  'csrf_token': 'test_token'},
             follow_redirects=True
         )
         assert response.status_code == 200
 
     def test_admin_delete_super_user(self, app, client):
         with app.app_context():
-            super_user_id = users.create_user('SuperDelete', 'superdelete@example.com', 'password123', 1)
+            super_user_id = users.create_user(
+                'SuperDelete', 'superdelete@example.com', 'password123', 1)
             assert super_user_id is not None
 
         with client.session_transaction() as session:
             session['super_user'] = True
-            session['user_id'] = 2  # Assuming a different admin is doing the deleting
+            # Assuming a different admin is doing the deleting
+            session['user_id'] = 2
             session['csrf_token'] = 'test_token'
-        response = client.post(f'/admin/users/delete/{super_user_id}', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        response = client.post(f'/admin/users/delete/{super_user_id}', data={
+                               'csrf_token': 'test_token'}, follow_redirects=True)
         assert response.status_code == 200
-        assert 'pääkäyttäj' in response.get_data(as_text=True).lower() or 'virhe' in response.get_data(as_text=True).lower()
+        assert 'pääkäyttäj' in response.get_data(as_text=True).lower(
+        ) or 'virhe' in response.get_data(as_text=True).lower()
 
     def test_admin_delete_own_user(self, app, client):
         with app.app_context():
-            own_user_id = users.create_user('OwnUserDelete', 'ownuserdelete@example.com', 'password123', 0)
+            own_user_id = users.create_user(
+                'OwnUserDelete', 'ownuserdelete@example.com', 'password123', 0)
             assert own_user_id is not None
 
         with client.session_transaction() as session:
             session['super_user'] = True
             session['user_id'] = own_user_id
             session['csrf_token'] = 'test_token'
-        response = client.post(f'/admin/users/delete/{own_user_id}', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        response = client.post(f'/admin/users/delete/{own_user_id}', data={
+                               'csrf_token': 'test_token'}, follow_redirects=True)
         assert response.status_code == 200
-        assert 'Et voi poistaa omaa tunnustasi.' in response.get_data(as_text=True)
+        assert 'Et voi poistaa omaa tunnustasi.' in response.get_data(
+            as_text=True)
 
     def test_edit_entry_as_non_owner(self, client):
         # Assume entry 2 belongs to user 2, but we log in as user 1
@@ -436,7 +481,8 @@ class TestAdminRoutes:
         with client.session_transaction() as sess:
             sess['user_id'] = 1
             sess['csrf_token'] = 'correct_token'
-        response = client.post('/entry/1/delete', data={'csrf_token': 'wrong_token'})
+        response = client.post(
+            '/entry/1/delete', data={'csrf_token': 'wrong_token'})
         assert response.status_code in (400, 403)
 
     def test_review_get_logged_in(self, client):
@@ -450,7 +496,8 @@ class TestAdminRoutes:
             sess['user_id'] = 1
             sess['csrf_token'] = 'test_token'
         # You may need to adjust points_1, points_2, ... based on your app logic
-        response = client.post('/review/1', data={'csrf_token': 'test_token', 'points_1': '5'}, follow_redirects=True)
+        response = client.post(
+            '/review/1', data={'csrf_token': 'test_token', 'points_1': '5'}, follow_redirects=True)
         assert response.status_code in (200, 302, 404)
 
     def test_admin_contests_with_search_filter(self, client, monkeypatch):
@@ -469,11 +516,13 @@ class TestAdminRoutes:
         monkeypatch.setattr("users.get_user_count", lambda **kwargs: 0)
         with client.session_transaction() as session:
             session['super_user'] = True
-        response = client.get('/admin/users?name_search=Admin&username_search=admin@test.com&super_user=1')
+        response = client.get(
+            '/admin/users?name_search=Admin&username_search=admin@test.com&super_user=1')
         assert response.status_code == 200
         assert b'value="Admin"' in response.data
         assert b'value="admin@test.com"' in response.data
-        assert '<option value="1" selected>Kyllä</option>' in response.get_data(as_text=True)
+        assert '<option value="1" selected>Kyllä</option>' in response.get_data(
+            as_text=True)
 
     def test_admin_entries_with_filters(self, client, monkeypatch):
         """Test the search filters on the admin entries page."""
@@ -484,7 +533,8 @@ class TestAdminRoutes:
         monkeypatch.setattr("sql.get_entry_count", lambda **kwargs: 0)
         with client.session_transaction() as session:
             session['super_user'] = True
-        response = client.get('/admin/entries?contest_id=1&user_search=TestUser')
+        response = client.get(
+            '/admin/entries?contest_id=1&user_search=TestUser')
         assert response.status_code == 200
         assert b'value="TestUser"' in response.data
         assert b'<option value="1" selected>' in response.data
@@ -502,9 +552,11 @@ class TestAdminContestManagement:
 
     def test_create_contest_validation_failure(self, client):
         """Test contest creation with missing required fields."""
-        response = client.post('/admin/contests/create', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        response = client.post(
+            '/admin/contests/create', data={'csrf_token': 'test_token'}, follow_redirects=True)
         assert response.status_code == 200
-        assert b'Kaikki pakolliset kent\xc3\xa4t on t\xc3\xa4ytett\xc3\xa4v\xc3\xa4.' in response.data  # "Kaikki pakolliset kentät on täytettävä."
+        # "Kaikki pakolliset kentät on täytettävä."
+        assert b'Kaikki pakolliset kent\xc3\xa4t on t\xc3\xa4ytett\xc3\xa4v\xc3\xa4.' in response.data
 
     def test_create_contest_description_length_validation(self, client):
         """Test contest creation with descriptions that are too long."""
@@ -518,7 +570,8 @@ class TestAdminContestManagement:
 
     def test_create_contest_db_error(self, client, monkeypatch):
         """Test generic exception handling during contest creation."""
-        monkeypatch.setattr("sql.create_contest", lambda *args, **kwargs: (_ for _ in ()).throw(Exception("DB Error")))
+        monkeypatch.setattr("sql.create_contest", lambda *args,
+                            **kwargs: (_ for _ in ()).throw(Exception("DB Error")))
         response = client.post('/admin/contests/create', data={
             'csrf_token': 'test_token', 'title': 'T', 'class_id': 1, 'collection_end': 'd', 'review_end': 'd',
             'short_description': 's', 'long_description': 'l'
@@ -592,7 +645,8 @@ class TestAdminContestManagement:
             follow_redirects=True
         )
         assert response.status_code == 200
-        assert '255' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
+        assert '255' in response.get_data(
+            as_text=True) or 'Virhe' in response.get_data(as_text=True)
 
     def test_admin_create_contest_long_description_too_long(self, client):
         long_desc = 'a' * 2001
@@ -610,7 +664,8 @@ class TestAdminContestManagement:
             follow_redirects=True
         )
         assert response.status_code == 200
-        assert '2000' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
+        assert '2000' in response.get_data(
+            as_text=True) or 'Virhe' in response.get_data(as_text=True)
 
     def test_admin_create_contest_missing_fields(self, client):
         response = client.post(
@@ -630,7 +685,8 @@ class TestAdminContestManagement:
 
     def test_admin_update_contest_short_description_too_long(self, client, monkeypatch):
         # Mock the DB calls for the redirected-to page
-        monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: {'id': 1, 'title': 'Test Contest'})
+        monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: {
+                            'id': 1, 'title': 'Test Contest'})
         monkeypatch.setattr("sql.get_all_classes", lambda: [])
 
         long_desc = 'a' * 256
@@ -648,11 +704,13 @@ class TestAdminContestManagement:
             follow_redirects=True
         )
         assert response.status_code == 200
-        assert '255' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
+        assert '255' in response.get_data(
+            as_text=True) or 'Virhe' in response.get_data(as_text=True)
 
     def test_admin_update_contest_long_description_too_long(self, client, monkeypatch):
         # Mock the DB calls for the redirected-to page
-        monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: {'id': 1, 'title': 'Test Contest'})
+        monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: {
+                            'id': 1, 'title': 'Test Contest'})
         monkeypatch.setattr("sql.get_all_classes", lambda: [])
 
         long_desc = 'a' * 2001
@@ -670,7 +728,8 @@ class TestAdminContestManagement:
             follow_redirects=True
         )
         assert response.status_code == 200
-        assert '2000' in response.get_data(as_text=True) or 'Virhe' in response.get_data(as_text=True)
+        assert '2000' in response.get_data(
+            as_text=True) or 'Virhe' in response.get_data(as_text=True)
 
 
 class TestAdminUserManagement:
@@ -688,13 +747,15 @@ class TestAdminUserManagement:
         response = client.post('/admin/users/create', data={
             'csrf_token': 'test_token', 'name': 'Test', 'username': 'dupe@test.com', 'password': 'password123'
         }, follow_redirects=True)
-        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4nimi on jo k\xc3\xa4yt\xc3\xb6ss\xc3\xa4.' in response.data  # "Käyttäjänimi on jo käytössä."
+        # "Käyttäjänimi on jo käytössä."
+        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4nimi on jo k\xc3\xa4yt\xc3\xb6ss\xc3\xa4.' in response.data
 
     def test_edit_user_not_found(self, client, monkeypatch):
         """Test that editing a non-existent user redirects with a flash message."""
         monkeypatch.setattr("users.get_user", lambda user_id: None)
         response = client.get('/admin/users/edit/999', follow_redirects=True)
-        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4\xc3\xa4 ei l\xc3\xb6ytynyt.' in response.data  # "Käyttäjää ei löytynyt."
+        # "Käyttäjää ei löytynyt."
+        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4\xc3\xa4 ei l\xc3\xb6ytynyt.' in response.data
 
     def test_update_user_integrity_error(self, app, client, monkeypatch):
         """Test user update failure due to a duplicate username (IntegrityError)."""
@@ -702,11 +763,13 @@ class TestAdminUserManagement:
         with app.app_context():
             users.create_user('TestUser', 'test@example.com', 'password123', 0)
 
-        monkeypatch.setattr("users.update_user", lambda *args, **kwargs: (_ for _ in ()).throw(sqlite3.IntegrityError))
+        monkeypatch.setattr("users.update_user", lambda *args, **
+                            kwargs: (_ for _ in ()).throw(sqlite3.IntegrityError))
         response = client.post('/admin/users/update/1', data={
             'csrf_token': 'test_token', 'name': 'Test', 'username': 'dupe@test.com'
         }, follow_redirects=True)
-        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4tunnus on jo k\xc3\xa4yt\xc3\xb6ss\xc3\xa4.' in response.data  # "Käyttäjätunnus on jo käytössä."
+        # "Käyttäjätunnus on jo käytössä."
+        assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4tunnus on jo k\xc3\xa4yt\xc3\xb6ss\xc3\xa4.' in response.data
 
 
 class TestAdminCoverage:
@@ -719,9 +782,11 @@ class TestAdminCoverage:
 
     def test_new_entry_get_request(self, client, monkeypatch):
         """Test the GET request handler for the new entry page."""
-        monkeypatch.setattr("sql.get_all_contests", lambda: [{'id': 1, 'title': 'Test Contest'}])
+        monkeypatch.setattr("sql.get_all_contests", lambda: [
+                            {'id': 1, 'title': 'Test Contest'}])
         # Add the 'username' key to the mock user data
-        monkeypatch.setattr("users.get_all_users", lambda: [{'id': 1, 'name': 'Test User', 'username': 'test@user.com'}])
+        monkeypatch.setattr("users.get_all_users", lambda: [
+                            {'id': 1, 'name': 'Test User', 'username': 'test@user.com'}])
         response = client.get('/admin/entries/new')
         assert response.status_code == 200
         # Correct the asserted text to match the template's H1 tag
@@ -729,10 +794,13 @@ class TestAdminCoverage:
 
     def test_new_entry_post_generic_db_error(self, client, monkeypatch):
         """Test the generic exception handler in the new entry POST route."""
-        monkeypatch.setattr("sql.create_entry", lambda *a, **kw: (_ for _ in ()).throw(Exception("Generic DB Error")))
-        monkeypatch.setattr("sql.get_all_contests", lambda: [{'id': 1, 'title': 'Test Contest'}])
+        monkeypatch.setattr("sql.create_entry", lambda *a, **
+                            kw: (_ for _ in ()).throw(Exception("Generic DB Error")))
+        monkeypatch.setattr("sql.get_all_contests", lambda: [
+                            {'id': 1, 'title': 'Test Contest'}])
         # Add the 'username' key here as well, since this test also re-renders the template
-        monkeypatch.setattr("users.get_all_users", lambda: [{'id': 1, 'name': 'Test User', 'username': 'test@user.com'}])
+        monkeypatch.setattr("users.get_all_users", lambda: [
+                            {'id': 1, 'name': 'Test User', 'username': 'test@user.com'}])
         response = client.post('/admin/entries/new', data={
             'csrf_token': 'test_token', 'contest_id': 1, 'user_id': 1, 'entry': 'text'
         })
@@ -742,9 +810,11 @@ class TestAdminCoverage:
     def test_edit_entry_success(self, client, monkeypatch):
         """Test successful rendering of the edit entry page."""
         # Provide more complete mock data for the entry and the dropdowns
-        mock_entry = {'id': 1, 'contest_id': 1, 'user_id': 1, 'entry': 'Test entry text'}
+        mock_entry = {'id': 1, 'contest_id': 1,
+                      'user_id': 1, 'entry': 'Test entry text'}
         mock_contests = [{'id': 1, 'title': 'Test Contest'}]
-        mock_users = [{'id': 1, 'name': 'Test User', 'username': 'test@user.com'}]
+        mock_users = [
+            {'id': 1, 'name': 'Test User', 'username': 'test@user.com'}]
 
         monkeypatch.setattr("sql.get_entry_by_id", lambda entry_id: mock_entry)
         monkeypatch.setattr("sql.get_all_contests", lambda: mock_contests)
@@ -753,7 +823,8 @@ class TestAdminCoverage:
         response = client.get('/admin/entries/edit/1')
         assert response.status_code == 200
         # Correct the assertion to match the likely heading in the template
-        assert b'Muokkaa kilpailuty\xc3\xb6t\xc3\xa4' in response.data  # "Muokkaa kilpailutyötä"
+        # "Muokkaa kilpailutyötä"
+        assert b'Muokkaa kilpailuty\xc3\xb6t\xc3\xa4' in response.data
 
     def test_update_entry_success(self, client, monkeypatch):
         """Test the success path for updating an entry."""
@@ -766,8 +837,10 @@ class TestAdminCoverage:
 
     def test_delete_contest_db_error(self, client, monkeypatch):
         """Test generic exception handling during contest deletion."""
-        monkeypatch.setattr("sql.delete_contest", lambda *a, **kw: (_ for _ in ()).throw(Exception("DB Error")))
-        response = client.post('/admin/contests/delete/1', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        monkeypatch.setattr("sql.delete_contest", lambda *a,
+                            **kw: (_ for _ in ()).throw(Exception("DB Error")))
+        response = client.post('/admin/contests/delete/1',
+                               data={'csrf_token': 'test_token'}, follow_redirects=True)
         assert response.status_code == 200
         # This assumes you add a try-except block to delete_contest like you have in delete_entry
         # If not, this test will fail, and you should add the try-except block to your route.
@@ -776,7 +849,8 @@ class TestAdminCoverage:
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
-        monkeypatch.setattr("sql.create_contest", lambda *a, **kw: (_ for _ in ()).throw(Exception("fail")))
+        monkeypatch.setattr("sql.create_contest", lambda *a,
+                            **kw: (_ for _ in ()).throw(Exception("fail")))
         response = client.post(
             '/admin/contests/create',
             data={
@@ -797,7 +871,8 @@ class TestAdminCoverage:
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
-        monkeypatch.setattr("sql.delete_contest", lambda *a, **kw: (_ for _ in ()).throw(Exception("fail")))
+        monkeypatch.setattr("sql.delete_contest", lambda *a,
+                            **kw: (_ for _ in ()).throw(Exception("fail")))
         response = client.post(
             '/admin/contests/delete/1',
             data={'csrf_token': 'test_token'},
@@ -819,7 +894,8 @@ class TestAdminCoverage:
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
-        monkeypatch.setattr("sql.get_contest_by_id", lambda cid: {'id': 1, 'title': 'Test'})
+        monkeypatch.setattr("sql.get_contest_by_id", lambda cid: {
+                            'id': 1, 'title': 'Test'})
         monkeypatch.setattr("sql.get_all_classes", lambda: [])
         response = client.post(
             '/admin/contests/update/1',
@@ -843,7 +919,8 @@ class TestAdminCoverage:
             session['csrf_token'] = 'test_token'
         response = client.post(
             '/admin/users/create',
-            data={'csrf_token': 'test_token', 'name': '', 'username': '', 'password': ''},
+            data={'csrf_token': 'test_token', 'name': '',
+                  'username': '', 'password': ''},
             follow_redirects=True
         )
         assert b'Kaikki kent' in response.data
@@ -855,7 +932,8 @@ class TestAdminCoverage:
             session['csrf_token'] = 'test_token'
         response = client.post(
             '/admin/users/create',
-            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'notanemail', 'password': 'password123'},
+            data={'csrf_token': 'test_token', 'name': 'Test',
+                  'username': 'notanemail', 'password': 'password123'},
             follow_redirects=True
         )
         assert b'S\xc3\xa4hk\xc3\xb6postiosoite ei ole kelvollinen' in response.data
@@ -868,7 +946,8 @@ class TestAdminCoverage:
         monkeypatch.setattr("users.create_user", lambda *a, **kw: False)
         response = client.post(
             '/admin/users/create',
-            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'dupe@test.com', 'password': 'password123'},
+            data={'csrf_token': 'test_token', 'name': 'Test',
+                  'username': 'dupe@test.com', 'password': 'password123'},
             follow_redirects=True
         )
         assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4nimi on jo k\xc3\xa4yt\xc3\xb6ss\xc3\xa4' in response.data
@@ -881,7 +960,8 @@ class TestAdminCoverage:
         monkeypatch.setattr("users.create_user", lambda *a, **kw: True)
         response = client.post(
             '/admin/users/create',
-            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'test@example.com', 'password': 'password123'},
+            data={'csrf_token': 'test_token', 'name': 'Test',
+                  'username': 'test@example.com', 'password': 'password123'},
             follow_redirects=True
         )
         assert b'Uusi k\xc3\xa4ytt\xc3\xa4j\xc3\xa4 on luotu' in response.data
@@ -896,7 +976,8 @@ class TestAdminCoverage:
 
     # --- 380: update_user, forbidden ---
     def test_update_user_forbidden(self, client):
-        response = client.post('/admin/users/update/1', data={'name': 'Test', 'username': 'test@example.com'})
+        response = client.post(
+            '/admin/users/update/1', data={'name': 'Test', 'username': 'test@example.com'})
         assert response.status_code == 403
 
     # --- 398-405: update_user, missing fields, invalid email, short password ---
@@ -904,7 +985,8 @@ class TestAdminCoverage:
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
-        monkeypatch.setattr("users.get_user", lambda uid: {'id': 1, 'name': 'Test', 'username': 'test@example.com'})
+        monkeypatch.setattr("users.get_user", lambda uid: {
+                            'id': 1, 'name': 'Test', 'username': 'test@example.com'})
         response = client.post(
             '/admin/users/update/1',
             data={'csrf_token': 'test_token', 'name': '', 'username': ''},
@@ -916,10 +998,12 @@ class TestAdminCoverage:
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
-        monkeypatch.setattr("users.get_user", lambda uid: {'id': 1, 'name': 'Test', 'username': 'test@example.com'})
+        monkeypatch.setattr("users.get_user", lambda uid: {
+                            'id': 1, 'name': 'Test', 'username': 'test@example.com'})
         response = client.post(
             '/admin/users/update/1',
-            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'notanemail'},
+            data={'csrf_token': 'test_token',
+                  'name': 'Test', 'username': 'notanemail'},
             follow_redirects=True
         )
         assert b'S\xc3\xa4hk\xc3\xb6postiosoite ei ole kelvollinen' in response.data
@@ -928,10 +1012,12 @@ class TestAdminCoverage:
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
-        monkeypatch.setattr("users.get_user", lambda uid: {'id': 1, 'name': 'Test', 'username': 'test@example.com'})
+        monkeypatch.setattr("users.get_user", lambda uid: {
+                            'id': 1, 'name': 'Test', 'username': 'test@example.com'})
         response = client.post(
             '/admin/users/update/1',
-            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'test@example.com', 'password': '123'},
+            data={'csrf_token': 'test_token', 'name': 'Test',
+                  'username': 'test@example.com', 'password': '123'},
             follow_redirects=True
         )
         assert b'Salasanan on oltava v\xc3\xa4hint\xc3\xa4\xc3\xa4n' in response.data
@@ -944,7 +1030,8 @@ class TestAdminCoverage:
         monkeypatch.setattr("users.get_user", lambda uid: None)
         response = client.post(
             '/admin/users/update/999',
-            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'test@example.com'},
+            data={'csrf_token': 'test_token', 'name': 'Test',
+                  'username': 'test@example.com'},
             follow_redirects=True
         )
         assert response.status_code == 404
@@ -955,14 +1042,16 @@ class TestAdminCoverage:
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
-        monkeypatch.setattr("users.get_user", lambda uid: {'id': 1, 'name': 'Test', 'username': 'test@example.com'})
+        monkeypatch.setattr("users.get_user", lambda uid: {
+                            'id': 1, 'name': 'Test', 'username': 'test@example.com'})
 
         def raise_integrity(*a, **kw):
             raise sqlite3.IntegrityError()
         monkeypatch.setattr("users.update_user", raise_integrity)
         response = client.post(
             '/admin/users/update/1',
-            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'test@example.com'},
+            data={'csrf_token': 'test_token', 'name': 'Test',
+                  'username': 'test@example.com'},
             follow_redirects=True
         )
         assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4tunnus on jo k\xc3\xa4yt\xc3\xb6ss\xc3\xa4' in response.data
@@ -972,14 +1061,16 @@ class TestAdminCoverage:
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
-        monkeypatch.setattr("users.get_user", lambda uid: {'id': 1, 'name': 'Test', 'username': 'test@example.com'})
+        monkeypatch.setattr("users.get_user", lambda uid: {
+                            'id': 1, 'name': 'Test', 'username': 'test@example.com'})
 
         def raise_exception(*a, **kw):
             raise Exception("fail")
         monkeypatch.setattr("users.update_user", raise_exception)
         response = client.post(
             '/admin/users/update/1',
-            data={'csrf_token': 'test_token', 'name': 'Test', 'username': 'test@example.com'},
+            data={'csrf_token': 'test_token', 'name': 'Test',
+                  'username': 'test@example.com'},
             follow_redirects=True
         )
         assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4n tietoja ei voitu p\xc3\xa4ivitt\xc3\xa4\xc3\xa4' in response.data
@@ -990,7 +1081,8 @@ class TestAdminCoverage:
             session['super_user'] = True
             session['user_id'] = 1
             session['csrf_token'] = 'test_token'
-        response = client.post('/admin/users/delete/1', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        response = client.post(
+            '/admin/users/delete/1', data={'csrf_token': 'test_token'}, follow_redirects=True)
         assert b'Et voi poistaa omaa tunnustasi' in response.data
 
     # --- 494: delete_user, user not found ---
@@ -999,7 +1091,8 @@ class TestAdminCoverage:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
         monkeypatch.setattr("users.get_user", lambda uid: None)
-        response = client.post('/admin/users/delete/999', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        response = client.post(
+            '/admin/users/delete/999', data={'csrf_token': 'test_token'}, follow_redirects=True)
         assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4\xc3\xa4 ei l\xc3\xb6ytynyt' in response.data
 
     # --- 501-502: delete_user, super user ---
@@ -1007,8 +1100,10 @@ class TestAdminCoverage:
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
-        monkeypatch.setattr("users.get_user", lambda uid: {'id': 2, 'name': 'Super', 'username': 'super@example.com', 'super_user': 1})
-        response = client.post('/admin/users/delete/2', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        monkeypatch.setattr("users.get_user", lambda uid: {
+                            'id': 2, 'name': 'Super', 'username': 'super@example.com', 'super_user': 1})
+        response = client.post(
+            '/admin/users/delete/2', data={'csrf_token': 'test_token'}, follow_redirects=True)
         assert b'P\xc3\xa4\xc3\xa4k\xc3\xa4ytt\xc3\xa4ji\xc3\xa4 ei voi poistaa' in response.data
 
     # --- 508-511: delete_user, generic Exception ---
@@ -1016,9 +1111,12 @@ class TestAdminCoverage:
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
-        monkeypatch.setattr("users.get_user", lambda uid: {'id': 3, 'name': 'User', 'username': 'user@example.com', 'super_user': 0})
-        monkeypatch.setattr("users.delete_user", lambda uid: (_ for _ in ()).throw(Exception("fail")))
-        response = client.post('/admin/users/delete/3', data={'csrf_token': 'test_token'}, follow_redirects=True)
+        monkeypatch.setattr("users.get_user", lambda uid: {
+                            'id': 3, 'name': 'User', 'username': 'user@example.com', 'super_user': 0})
+        monkeypatch.setattr("users.delete_user", lambda uid: (
+            _ for _ in ()).throw(Exception("fail")))
+        response = client.post(
+            '/admin/users/delete/3', data={'csrf_token': 'test_token'}, follow_redirects=True)
         assert b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4\xc3\xa4 ei voitu poistaa' in response.data
 
     # --- 522-524: new_entry, missing fields POST ---
@@ -1026,11 +1124,14 @@ class TestAdminCoverage:
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
-        monkeypatch.setattr("sql.get_all_contests", lambda: [{'id': 1, 'title': 'Test Contest'}])
-        monkeypatch.setattr("users.get_all_users", lambda: [{'id': 1, 'name': 'Test User', 'username': 'test@user.com'}])
+        monkeypatch.setattr("sql.get_all_contests", lambda: [
+                            {'id': 1, 'title': 'Test Contest'}])
+        monkeypatch.setattr("users.get_all_users", lambda: [
+                            {'id': 1, 'name': 'Test User', 'username': 'test@user.com'}])
         response = client.post(
             '/admin/entries/new',
-            data={'csrf_token': 'test_token', 'contest_id': '', 'user_id': '', 'entry': ''},
+            data={'csrf_token': 'test_token',
+                  'contest_id': '', 'user_id': '', 'entry': ''},
             follow_redirects=True
         )
         assert b'Kaikki pakolliset kent' in response.data

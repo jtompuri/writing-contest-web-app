@@ -38,11 +38,13 @@ class TestDatabaseOperations:
     def test_execute_query_and_last_id(self):
         """Test successful execute, query, and last_insert_id calls."""
         with app.app_context():
-            db.execute("CREATE TABLE IF NOT EXISTS test_table (id INTEGER PRIMARY KEY, name TEXT UNIQUE)")
+            db.execute(
+                "CREATE TABLE IF NOT EXISTS test_table (id INTEGER PRIMARY KEY, name TEXT UNIQUE)")
             db.execute("DELETE FROM test_table")  # Clean up from previous runs
 
             # Test execute and last_insert_id
-            result = db.execute("INSERT INTO test_table (name) VALUES (?)", ["test1"])
+            result = db.execute(
+                "INSERT INTO test_table (name) VALUES (?)", ["test1"])
             assert result.rowcount == 1
             last_id = db.last_insert_id()
             assert last_id is not None
@@ -62,13 +64,16 @@ class TestDatabaseOperations:
     def test_execute_raises_integrity_error(self):
         """Test that execute correctly raises IntegrityError for constraint violations."""
         with app.app_context():
-            db.execute("CREATE TABLE IF NOT EXISTS test_table (id INTEGER PRIMARY KEY, name TEXT UNIQUE)")
+            db.execute(
+                "CREATE TABLE IF NOT EXISTS test_table (id INTEGER PRIMARY KEY, name TEXT UNIQUE)")
             db.execute("DELETE FROM test_table")
-            db.execute("INSERT INTO test_table (name) VALUES (?)", ["unique_name"])
+            db.execute("INSERT INTO test_table (name) VALUES (?)",
+                       ["unique_name"])
 
             with pytest.raises(sqlite3.IntegrityError):
                 # Attempt to insert the same unique name again
-                db.execute("INSERT INTO test_table (name) VALUES (?)", ["unique_name"])
+                db.execute("INSERT INTO test_table (name) VALUES (?)", [
+                           "unique_name"])
 
             db.execute("DROP TABLE test_table")
 

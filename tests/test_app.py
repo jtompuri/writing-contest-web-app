@@ -29,11 +29,13 @@ class TestAppFeatures:
             text_content = "Test *bold* and _italic_."
 
             # Test richtext filter
-            rendered_no_links = render_template_string("{{ content | richtext }}", content=text_content)
+            rendered_no_links = render_template_string(
+                "{{ content | richtext }}", content=text_content)
             assert "<strong>bold</strong>" in rendered_no_links
             assert "<em>italic</em>" in rendered_no_links
 
             # Test richtext_with_links filter
-            rendered_with_links = render_template_string("{{ content | richtext_with_links }}", content=text_content)
+            rendered_with_links = render_template_string(
+                "{{ content | richtext_with_links }}", content=text_content)
             assert "<strong>bold</strong>" in rendered_with_links
             assert "<em>italic</em>" in rendered_with_links

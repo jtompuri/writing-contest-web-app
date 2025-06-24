@@ -15,7 +15,8 @@ class TestUserFunctions:
         monkeypatch.setattr(db, "execute", mock_execute)
         monkeypatch.setattr(db, "last_insert_id", mock_last_id)
 
-        result = users.create_user("Test User", "test@example.com", "password123", 0)
+        result = users.create_user(
+            "Test User", "test@example.com", "password123", 0)
 
         # The function should now return the ID from last_insert_id
         assert result == 1
@@ -28,7 +29,8 @@ class TestUserFunctions:
         mock_execute = MagicMock(side_effect=sqlite3.IntegrityError)
         monkeypatch.setattr(db, "execute", mock_execute)
 
-        result = users.create_user("Test User", "test@example.com", "password123", 0)
+        result = users.create_user(
+            "Test User", "test@example.com", "password123", 0)
 
         # The function now returns None on failure
         assert result is None
@@ -65,7 +67,8 @@ class TestUserFunctions:
         mock_query = MagicMock(return_value=[])
         monkeypatch.setattr(db, "query", mock_query)
 
-        users.get_all_users(limit=10, offset=5, name_search="Admin", username_search="admin@test.com", super_user="1")
+        users.get_all_users(limit=10, offset=5, name_search="Admin",
+                            username_search="admin@test.com", super_user="1")
 
         expected_query = "SELECT * FROM users WHERE 1=1 AND name LIKE ? AND username LIKE ? AND super_user = ? ORDER BY id ASC LIMIT ? OFFSET ?"
         expected_params = ["%Admin%", "%admin@test.com%", 1, 10, 5]
@@ -125,7 +128,8 @@ class TestUserFunctions:
 
         users.update_user_name(1, "Just The Name")
 
-        mock_execute.assert_called_with("UPDATE users SET name = ? WHERE id = ?", ["Just The Name", 1])
+        mock_execute.assert_called_with(
+            "UPDATE users SET name = ? WHERE id = ?", ["Just The Name", 1])
 
     def test_update_user_password(self, monkeypatch):
         """Test the update_user_password function."""
