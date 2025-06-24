@@ -2,7 +2,8 @@
 Configuration module for the Writing Contest Web App.
 
 Attributes:
-    secret_key (str): The secret key used for Flask session management and CSRF protection.
+    secret_key (str): The secret key used for Flask session management and
+                      CSRF protection.
     DATABASE (str): The SQLite database filename.
     DEFAULT_PER_PAGE (int): Default number of items per page for pagination.
     ADMIN_PER_PAGE (int): Number of items per page for admin views.

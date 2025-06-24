@@ -7,7 +7,8 @@ Blueprints:
     admin_bp (Blueprint): Handles admin-related routes.
 """
 
-from flask import Blueprint, render_template, request, session, abort, flash, redirect, url_for
+from flask import (Blueprint, render_template, request, session, abort, flash,
+                   redirect, url_for)
 
 import config
 import sql
@@ -49,9 +50,11 @@ def admin_contests():
     offset = (page - 1) * per_page
 
     # Sanitize filter input
-    title_search = sanitize_input(request.args.get("title_search", "", type=str).strip())
+    title_search = sanitize_input(request.args.get("title_search", "",
+                                                   type=str).strip())
 
-    contests = sql.get_all_contests(limit=per_page, offset=offset, title_search=title_search)
+    contests = sql.get_all_contests(limit=per_page, offset=offset,
+                                    title_search=title_search)
     total = sql.get_contest_count(title_search=title_search)
 
     return render_template(
@@ -75,8 +78,10 @@ def admin_users():
     offset = (page - 1) * per_page
 
     # Sanitize filter inputs
-    name_search = sanitize_input(request.args.get("name_search", "", type=str).strip())
-    username_search = sanitize_input(request.args.get("username_search", "", type=str).strip())
+    name_search = sanitize_input(request.args.get("name_search", "",
+                                                  type=str).strip())
+    username_search = sanitize_input(request.args.get("username_search", "",
+                                                      type=str).strip())
     super_user_filter = sanitize_input(request.args.get("super_user", ""))
 
     users_list = users.get_all_users(
@@ -115,7 +120,8 @@ def admin_entries():
 
     # Sanitize filter inputs
     contest_id = request.args.get("contest_id", type=int)
-    user_search = sanitize_input(request.args.get("user_search", "", type=str).strip())
+    user_search = sanitize_input(request.args.get("user_search", "",
+                                                  type=str).strip())
 
     offset = (page - 1) * per_page
 
@@ -167,7 +173,8 @@ def create_contest():
     class_id = int(class_id_str) if class_id_str.isdigit() else None
 
     errors = []
-    if (not title or not class_id or not collection_end or not review_end or not short_description or not long_description):
+    if (not title or not class_id or not collection_end or not review_end
+       or not short_description or not long_description):
         errors.append("Kaikki pakolliset kentät on täytettävä.")
 
     if len(short_description) > 255:
@@ -223,7 +230,8 @@ def edit_contest(contest_id):
     classes = sql.get_all_classes()
     if not contest:
         abort(404)
-    return render_template("admin/edit_contest.html", contest=contest, classes=classes)
+    return render_template("admin/edit_contest.html", contest=contest,
+                           classes=classes)
 
 
 @admin_bp.route("/contests/update/<int:contest_id>", methods=["POST"])
@@ -243,7 +251,8 @@ def update_contest(contest_id):
     class_id = int(class_id_str) if class_id_str.isdigit() else None
 
     errors = []
-    if (not title or not class_id or not collection_end or not review_end or not short_description or not long_description):
+    if (not title or not class_id or not collection_end or not review_end
+       or not short_description or not long_description):
         errors.append("Kaikki pakolliset kentät on täytettävä.")
 
     if len(short_description) > 255:
@@ -350,7 +359,8 @@ def update_user(user_id):
         return render_template("admin/edit_user.html", user=user)
 
     if password and len(password) < config.PASSWORD_MIN_LENGTH:
-        flash(f"Salasanan on oltava vähintään {config.PASSWORD_MIN_LENGTH} merkkiä pitkä.")
+        flash(f"Salasanan on oltava vähintään {config.PASSWORD_MIN_LENGTH} "
+              "merkkiä pitkä.")
         return render_template("admin/edit_user.html", user=user)
     # --- End Validation ---
 
@@ -435,7 +445,8 @@ def new_entry():
             flash("Teksti on luotu.")
             return redirect(url_for("admin.admin_entries"))
         except Exception as e:
-            if ("UNIQUE constraint failed" in str(e) or "duplicate key" in str(e)):
+            if ("UNIQUE constraint failed" in str(e)
+               or "duplicate key" in str(e)):
                 flash("Tällä käyttäjällä on jo teksti tässä kilpailussa.")
             else:
                 flash("Tekstiä ei voitu luoda.")
@@ -448,7 +459,8 @@ def new_entry():
                 selected_user_id=user_id
             )
 
-    return render_template("admin/new_entry.html", contests=contests, users=users_list)
+    return render_template("admin/new_entry.html", contests=contests,
+                           users=users_list)
 
 
 @admin_bp.route("/entries/create", methods=["POST"])
@@ -484,7 +496,8 @@ def edit_entry(entry_id):
     users_list = users.get_all_users()
     if not entry:
         abort(404)
-    return render_template("admin/edit_entry.html", entry=entry, contests=contests, users=users_list)
+    return render_template("admin/edit_entry.html", entry=entry,
+                           contests=contests, users=users_list)
 
 
 @admin_bp.route("/entries/update/<int:entry_id>", methods=["POST"])

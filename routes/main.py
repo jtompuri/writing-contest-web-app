@@ -9,7 +9,8 @@ Blueprints:
 
 from datetime import datetime, date
 
-from flask import Blueprint, render_template, request, session, abort, flash, url_for, redirect
+from flask import (Blueprint, render_template, request, session, abort, flash,
+                   url_for, redirect)
 
 import config
 import sql
@@ -39,8 +40,9 @@ def index():
                 winner["id"] = winner.get("entry_id", winner.get("id"))
                 # Only set contest-level fields if not present in the entry
                 for field in [
-                    "short_description", "class_value", "anonymity", "public_reviews",
-                    "public_results", "review_end", "collection_end", "total_entries"
+                    "short_description", "class_value", "anonymity",
+                    "public_reviews", "public_results", "review_end",
+                    "collection_end", "total_entries"
                 ]:
                     if field not in winner or winner[field] in (None, ""):
                         winner[field] = latest_result.get(field, "")
@@ -66,7 +68,8 @@ def contest(contest_id):
         abort(404)
 
     today = datetime.now().date()
-    collection_end = datetime.strptime(contest["collection_end"], "%Y-%m-%d").date()
+    collection_end = datetime.strptime(contest["collection_end"],
+                                       "%Y-%m-%d").date()
     review_end = datetime.strptime(contest["review_end"], "%Y-%m-%d").date()
 
     collection_open = today <= collection_end
@@ -123,7 +126,8 @@ def results():
 
     key = request.args.get("key")
     visible_contests = [
-        c for c in contests if c["public_results"] or (key and c["private_key"] == key)
+        c for c in contests if c["public_results"]
+        or (key and c["private_key"] == key)
     ]
 
     return render_template(
@@ -149,7 +153,8 @@ def reviews():
 
     key = request.args.get("key")
     visible_contests = [
-        c for c in contests if c["public_reviews"] or (key and c["private_key"] == key)
+        c for c in contests if c["public_reviews"]
+        or (key and c["private_key"] == key)
     ]
 
     return render_template(
@@ -176,7 +181,8 @@ def result(contest_id):
 
     if not contest["public_results"]:
         private_key_param = request.args.get("key", "")
-        if not private_key_param or private_key_param != contest["private_key"]:
+        if (not private_key_param
+           or private_key_param != contest["private_key"]):
             flash("Tämän kilpailun tulokset eivät ole julkisia.")
             return redirect(url_for("main.results"))
 

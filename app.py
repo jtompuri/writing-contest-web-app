@@ -1,8 +1,8 @@
 """Main Flask application setup for the Writing Contest Web App.
 
-This module initializes the Flask app, registers blueprints, sets up context processors,
-template filters, and global CSRF protection. It also injects configuration constants
-and site name into all templates.
+This module initializes the Flask app, registers blueprints, sets up context
+processors, template filters, and global CSRF protection. It also injects
+configuration constants and site name into all templates.
 
 Blueprints:
     main_bp (Blueprint): Handles public-facing routes.
@@ -20,7 +20,8 @@ Template Filters:
     richtext_with_links: Formats text with basic HTML and links.
 
 Functions:
-    ensure_csrf_token: Ensures a CSRF token is present in the session for each request.
+    ensure_csrf_token: Ensures a CSRF token is present in the session for each
+    request.
 """
 
 import secrets
@@ -55,8 +56,12 @@ def inject_config():
     return dict(
         SITE_TITLE=getattr(config, "SITE_TITLE", "Kirjoituskilpailut"),
         TITLE_MAX_LENGTH=getattr(config, "TITLE_MAX_LENGTH", 100),
-        SHORT_DESCRIPTION_MAX_LENGTH=getattr(config, "SHORT_DESCRIPTION_MAX_LENGTH", 255),
-        LONG_DESCRIPTION_MAX_LENGTH=getattr(config, "LONG_DESCRIPTION_MAX_LENGTH", 2000),
+        SHORT_DESCRIPTION_MAX_LENGTH=getattr(config,
+                                             "SHORT_DESCRIPTION_MAX_LENGTH",
+                                             255),
+        LONG_DESCRIPTION_MAX_LENGTH=getattr(config,
+                                            "LONG_DESCRIPTION_MAX_LENGTH",
+                                            2000),
         ENTRY_MAX_LENGTH=getattr(config, "ENTRY_MAX_LENGTH", 5000),
         FIELD_MAX_LENGTH=getattr(config, "FIELD_MAX_LENGTH", 50),
         PASSWORD_MIN_LENGTH=getattr(config, "PASSWORD_MIN_LENGTH", 8),

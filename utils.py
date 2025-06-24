@@ -15,7 +15,8 @@ def sanitize_input(text):
     text = text.strip()
     text = re.sub(r'<.*?>', '', text)
     text = re.sub(r'on\w+=".*?"', '', text, flags=re.IGNORECASE)
-    text = re.sub(r'(javascript:|data:|vbscript:)', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'(javascript:|data:|vbscript:)', '', text,
+                  flags=re.IGNORECASE)
     return text
 
 
@@ -32,7 +33,9 @@ def format_text(text, links_allowed=False):
         email_regex = r'([\w\.-]+@[\w\.-]+\.\w+)'
         text = re.sub(email_regex, r'<a href="mailto:\1">\1</a>', text)
         url_regex = r'(?<!href=")(https?://[^\s<>"]+)'
-        text = re.sub(url_regex, r'<a href="\1" target="_blank" rel="noopener">\1</a>', text)
+        text = re.sub(url_regex,
+                      r'<a href="\1" target="_blank" rel="noopener">\1</a>',
+                      text)
     return Markup(text)
 
 

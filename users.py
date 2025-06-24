@@ -1,8 +1,8 @@
 """
 Provides functions for user management in the Writing Contest Web App.
 
-This module includes functions for creating, retrieving, updating, and deleting users,
-as well as authentication and privilege checks.
+This module includes functions for creating, retrieving, updating, and
+deleting users, as well as authentication and privilege checks.
 
 Functions:
     create_user(name, username, password, is_super)
@@ -61,16 +61,20 @@ def get_user(user_id):
     return result[0] if result else None
 
 
-def get_all_users(limit=None, offset=None, name_search=None, username_search=None, super_user=None):
+def get_all_users(limit=None, offset=None, name_search=None,
+                  username_search=None, super_user=None):
     """
     Retrieve all users from the database, ordered by their ID.
 
     Args:
         limit (int, optional): The maximum number of users to return.
-        offset (int, optional): The number of users to skip before starting to return results.
+        offset (int, optional): The number of users to skip before starting to
+                                return results.
         name_search (str, optional): A search term to filter users by name.
-        username_search (str, optional): A search term to filter users by username.
-        super_user (bool or int, optional): A flag to filter users by super user status.
+        username_search (str, optional): A search term to filter users by
+                                         username.
+        super_user (bool or int, optional): A flag to filter users by super
+                                            user status.
 
     Returns:
         list: A list of users.
@@ -102,8 +106,10 @@ def get_user_count(name_search=None, username_search=None, super_user=None):
 
     Args:
         name_search (str, optional): A search term to filter users by name.
-        username_search (str, optional): A search term to filter users by username.
-        super_user (bool or int, optional): A flag to filter users by super user status.
+        username_search (str, optional): A search term to filter users by
+                                         username.
+        super_user (bool or int, optional): A flag to filter users by super
+                                            user status.
 
     Returns:
         int: The total number of users.
