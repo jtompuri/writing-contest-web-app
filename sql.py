@@ -1,20 +1,28 @@
 """
-Provides functions for contest, entry, review, and class management in the Writing Contest Web App.
+Provides functions for contest, entry, review, and class management in the
+Writing Contest Web App.
 
-This module includes functions for creating, retrieving, updating, and deleting contests and entries,
-as well as managing reviews, classes, and contest-related statistics.
+This module includes functions for creating, retrieving, updating, and
+deleting contests and entries, as well as managing reviews, classes,
+and contest-related statistics.
 
 Functions:
     get_all_contests(limit=None, offset=None)
-    add_contest(title, class_id, short_description, long_description, anonymity, public_reviews, public_results, collection_start, collection_end, review_start, review_end)
+    add_contest(title, class_id, short_description, long_description,
+               anonymity, public_reviews, public_results, collection_start,
+               collection_end, review_start, review_end)
     get_contest_by_id(contest_id)
-    update_contest(contest_id, title, class_id, short_description, long_description, anonymity, public_reviews, public_results, collection_end, review_end)
+    update_contest(contest_id, title, class_id, short_description,
+                  long_description, anonymity, public_reviews, public_results,
+                  collection_end, review_end)
     delete_contest(contest_id)
     get_contests_for_entry(limit=None, offset=None)
     get_contests_for_review(limit=None, offset=None)
     get_contests_for_results(limit=None, offset=None)
     get_contest_count()
-    create_contest(title, class_id, short_description, long_description, anonymity, public_reviews, public_results, collection_end, review_end, private_key)
+    create_contest(title, class_id, short_description, long_description,
+                  anonymity, public_reviews, public_results, collection_end,
+                  review_end, private_key)
     add_entry(contest_id, user_id, entry)
     get_all_entries(limit=None, offset=None, contest_id=None, user_search=None)
     get_entry_by_id(entry_id)
@@ -48,11 +56,13 @@ import db
 
 def get_all_contests(limit=None, offset=None, title_search=None):
     """
-    Retrieve all contests from the database, including their class information, ordered by collection end date.
+    Retrieve all contests from the database, including their class information,
+    ordered by collection end date.
 
     Args:
         limit (int, optional): Maximum number of contests to return.
-        offset (int, optional): Number of contests to skip before starting to return results.
+        offset (int, optional): Number of contests to skip before starting to
+                                return results.
         title_search (str, optional): Search term to filter contests by title.
 
     Returns:
@@ -120,7 +130,8 @@ def get_contest_by_id(contest_id):
         dict or None: The contest details if found, otherwise None.
     """
     query = """
-            SELECT contests.id, contests.title, contests.class_id, contests.short_description,
+            SELECT contests.id, contests.title, contests.class_id,
+                   contests.short_description,
                    contests.long_description, contests.collection_end,
                    contests.review_end, contests.public_reviews,
                    contests.public_results, contests.anonymity,
@@ -189,18 +200,22 @@ def delete_contest(contest_id):
 
 def get_contests_for_entry(limit=None, offset=None):
     """
-    Retrieve contests available for entry, ordered by collection end date descending.
+    Retrieve contests available for entry, ordered by collection end date
+    descending.
 
     Args:
         limit (int, optional): Maximum number of contests to return.
-        offset (int, optional): Number of contests to skip before starting to return results.
+        offset (int, optional): Number of contests to skip before starting to
+        return results.
 
     Returns:
         list: A list of contests available for entry.
     """
     query = """SELECT contests.id, contests.title, contests.short_description,
-            contests.collection_end, contests.review_end, classes.value AS class_value,
-            contests.anonymity AS anonymity, contests.public_reviews AS public_reviews,
+            contests.collection_end, contests.review_end,
+            classes.value AS class_value,
+            contests.anonymity AS anonymity,
+            contests.public_reviews AS public_reviews,
             contests.public_results AS public_results
             FROM contests
             JOIN classes ON contests.class_id = classes.id
@@ -218,11 +233,13 @@ def get_contests_for_entry(limit=None, offset=None):
 
 def get_contests_for_review(limit=None, offset=None):
     """
-    Retrieve contests available for review, ordered by review end date descending.
+    Retrieve contests available for review, ordered by review end date
+    descending.
 
     Args:
         limit (int, optional): Maximum number of contests to return.
-        offset (int, optional): Number of contests to skip before starting to return results.
+        offset (int, optional): Number of contests to skip before starting to
+        return results.
 
     Returns:
         list: A list of contests available for review.
@@ -249,11 +266,13 @@ def get_contests_for_review(limit=None, offset=None):
 
 def get_contests_for_results(limit=None, offset=None):
     """
-    Retrieve contests with results available, ordered by collection end date descending.
+    Retrieve contests with results available, ordered by collection end date
+    descending.
 
     Args:
         limit (int, optional): Maximum number of contests to return.
-        offset (int, optional): Number of contests to skip before starting to return results.
+        offset (int, optional): Number of contests to skip before starting to
+        return results.
 
     Returns:
         list: A list of contests with results available.
@@ -347,13 +366,16 @@ def add_entry(contest_id, user_id, entry):
     db.execute(query, [contest_id, user_id, entry])
 
 
-def get_all_entries(limit=None, offset=None, contest_id=None, user_search=None):
+def get_all_entries(limit=None, offset=None, contest_id=None,
+                    user_search=None):
     """
-    Retrieve all entries from the database, including user and contest information, ordered by creation date.
+    Retrieve all entries from the database, including user and contest
+    information, ordered by creation date.
 
     Args:
         limit (int, optional): Maximum number of entries to return.
-        offset (int, optional): Number of entries to skip before starting to return results.
+        offset (int, optional): Number of entries to skip before starting to
+                                return results.
         contest_id (int, optional): Filter entries by contest ID.
         user_search (str, optional): Filter entries by user name or username.
 
@@ -384,7 +406,8 @@ def get_all_entries(limit=None, offset=None, contest_id=None, user_search=None):
 
 def get_entry_by_id(entry_id):
     """
-    Retrieve an entry by its ID, including user, contest info, total points, contest anonymity, and review_end date.
+    Retrieve an entry by its ID, including user, contest info, total points,
+    contest anonymity, and review_end date.
 
     Args:
         entry_id (int): The ID of the entry.
@@ -394,7 +417,8 @@ def get_entry_by_id(entry_id):
     """
     query = """
         SELECT entries.id, entries.entry, entries.created,
-               users.name AS author_name, users.username, contests.title AS contest_title,
+               users.name AS author_name, users.username,
+               contests.title AS contest_title,
                contests.id AS contest_id, users.id AS user_id,
                contests.anonymity AS anonymity,
                contests.review_end AS review_end,
@@ -538,7 +562,8 @@ def get_user_entry_for_contest(contest_id, user_id):
     Returns:
         dict or None: The entry if found, otherwise None.
     """
-    query = "SELECT id FROM entries WHERE contest_id = ? AND user_id = ? LIMIT 1"
+    query = ("SELECT id FROM entries WHERE contest_id = ? AND user_id = ? "
+             "LIMIT 1")
     result = db.query(query, [contest_id, user_id])
     return result[0] if result else None
 
@@ -639,7 +664,9 @@ def get_user_reviews_for_contest(contest_id, user_id):
         JOIN entries ON reviews.entry_id = entries.id
         WHERE entries.contest_id = ? AND reviews.user_id = ?
     """
-    return {row["entry_id"]: row["points"] for row in db.query(query, [contest_id, user_id])}
+    return {row["entry_id"]: row["points"] for row in db.query(query,
+                                                               [contest_id,
+                                                                user_id])}
 
 
 # -------------------------------
@@ -706,13 +733,15 @@ def get_contest_results(contest_id):
 
 def get_user_entries_with_results(user_id):
     """
-    Retrieve all entries submitted by a user, including contest info, points, placement, and total entries.
+    Retrieve all entries submitted by a user, including contest info, points,
+    placement, and total entries.
 
     Args:
         user_id (int): The ID of the user.
 
     Returns:
-        list: Each dict contains entry and contest details, points, placement, and total_entries.
+        list: Each dict contains entry and contest details, points, placement,
+        and total_entries.
     """
     query = """
     SELECT
@@ -820,5 +849,20 @@ def get_user_entry_count(user_id):
         int: The number of entries submitted by the user.
     """
     query = "SELECT COUNT(*) AS count FROM entries WHERE user_id = ?"
+    result = db.query(query, [user_id])
+    return result[0]["count"] if result else 0
+
+
+def get_user_review_count(user_id):
+    """
+    Returns the number of reviews given by the user.
+
+    Args:
+        user_id (int): The ID of the user.
+
+    Returns:
+        int: The number of reviews the user has given.
+    """
+    query = "SELECT COUNT(*) AS count FROM reviews WHERE user_id = ?"
     result = db.query(query, [user_id])
     return result[0]["count"] if result else 0
