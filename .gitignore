@@ -8,3 +8,4 @@ pytest.ini
 dump.sql
 .flake8
 .vscode/
+tests/
