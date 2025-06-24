@@ -10,7 +10,8 @@ class TestUserFunctions:
     def test_create_user_success(self, monkeypatch):
         """Test successful user creation."""
         mock_execute = MagicMock()
-        # Mock last_insert_id to avoid the context error and return a predictable ID
+        # Mock last_insert_id to avoid the context error and return
+        # a predictable ID
         mock_last_id = MagicMock(return_value=1)
         monkeypatch.setattr(db, "execute", mock_execute)
         monkeypatch.setattr(db, "last_insert_id", mock_last_id)
@@ -70,7 +71,9 @@ class TestUserFunctions:
         users.get_all_users(limit=10, offset=5, name_search="Admin",
                             username_search="admin@test.com", super_user="1")
 
-        expected_query = "SELECT * FROM users WHERE 1=1 AND name LIKE ? AND username LIKE ? AND super_user = ? ORDER BY id ASC LIMIT ? OFFSET ?"
+        expected_query = ("SELECT * FROM users WHERE 1=1 AND name LIKE ? AND "
+                          "username LIKE ? AND super_user = ? ORDER BY id "
+                          "ASC LIMIT ? OFFSET ?")
         expected_params = ["%Admin%", "%admin@test.com%", 1, 10, 5]
         mock_query.assert_called_with(expected_query, expected_params)
 
@@ -97,7 +100,8 @@ class TestUserFunctions:
 
         users.get_user_count(name_search="Test", super_user="0")
 
-        expected_query = "SELECT COUNT(*) FROM users WHERE 1=1 AND name LIKE ? AND super_user = ?"
+        expected_query = ("SELECT COUNT(*) FROM users WHERE 1=1 AND "
+                          "name LIKE ? AND super_user = ?")
         expected_params = ["%Test%", 0]
         mock_query.assert_called_with(expected_query, expected_params)
 
@@ -117,7 +121,8 @@ class TestUserFunctions:
         users.update_user(1, "New Name", "new@email.com", 1)
 
         # Update the query to match the exact formatting in users.py
-        expected_query = "UPDATE users SET name = ?, username = ?, super_user = ?\n                WHERE id = ?"
+        expected_query = ("UPDATE users SET name = ?, username = ?, "
+                          "super_user = ?\n                WHERE id = ?")
         expected_params = ["New Name", "new@email.com", 1, 1]
         mock_execute.assert_called_with(expected_query, expected_params)
 
@@ -138,7 +143,9 @@ class TestUserFunctions:
 
         users.update_user_password(1, "new_password")
 
-        assert mock_execute.call_args[0][0] == "UPDATE users SET password_hash = ? WHERE id = ?"
+        assert mock_execute.call_args[0][0] == ("UPDATE users SET "
+                                                "password_hash = ? WHERE "
+                                                "id = ?")
         assert mock_execute.call_args[0][1][1] == 1
         # Check that the password was hashed using the new default method
         assert mock_execute.call_args[0][1][0].startswith("scrypt:")
@@ -159,7 +166,8 @@ class TestUserFunctions:
 
         users.get_user_count(username_search="testuser")
 
-        expected_query = "SELECT COUNT(*) FROM users WHERE 1=1 AND username LIKE ?"
+        expected_query = ("SELECT COUNT(*) FROM users WHERE 1=1 AND "
+                          "username LIKE ?")
         expected_params = ["%testuser%"]
         mock_query.assert_called_with(expected_query, expected_params)
 

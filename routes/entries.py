@@ -233,7 +233,7 @@ def review(contest_id):
     private_key_param = request.args.get("key", "")
 
     if not contest["public_reviews"]:
-        if (not private_key_param 
+        if (not private_key_param
            or private_key_param != contest["private_key"]):
             flash("Tämän kilpailun arviointi ei ole julkinen.")
             return redirect(url_for("main.reviews"))

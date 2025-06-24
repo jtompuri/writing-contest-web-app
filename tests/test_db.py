@@ -9,7 +9,8 @@ class TestDatabaseOperations:
     """Tests for the database utility functions in db.py."""
 
     def test_get_connection_creates_and_caches(self):
-        """Test that get_connection creates a new connection and caches it in g."""
+        """Test that get_connection creates a new connection and caches it
+        in g."""
         with app.app_context():
             # On first call, a new connection is made and stored in g
             conn1 = db.get_connection()
@@ -21,7 +22,8 @@ class TestDatabaseOperations:
             assert conn1 is conn2
 
     def test_close_connection(self):
-        """Test that close_connection removes the database from g and closes it."""
+        """Test that close_connection removes the database from g and
+        closes it."""
         with app.app_context():
             db.get_connection()
             assert 'db' in g
@@ -29,7 +31,8 @@ class TestDatabaseOperations:
             assert 'db' not in g
 
     def test_close_connection_is_idempotent(self):
-        """Test that closing a non-existent connection does not raise an error."""
+        """Test that closing a non-existent connection does not raise
+        an error."""
         with app.app_context():
             # Should not raise an error if 'db' is not in g
             db.close_connection()
@@ -39,7 +42,8 @@ class TestDatabaseOperations:
         """Test successful execute, query, and last_insert_id calls."""
         with app.app_context():
             db.execute(
-                "CREATE TABLE IF NOT EXISTS test_table (id INTEGER PRIMARY KEY, name TEXT UNIQUE)")
+                "CREATE TABLE IF NOT EXISTS test_table "
+                "(id INTEGER PRIMARY KEY, name TEXT UNIQUE)")
             db.execute("DELETE FROM test_table")  # Clean up from previous runs
 
             # Test execute and last_insert_id
@@ -57,15 +61,18 @@ class TestDatabaseOperations:
             db.execute("DROP TABLE test_table")
 
     def test_last_insert_id_without_insert(self):
-        """Test that last_insert_id returns None when no insert has occurred."""
+        """Test that last_insert_id returns None when no insert
+        has occurred."""
         with app.app_context():
             assert db.last_insert_id() is None
 
     def test_execute_raises_integrity_error(self):
-        """Test that execute correctly raises IntegrityError for constraint violations."""
+        """Test that execute correctly raises IntegrityError for constraint
+        violations."""
         with app.app_context():
             db.execute(
-                "CREATE TABLE IF NOT EXISTS test_table (id INTEGER PRIMARY KEY, name TEXT UNIQUE)")
+                "CREATE TABLE IF NOT EXISTS test_table "
+                "(id INTEGER PRIMARY KEY, name TEXT UNIQUE)")
             db.execute("DELETE FROM test_table")
             db.execute("INSERT INTO test_table (name) VALUES (?)",
                        ["unique_name"])
@@ -90,7 +97,8 @@ class TestDatabaseOperations:
                 db.query("SELECT * FROM a_table_that_does_not_exist")
 
     def test_connection_failure(self, monkeypatch):
-        """Test the exception handling in get_connection when sqlite3.connect fails."""
+        """Test the exception handling in get_connection when sqlite3.connect
+        fails."""
         # Mock sqlite3.connect to always raise an error
         def mock_connect(*args, **kwargs):
             raise sqlite3.Error("Mock connection error")

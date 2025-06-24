@@ -1,7 +1,8 @@
 """Tests for the entries blueprint and entry-related features.
 
 This module contains unit tests for entry routes, including adding, editing,
-deleting, reviewing entries, and admin entry management in the Writing Contest Web App.
+deleting, reviewing entries, and admin entry management in the Writing Contest
+Web App.
 """
 
 
@@ -156,7 +157,8 @@ class TestEntryRoutes:
         with client.session_transaction() as sess:
             sess['user_id'] = 1
         monkeypatch.setattr("sql.get_contest_by_id", lambda cid: {
-                            "id": cid, "collection_end": "2100-01-01", "review_end": "2101-01-01"})
+                            "id": cid, "collection_end": "2100-01-01",
+                            "review_end": "2101-01-01"})
         response = client.get('/contests/contest/1/add_entry?entry=foobar')
         assert b'foobar' in response.data
 
@@ -171,9 +173,11 @@ class TestEntryRoutes:
         monkeypatch.setattr("sql.get_entry_by_id", lambda eid: {
                             "id": eid, "contest_id": 1})
         monkeypatch.setattr("sql.get_contest_by_id", lambda cid: {
-                            "id": cid, "public_results": False, "private_key": "sekret"})
+                            "id": cid, "public_results": False,
+                            "private_key": "sekret"})
         response = client.get('/entry/1?source=result&key=wrong')
-        assert b'Tulokset eiv\xc3\xa4t ole julkisia' in response.data or response.status_code == 302
+        assert (b'Tulokset eiv\xc3\xa4t ole '
+                b'julkisia') in response.data or response.status_code == 302
 
     def test_delete_entry_not_logged_in(self, client):
         """Delete entry not logged in."""
@@ -207,7 +211,8 @@ class TestEntryRoutes:
         with client.session_transaction() as sess:
             sess['user_id'] = 1
         monkeypatch.setattr("sql.get_contest_by_id", lambda cid: {
-                            "id": cid, "public_reviews": False, "private_key": "sekret"})
+                            "id": cid, "public_reviews": False,
+                            "private_key": "sekret"})
         response = client.get('/review/1?key=wrong', follow_redirects=True)
         assert b'arviointi ei ole julkinen' in response.data
 
@@ -221,7 +226,8 @@ class TestEntryRoutes:
         })
         response = client.get('/review/1', follow_redirects=True)
         # Now the error message should be in the response after redirect
-        assert b'arviointijakso ei ole k\xc3\xa4ynniss\xc3\xa4' in response.data
+        assert (b'arviointijakso ei ole '
+                b'k\xc3\xa4ynniss\xc3\xa4') in response.data
 
     def test_entry_view_valid(self, client):
         response = client.get('/entry/1')
@@ -297,7 +303,8 @@ class TestEntryRoutes:
         )
         # Accept either the specific error message or a generic error page
         assert (
-            b'Kilpailuty\xc3\xb6 on liian' in response.data or b'Virhe' in response.data or response.status_code == 200
+            b'Kilpailuty\xc3\xb6 on liian' in response.data
+            or b'Virhe' in response.data or response.status_code == 200
         )
 
     def test_add_entry_post_duplicate(self, client):
@@ -364,7 +371,8 @@ class TestEntryRoutes:
         assert response.status_code in (200, 302, 404)
         if response.status_code == 200:
             assert 'arvosanojen tulee olla välillä 0-5' in response.get_data(
-                as_text=True) or 'Arvosanan tulee olla välillä 0–5' in response.get_data(as_text=True)
+                as_text=True) or ('Arvosanan tulee olla välillä '
+                                  '0–5') in response.get_data(as_text=True)
 
     def test_add_entry_post_preview_action(self, client, monkeypatch):
         """Test the 'preview' action when adding an entry."""
@@ -372,7 +380,8 @@ class TestEntryRoutes:
             sess['user_id'] = 1
             sess['csrf_token'] = 'test_token'
         monkeypatch.setattr("sql.get_contest_by_id", lambda cid: {
-                            "id": cid, "collection_end": "2100-01-01", "review_end": "2101-01-01"})
+                            "id": cid, "collection_end": "2100-01-01",
+                            "review_end": "2101-01-01"})
         response = client.post(
             '/contests/contest/1/add_entry',
             data={'csrf_token': 'test_token',
@@ -422,9 +431,11 @@ class TestEntryRoutes:
     def test_entry_private_results_valid_key(self, client, monkeypatch):
         """Test viewing a private result with a valid key."""
         monkeypatch.setattr("sql.get_entry_by_id", lambda eid: {
-                            "id": eid, "contest_id": 1, "entry": "Secret Text"})
+                            "id": eid, "contest_id": 1,
+                            "entry": "Secret Text"})
         monkeypatch.setattr("sql.get_contest_by_id", lambda cid: {
-                            "id": cid, "public_results": False, "private_key": "secret"})
+                            "id": cid, "public_results": False,
+                            "private_key": "secret"})
         response = client.get('/entry/1?source=result&key=secret')
         assert response.status_code == 200
         assert b'Secret Text' in response.data
@@ -447,8 +458,10 @@ class TestEntryRoutes:
         assert b'Esikatselu' in response.data
         assert b'Preview Edit' in response.data
 
-    def test_edit_entry_post_submit_redirect_to_contest(self, client, monkeypatch):
-        """Test that submitting an edit redirects to the contest page if source is 'contest'."""
+    def test_edit_entry_post_submit_redirect_to_contest(self, client,
+                                                        monkeypatch):
+        """Test that submitting an edit redirects to the contest page if
+        source is 'contest'."""
         with client.session_transaction() as sess:
             sess['user_id'] = 1
             sess['csrf_token'] = 'test_token'
@@ -474,9 +487,10 @@ class TestEntryRoutes:
                             "id": eid, "user_id": 1, "contest_id": 99})
         monkeypatch.setattr("sql.get_contest_by_id", lambda cid: None)
         response = client.post(
-            '/entry/1/delete', data={'csrf_token': 'test_token'}, follow_redirects=True)
+            '/entry/1/delete', data={'csrf_token': 'test_token'},
+            follow_redirects=True)
         assert response.status_code == 200
-        assert b'Et voi en\xc3\xa4\xc3\xa4 poistaa' in response.data  # "Et voi enää poistaa"
+        assert b'Et voi en\xc3\xa4\xc3\xa4 poistaa' in response.data
 
     def test_review_private_valid_key(self, client, monkeypatch):
         """Test accessing a private review page with a valid key."""
@@ -509,16 +523,20 @@ class TestEntryRoutes:
         assert response.status_code == 200
         # Try a more robust check for the review form or entry text
         assert (
-            b'Arvioi kilpailuty\xc3\xb6t' in response.data or b'Test entry text' in response.data or b'Test Entry' in response.data
+            b'Arvioi kilpailuty\xc3\xb6t' in response.data or
+            b'Test entry text' in response.data or b'Test Entry'
+            in response.data
         )
 
     def test_review_post_negative_points(self, client, monkeypatch):
-        """Test that submitting negative points for a review is handled as an error."""
+        """Test that submitting negative points for a review is handled as
+        an error."""
         with client.session_transaction() as sess:
             sess['user_id'] = 1
             sess['csrf_token'] = 'test_token'
         monkeypatch.setattr("sql.get_contest_by_id", lambda cid: {
-            "id": cid, "public_reviews": True, "collection_end": "2000-01-01", "review_end": "2100-01-01"
+            "id": cid, "public_reviews": True, "collection_end": "2000-01-01",
+            "review_end": "2100-01-01"
         })
         monkeypatch.setattr("sql.get_entries_for_review", lambda cid: [
             {"id": 1, "author_name": "Test", "entry": "Test entry text"}
@@ -531,7 +549,8 @@ class TestEntryRoutes:
         )
         assert response.status_code == 200
         # "Arvosanan tulee olla välillä 0–5"
-        assert b'Arvosanan tulee olla v\xc3\xa4lill\xc3\xa4 0\xe2\x80\x935' in response.data
+        assert (b'Arvosanan tulee olla v\xc3\xa4lill\xc3\xa4 '
+                b'0\xe2\x80\x935') in response.data
 
     # --- add_entry: lines 69-70, 76 (unknown action fallback) ---
     def test_add_entry_post_unknown_action(self, client, monkeypatch):
@@ -561,7 +580,8 @@ class TestEntryRoutes:
         with client.session_transaction() as sess:
             sess['user_id'] = 1
         monkeypatch.setattr("sql.get_entry_by_id", lambda eid: {
-                            "id": eid, "user_id": 1, "contest_id": 1, "entry": "original"})
+                            "id": eid, "user_id": 1, "contest_id": 1,
+                            "entry": "original"})
         monkeypatch.setattr("sql.get_contest_by_id", lambda cid: {
                             "id": cid, "collection_end": "2100-01-01"})
         response = client.get('/entry/1/edit?entry=changed')
@@ -579,9 +599,11 @@ class TestEntryRoutes:
         monkeypatch.setattr("sql.get_entry_by_id", lambda eid: {
                             "id": eid, "contest_id": 1})
         monkeypatch.setattr("sql.get_contest_by_id", lambda cid: {
-                            "id": cid, "public_results": True, "public_reviews": False, "private_key": "sekret"})
+                            "id": cid, "public_results": True,
+                            "public_reviews": False, "private_key": "sekret"})
         response = client.get('/entry/1?source=review&key=wrong')
-        assert b'arviointi ei ole julkista' in response.data or response.status_code == 302
+        assert (b'arviointi ei ole '
+                b'julkista') in response.data or response.status_code == 302
 
     # --- edit_entry: lines 176-178, 184-187, 202-204 ---
     def test_edit_entry_not_logged_in(self, client):
@@ -601,7 +623,8 @@ class TestEntryRoutes:
             sess['user_id'] = 1
             sess['csrf_token'] = 'test_token'
         monkeypatch.setattr("sql.get_entry_by_id", lambda eid: {
-                            "id": eid, "user_id": 1, "contest_id": 1, "entry": "foo"})
+                            "id": eid, "user_id": 1, "contest_id": 1,
+                            "entry": "foo"})
         monkeypatch.setattr("sql.get_contest_by_id", lambda cid: {
                             "id": cid, "collection_end": "2100-01-01"})
         response = client.post(

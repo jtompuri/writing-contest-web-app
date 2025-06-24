@@ -13,12 +13,13 @@ class TestSqlFunctions:
         monkeypatch.setattr(db, "query", mock_query)
         sql.get_all_contests(limit=10, offset=5, title_search="Test")
 
-        expected_sql = """
+        expected_sql = ("""
         SELECT contests.id, contests.title, contests.collection_end,
                contests.review_end, classes.value AS class_value
         FROM contests
         JOIN classes ON contests.class_id = classes.id
-     WHERE contests.title LIKE ? ORDER BY contests.collection_end DESC LIMIT ? OFFSET ?"""
+     WHERE contests.title LIKE ? ORDER BY contests.collection_end DESC """
+                        """LIMIT ? OFFSET ?""")
         mock_query.assert_called_with(expected_sql, ["%Test%", 10, 5])
 
     def test_add_contest(self, monkeypatch):
@@ -58,7 +59,8 @@ class TestSqlFunctions:
         sql.get_contests_for_review,
         sql.get_contests_for_results
     ])
-    def test_contest_listing_functions_with_limit_offset(self, monkeypatch, func):
+    def test_contest_listing_functions_with_limit_offset(self, monkeypatch,
+                                                         func):
         mock_query = MagicMock()
         monkeypatch.setattr(db, "query", mock_query)
         func(limit=10, offset=5)
@@ -90,7 +92,8 @@ class TestSqlFunctions:
         (sql.get_review_contest_count, "review_end >= DATE('now')"),
         (sql.get_results_contest_count, "review_end < DATE('now')")
     ])
-    def test_time_based_contest_counts(self, monkeypatch, func, expected_sql_part):
+    def test_time_based_contest_counts(self, monkeypatch, func,
+                                       expected_sql_part):
         mock_query = MagicMock(return_value=[[3]])
         monkeypatch.setattr(db, "query", mock_query)
         assert func() == 3
@@ -100,13 +103,15 @@ class TestSqlFunctions:
         assert func() == 0
 
     # Entry CRUD
-    @pytest.mark.parametrize("func", [sql.add_entry, sql.create_entry, sql.save_entry])
+    @pytest.mark.parametrize("func", [sql.add_entry, sql.create_entry,
+                                      sql.save_entry])
     def test_entry_creation_functions(self, monkeypatch, func):
         mock_execute = MagicMock()
         monkeypatch.setattr(db, "execute", mock_execute)
         func(1, 1, "content")
         mock_execute.assert_called_with(
-            "INSERT INTO entries (contest_id, user_id, entry)\n             VALUES (?, ?, ?)",
+            "INSERT INTO entries (contest_id, user_id, entry)\n"
+            "             VALUES (?, ?, ?)",
             [1, 1, "content"]
         )
 

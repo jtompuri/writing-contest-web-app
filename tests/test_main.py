@@ -5,7 +5,8 @@ validation in the Writing Contest Web App.
 
 Test Classes:
     TestPublicRoutes: Tests for public pages and error handling.
-    TestContestRoutes: Tests for contest detail, admin contest management, and validation.
+    TestContestRoutes: Tests for contest detail, admin contest management,
+                       and validation.
 """
 
 import pytest
@@ -16,8 +17,10 @@ from datetime import date, timedelta, datetime
 class TestFrontpage:
     def test_frontpage_winners_display(self, client, monkeypatch):
         fake_contests = [
-            {"id": 1, "title": "Test Contest", "public_results": True, "short_description": "Desc", "class_value": "Essee",
-             "anonymity": True, "public_reviews": True, "review_end": "2025-01-01", "collection_end": "2024-12-01",
+            {"id": 1, "title": "Test Contest", "public_results": True,
+             "short_description": "Desc", "class_value": "Essee",
+             "anonymity": True, "public_reviews": True,
+             "review_end": "2025-01-01", "collection_end": "2024-12-01",
              "total_entries": 3}
         ]
         long_text = "A" * 300  # 300 characters
@@ -67,8 +70,10 @@ class TestFrontpage:
 
     def test_frontpage_no_winners(self, client, monkeypatch):
         fake_contests = [
-            {"id": 1, "title": "Test Contest", "public_results": False, "short_description": "Desc", "class_value": "Essee",
-             "anonymity": True, "public_reviews": True, "review_end": "2025-01-01", "collection_end": "2024-12-01",
+            {"id": 1, "title": "Test Contest", "public_results": False,
+             "short_description": "Desc", "class_value": "Essee",
+             "anonymity": True, "public_reviews": True,
+             "review_end": "2025-01-01", "collection_end": "2024-12-01",
              "total_entries": 3}
         ]
         monkeypatch.setattr("sql.get_contests_for_entry",
@@ -81,7 +86,8 @@ class TestFrontpage:
 
         resp = client.get("/")
         assert resp.status_code == 200
-        assert b"Ei tuloksia t" in resp.data or "Voittajat julkaistaan pian".encode(
+        assert b"Ei tuloksia t" in resp.data or ("Voittajat julkaistaan "
+                                                 "pian").encode(
             'utf-8') in resp.data
 
     def test_frontpage_no_contests(self, client, monkeypatch):
@@ -97,8 +103,10 @@ class TestFrontpage:
 
     def test_frontpage_winner_entry_links(self, client, monkeypatch):
         fake_contests = [
-            {"id": 1, "title": "Test Contest", "public_results": True, "short_description": "Desc", "class_value": "Essee",
-             "anonymity": True, "public_reviews": True, "review_end": "2025-01-01", "collection_end": "2024-12-01",
+            {"id": 1, "title": "Test Contest", "public_results": True,
+             "short_description": "Desc", "class_value": "Essee",
+             "anonymity": True, "public_reviews": True,
+             "review_end": "2025-01-01", "collection_end": "2024-12-01",
              "total_entries": 3}
         ]
         long_text = "A" * 300  # 300 characters
@@ -172,13 +180,18 @@ class TestPublicRoutes:
         assert response.status_code == 404
 
     def test_results_page_filters_private_contests(self, client, monkeypatch):
-        """Test that the main results page does not show private contests without a key."""
+        """Test that the main results page does not show private contests
+        without a key."""
         # This mocks a mix of public and private contests
         fake_contests = [
-            {"id": 1, "title": "Public Results Contest", "public_results": True,
-                "private_key": "", "review_end": "2025-01-31", "collection_end": "2025-01-15"},
-            {"id": 2, "title": "Private Results Contest", "public_results": False,
-                "private_key": "secret1", "review_end": "2025-01-31", "collection_end": "2025-01-15"}
+            {"id": 1, "title": "Public Results Contest",
+             "public_results": True,
+                "private_key": "", "review_end": "2025-01-31",
+                "collection_end": "2025-01-15"},
+            {"id": 2, "title": "Private Results Contest",
+             "public_results": False,
+                "private_key": "secret1", "review_end": "2025-01-31",
+                "collection_end": "2025-01-15"}
         ]
         monkeypatch.setattr("sql.get_contests_for_results",
                             lambda limit, offset: fake_contests)
@@ -191,13 +204,17 @@ class TestPublicRoutes:
         assert b"Private Results Contest" not in response.data
 
     def test_reviews_page_filters_private_contests(self, client, monkeypatch):
-        """Test that the main reviews page does not show private contests without a key."""
+        """Test that the main reviews page does not show private contests
+        without a key."""
         # This mocks a mix of public and private contests
         fake_contests = [
             {"id": 1, "title": "Public Review Contest", "public_reviews": True,
-                "private_key": "", "review_end": "2025-01-31", "collection_end": "2025-01-15"},
-            {"id": 2, "title": "Private Review Contest", "public_reviews": False,
-                "private_key": "secret2", "review_end": "2025-01-31", "collection_end": "2025-01-15"}
+                "private_key": "", "review_end": "2025-01-31",
+                "collection_end": "2025-01-15"},
+            {"id": 2, "title": "Private Review Contest",
+             "public_reviews": False,
+                "private_key": "secret2", "review_end": "2025-01-31",
+                "collection_end": "2025-01-15"}
         ]
         monkeypatch.setattr("sql.get_contests_for_review",
                             lambda limit, offset: fake_contests)
@@ -209,11 +226,15 @@ class TestPublicRoutes:
         assert b"Public Review Contest" in response.data
         assert b"Private Review Contest" not in response.data
 
-    def test_reviews_page_shows_private_contest_with_key(self, client, monkeypatch):
-        """Test that the reviews page shows a private contest when the correct key is provided."""
+    def test_reviews_page_shows_private_contest_with_key(self, client,
+                                                         monkeypatch):
+        """Test that the reviews page shows a private contest when the correct
+        key is provided."""
         fake_contests = [
-            {"id": 2, "title": "Private Review Contest", "public_reviews": False,
-                "private_key": "secret2", "review_end": "2025-01-31", "collection_end": "2025-01-15"}
+            {"id": 2, "title": "Private Review Contest",
+             "public_reviews": False,
+                "private_key": "secret2", "review_end": "2025-01-31",
+                "collection_end": "2025-01-15"}
         ]
         monkeypatch.setattr("sql.get_contests_for_review",
                             lambda limit, offset: fake_contests)
@@ -238,7 +259,8 @@ class TestContestRoutes:
 class TestMainCoverage:
 
     def test_index_winner_missing_review_end(self, client, monkeypatch):
-        """Test the fallback logic for a winner's review_end date on the index page."""
+        """Test the fallback logic for a winner's review_end date on
+        the index page."""
         # Mock a contest that has a review_end date
         mock_contest = {
             "id": 1, "public_results": True, "review_end": "2025-01-01"
@@ -246,7 +268,8 @@ class TestMainCoverage:
         # Mock a winner from that contest that is missing the review_end date
         # Add the 'entry' key to the mock data to satisfy the template
         mock_winner = {
-            "entry_id": 101, "author_name": "Winner", "points": 50, "entry": "The winning text."
+            "entry_id": 101, "author_name": "Winner", "points": 50,
+            "entry": "The winning text."
         }
         monkeypatch.setattr("sql.get_contests_for_results",
                             lambda n: [mock_contest])
@@ -258,17 +281,22 @@ class TestMainCoverage:
 
         response = client.get("/")
         assert response.status_code == 200
-        # The test passes if the route runs without error, as the logic adds the key.
+        # The test passes if the route runs without error, as the logic adds
+        # the key.
         # We can also assert the winner's name is present.
         assert b"Winner" in response.data
 
-    @pytest.mark.parametrize("days_offset, expected_collection_open, expected_review_open", [
-        (-10, True, False),  # Collection is open
-        (5, False, True),    # Review is open
-        (20, False, False)   # Contest is closed
-    ])
-    def test_contest_page_states(self, client, monkeypatch, days_offset, expected_collection_open, expected_review_open):
-        """Test the collection_open and review_open states on the contest detail page."""
+    @pytest.mark.parametrize("days_offset, expected_collection_open, "
+                             "expected_review_open", [
+                                 (-10, True, False),  # Collection is open
+                                 (5, False, True),    # Review is open
+                                 (20, False, False)   # Contest is closed
+                             ])
+    def test_contest_page_states(self, client, monkeypatch, days_offset,
+                                 expected_collection_open,
+                                 expected_review_open):
+        """Test the collection_open and review_open states on the contest
+        detail page."""
         today = date.today()
         collection_end = today.isoformat()
         review_end = (today + timedelta(days=10)).isoformat()
@@ -281,8 +309,10 @@ class TestMainCoverage:
 
             # Provide a complete mock object for the contest
             mock_contest = {
-                "id": 1, "collection_end": collection_end, "review_end": review_end,
-                "title": "Test Contest", "short_description": "Short desc.", "long_description": "Long desc."
+                "id": 1, "collection_end": collection_end,
+                "review_end": review_end,
+                "title": "Test Contest", "short_description": "Short desc.",
+                "long_description": "Long desc."
             }
             monkeypatch.setattr("sql.get_contest_by_id",
                                 lambda contest_id: mock_contest)
@@ -294,14 +324,17 @@ class TestMainCoverage:
             # This test primarily ensures the logic runs and doesn't crash.
 
     def test_contest_page_user_has_entry(self, client, monkeypatch):
-        """Test the contest page logic when a logged-in user has an existing entry."""
+        """Test the contest page logic when a logged-in user has
+        an existing entry."""
         with client.session_transaction() as session:
             session['user_id'] = 1
 
         # Provide a complete mock object for the contest
         mock_contest = {
-            "id": 1, "collection_end": "2999-12-31", "review_end": "2999-12-31",
-            "title": "Test Contest", "short_description": "Short desc.", "long_description": "Long desc."
+            "id": 1, "collection_end": "2999-12-31",
+            "review_end": "2999-12-31",
+            "title": "Test Contest", "short_description": "Short desc.",
+            "long_description": "Long desc."
         }
         mock_entry = {"id": 101}
         monkeypatch.setattr("sql.get_contest_by_id",
@@ -318,7 +351,8 @@ class TestMainCoverage:
             response = client.get('/contests/contest/1')
 
         assert response.status_code == 200
-        # Correct the asserted URL path. The blueprint name 'entries' is not part of the path.
+        # Correct the asserted URL path. The blueprint name 'entries' is not
+        # part of the path.
         assert b'/entry/101/edit' in response.data
 
     def test_contests_list_pagination(self, client, monkeypatch):
@@ -328,11 +362,12 @@ class TestMainCoverage:
         monkeypatch.setattr("sql.get_entry_contest_count", lambda: 10)
 
         client.get('/contests?page=2')
-        # Correct the assertion to match the actual config value (DEFAULT_PER_PAGE = 5)
+        # Correct the assertion to match the actual config value
         mock_get_contests.assert_called_with(limit=5, offset=5)
 
     def test_private_result_page_no_key(self, client, monkeypatch):
-        """Test that accessing a private result page without a key redirects."""
+        """Test that accessing a private result page without
+        a key redirects."""
         mock_contest = {"id": 1, "public_results": False,
                         "private_key": "secret"}
         monkeypatch.setattr("sql.get_contest_by_id",
@@ -344,7 +379,8 @@ class TestMainCoverage:
             'utf-8') in response.data
 
     def test_private_result_page_wrong_key(self, client, monkeypatch):
-        """Test that accessing a private result page with a wrong key redirects."""
+        """Test that accessing a private result page with a wrong
+        key redirects."""
         mock_contest = {"id": 1, "public_results": False,
                         "private_key": "secret"}
         monkeypatch.setattr("sql.get_contest_by_id",
@@ -356,7 +392,8 @@ class TestMainCoverage:
             'utf-8') in response.data
 
     def test_private_result_page_correct_key(self, client, monkeypatch):
-        """Test that a private result page is accessible with the correct key."""
+        """Test that a private result page is accessible with
+        the correct key."""
         mock_contest = {"id": 1, "public_results": False,
                         "private_key": "secret"}
         monkeypatch.setattr("sql.get_contest_by_id",

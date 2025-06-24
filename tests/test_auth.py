@@ -33,7 +33,8 @@ class TestAuth:
         assert b'Tunnus on luotu' in response.data
 
     def test_login_route_unsupported_method_redirects(self, client):
-        """Covers the fallback 'return redirect("/login")' for unsupported methods."""
+        """Covers the fallback 'return redirect("/login")' for unsupported
+        methods."""
         response = client.open('/login', method='PUT')
         # Accept 405 (Method Not Allowed) as the correct Flask behavior
         assert response.status_code == 405
@@ -258,19 +259,22 @@ class TestProfileEdit:
             sess["csrf_token"] = "test_token"
 
     def test_edit_profile_get_not_logged_in(self, client):
-        """Test that a non-logged-in user is redirected from the edit profile page."""
+        """Test that a non-logged-in user is redirected from the edit
+        profile page."""
         response = client.get("/profile/edit", follow_redirects=True)
         assert response.status_code == 200
         assert "Kirjaudu sisään" in response.get_data(as_text=True)
 
     def test_edit_profile_post_not_logged_in(self, client):
-        """Test that a non-logged-in user cannot POST to the edit profile page."""
+        """Test that a non-logged-in user cannot POST to the edit
+        profile page."""
         response = client.post("/profile/edit", follow_redirects=True)
         assert response.status_code == 200
         assert "Kirjaudu sisään" in response.get_data(as_text=True)
 
     def test_edit_profile_user_not_found(self, client, monkeypatch):
-        """Test behavior when the logged-in user is not found in the database."""
+        """Test behavior when the logged-in user is not found in
+        the database."""
         self.login_as(client)
         monkeypatch.setattr("users.get_user", lambda uid: None)
         response = client.get("/profile/edit", follow_redirects=True)
@@ -281,7 +285,8 @@ class TestProfileEdit:
         self.login_as(client)
 
         def fake_get_user(user_id):
-            return {"id": user_id, "username": "test@example.com", "name": "Test"}
+            return {"id": user_id, "username": "test@example.com",
+                    "name": "Test"}
         monkeypatch.setattr("users.get_user", fake_get_user)
         response = client.get("/profile/edit")
         assert response.status_code == 200
@@ -291,7 +296,8 @@ class TestProfileEdit:
         self.login_as(client)
 
         def fake_get_user(user_id):
-            return {"id": user_id, "username": "test@example.com", "name": "Test"}
+            return {"id": user_id, "username": "test@example.com",
+                    "name": "Test"}
 
         def fake_update_user_name(user_id, name):
             assert name == "Uusi Nimi"
@@ -311,7 +317,8 @@ class TestProfileEdit:
         self.login_as(client)
 
         def fake_get_user(user_id):
-            return {"id": user_id, "username": "test@example.com", "name": "Test"}
+            return {"id": user_id, "username": "test@example.com",
+                    "name": "Test"}
         monkeypatch.setattr("users.get_user", fake_get_user)
         monkeypatch.setattr("users.update_user_name", lambda uid, name: None)
 
@@ -332,7 +339,8 @@ class TestProfileEdit:
         self.login_as(client)
 
         def fake_get_user(user_id):
-            return {"id": user_id, "username": "test@example.com", "name": "Test"}
+            return {"id": user_id, "username": "test@example.com",
+                    "name": "Test"}
         monkeypatch.setattr("users.get_user", fake_get_user)
         monkeypatch.setattr("users.update_user_name", lambda uid, name: None)
         monkeypatch.setattr("users.update_user_password", lambda uid, pw: None)
@@ -350,7 +358,8 @@ class TestProfileEdit:
         self.login_as(client)
 
         def fake_get_user(user_id):
-            return {"id": user_id, "username": "test@example.com", "name": "Test"}
+            return {"id": user_id, "username": "test@example.com",
+                    "name": "Test"}
         monkeypatch.setattr("users.get_user", fake_get_user)
         monkeypatch.setattr("users.update_user_name", lambda uid, name: None)
         monkeypatch.setattr("users.update_user_password", lambda uid, pw: None)
@@ -361,14 +370,16 @@ class TestProfileEdit:
             "password2": "short"
         }, follow_redirects=True)
         assert response.status_code == 200
-        assert "Salasanan on oltava vähintään 8 merkkiä pitkä" in response.get_data(
-            as_text=True) or "salasanan on oltava" in response.get_data(as_text=True)
+        assert (("Salasanan on oltava vähintään 8 merkkiä pitkä")
+                in response.get_data(as_text=True)
+                or "salasanan on oltava" in response.get_data(as_text=True))
 
     def test_edit_profile_post_invalid_name(self, client, monkeypatch):
         self.login_as(client)
 
         def fake_get_user(user_id):
-            return {"id": user_id, "username": "test@example.com", "name": "Test"}
+            return {"id": user_id, "username": "test@example.com",
+                    "name": "Test"}
         monkeypatch.setattr("users.get_user", fake_get_user)
         monkeypatch.setattr("users.update_user_name", lambda uid, name: None)
         monkeypatch.setattr("users.update_user_password", lambda uid, pw: None)
@@ -386,7 +397,8 @@ class TestProfileEdit:
         self.login_as(client)
 
         def fake_get_user(user_id):
-            return {"id": user_id, "username": "test@example.com", "name": "Test"}
+            return {"id": user_id, "username": "test@example.com",
+                    "name": "Test"}
         monkeypatch.setattr("users.get_user", fake_get_user)
         response = client.post("/profile/edit", data={
             "csrf_token": "test_token",
@@ -408,7 +420,8 @@ class TestProfileEdit:
         self.login_as(client)
         monkeypatch.setattr("users.delete_user", lambda user_id: True)
         response = client.post(
-            "/profile/delete", data={"csrf_token": "test_token"}, follow_redirects=True)
+            "/profile/delete", data={"csrf_token": "test_token"},
+            follow_redirects=True)
         assert response.status_code in (200, 302)
         assert "Profiili poistettu" in response.get_data(
             as_text=True) or "poistettu" in response.get_data(as_text=True)

@@ -14,17 +14,20 @@ class TestAppFeatures:
             assert 'csrf_token' in sess
 
     def test_ensure_csrf_token_preservation(self, client):
-        """Test that an existing CSRF token is not overwritten on subsequent requests."""
+        """Test that an existing CSRF token is not overwritten on subsequent
+        requests."""
         with client.session_transaction() as sess:
             sess['csrf_token'] = 'my-test-token'
 
         client.get('/')
-        # After the request, check the session to ensure the token was preserved.
+        # After the request, check the session to ensure the token was
+        # preserved.
         with client.session_transaction() as sess:
             assert sess['csrf_token'] == 'my-test-token'
 
     def test_richtext_filter(self):
-        """Test the richtext filter for correct HTML escaping and line breaks."""
+        """Test the richtext filter for correct HTML escaping and line
+        breaks."""
         with app.test_request_context():
             text_content = "Test *bold* and _italic_."
 
