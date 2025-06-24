@@ -118,7 +118,38 @@ def populate_db():
         )
 
     today = datetime.now()
-    finished_count = int(CONTEST_COUNT * 0.3)  # 30% finished contests
+    finished_count = int(CONTEST_COUNT * 0.3)
+
+    # --- Ensure at least one contest is in review period ---
+    demo_title = "Demo Review Contest"
+    class_id = 1
+    short_description = "Demo contest with open review period."
+    long_description = "This contest is in review period for demo purposes."
+    anonymity = 0
+    public_reviews = 1
+    public_results = 0
+    collection_end = (today - timedelta(days=1)).strftime("%Y-%m-%d")
+    review_end = (today + timedelta(days=7)).strftime("%Y-%m-%d")
+    private_key = secrets.token_urlsafe(16)
+    cur.execute(
+        "INSERT INTO contests (title, class_id, short_description, "
+        "long_description, anonymity, public_reviews, public_results, "
+        "collection_end, review_end, private_key) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        (
+            demo_title,
+            class_id,
+            short_description,
+            long_description,
+            anonymity,
+            public_reviews,
+            public_results,
+            collection_end,
+            review_end,
+            private_key
+        )
+    )
+    demo_contest_id = cur.lastrowid
 
     # Finished contests
     for i in range(finished_count):
@@ -172,11 +203,12 @@ def populate_db():
              private_key)
         )
 
-    # Entries
+    # Entries (now include demo_contest_id in possible contest_ids)
     entry_pairs = set()
+    all_contest_ids = list(range(1, CONTEST_COUNT + 1)) + [demo_contest_id]
     for i in range(ENTRY_COUNT):
         while True:
-            contest_id = random.randint(1, CONTEST_COUNT)
+            contest_id = random.choice(all_contest_ids)
             user_id = random.randint(1, USER_COUNT)
             if (contest_id, user_id) not in entry_pairs:
                 entry_pairs.add((contest_id, user_id))
@@ -188,11 +220,13 @@ def populate_db():
             (contest_id, user_id, entry)
         )
 
-    # Reviews
+    # Reviews (now include entries from demo contest)
     review_pairs = set()
     attempts = 0
+    cur.execute("SELECT id FROM entries")
+    all_entry_ids = [row[0] for row in cur.fetchall()]
     while len(review_pairs) < REVIEW_COUNT and attempts < REVIEW_COUNT * 10:
-        entry_id = random.randint(1, ENTRY_COUNT)
+        entry_id = random.choice(all_entry_ids)
         user_id = random.randint(1, USER_COUNT)
         if (entry_id, user_id) in review_pairs:
             attempts += 1
@@ -206,50 +240,6 @@ def populate_db():
             (entry_id, user_id, points, review)
         )
         attempts += 1
-
-    # --- Ensure at least one contest is in review period ---
-    today = datetime.now()
-    class_id = 1
-    short_description = "Demo contest with open review period."
-    long_description = "This contest is always in review period for demo " \
-                       "purposes."
-    anonymity = 0
-    public_reviews = 1
-    public_results = 0
-    collection_end = (today - timedelta(days=1)).strftime("%Y-%m-%d")
-    review_end = (today + timedelta(days=7)).strftime("%Y-%m-%d")
-    private_key = secrets.token_urlsafe(16)
-    cur.execute(
-        "INSERT INTO contests (title, class_id, short_description, "
-        "long_description, anonymity, public_reviews, public_results, "
-        "collection_end, review_end, private_key) "
-        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (
-            "Demo Review Contest",
-            class_id,
-            short_description,
-            long_description,
-            anonymity,
-            public_reviews,
-            public_results,
-            collection_end,
-            review_end,
-            private_key
-        )
-    )
-    # Get the id of the inserted demo contest
-    demo_contest_id = cur.lastrowid
-
-    # Add a few entries for the demo contest (by unique users)
-    demo_user_ids = [i + 2 for i in range(3)]  # users 2, 3, 4
-    for i, user_id in enumerate(demo_user_ids):
-        entry = (f"Demo entry {i + 1} for review contest.\n\n" +
-                 random_lorem(200))
-        cur.execute(
-            "INSERT INTO entries (contest_id, user_id, entry) "
-            "VALUES (?, ?, ?)",
-            (demo_contest_id, user_id, entry)
-        )
 
     conn.commit()
     conn.close()
@@ -370,17 +360,4 @@ def main():
 
 
 if __name__ == "__main__":
-    print("Step 1: Recreate DB and populate with random data...")
-    recreate_db()
-    populate_db()
-    print_table_counts()
-    print("Step 2: Timing queries WITHOUT indexes...")
-    timings_no_idx = time_queries()
-
-    print("Step 3: Adding indexes...")
-    add_indexes()
-    print("Step 4: Timing queries WITH indexes...")
-    timings_idx = time_queries()
-
-    print_table_counts()
-    print_report(timings_no_idx, timings_idx)
+    main()
