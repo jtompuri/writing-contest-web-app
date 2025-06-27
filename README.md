@@ -110,8 +110,11 @@ Huomioitavaa kurssityön arvioinnissa:
 	- SQL-injektioriski tiedostossa `sql.py` on korjattu käyttämällä parametreja
 	- kirjautuneelta käyttäjältä piilotetaan rekisteröitymis- ja kirjautumislinkit
 	- demodataan lisätty arvostelu, jolla on pitkä arviointiperiodi, joten se on arvioitavissa
-- Koska sovellus kasvoi suhteellisen laajaksi, toteutin sille kattavat yksikkötestit, mikä helpotti merkittävästi tämän jälkeen laajempien muutosten tekemistä sovellukseen; yksikkötestit eivät olleet kurssin vaatimuksissa, mutta koin ne hyödyllisiksi joka tapauksessa
-- Testaus suurilla datamäärillä on tehty ja testien raportit löytyvät README:n lopusta
+- Koska sovellus kasvoi suhteellisen laajaksi, toteutin sille kattavat yksikkötestit
+	- yksikkötestit helpotti merkittävästi muutosten tekemistä sovellukseen
+	- yksikkötestit eivät olleet kurssin vaatimuksissa, mutta koin ne hyödyllisiksi 
+	- testikattavuus on tällä hetkellä 95 %, tarkempi testikattavuusraportti löytyy alta
+- Testaus suurilla datamäärillä on tehty ja testien raportit löytyvät alta
 
 ## Sovelluksen toiminnot
 
@@ -271,3 +274,22 @@ list_reviews_for_entry                   |     0.070866 |       0.000082 |   863
 list_contests_for_class                  |     0.004155 |       0.003808 |     1.09x
 --------------------------------------------------------------------------------
 ```
+
+## Testikattavuus
+
+Testikattavuusraportti luotiin komennolla `pytest --cov --cov-report=html --cov-report=term`:
+
+Name                 Stmts   Miss  Cover   Missing
+--------------------------------------------------
+app.py                  37      0   100%
+db.py                   43      0   100%
+routes/__init__.py       0      0   100%
+routes/admin.py        327     25    92%
+routes/auth.py         110      0   100%
+routes/entries.py      191     27    86%
+routes/main.py          91      0   100%
+sql.py                 169      0   100%
+users.py                80      0   100%
+utils.py                30      0   100%
+--------------------------------------------------
+TOTAL                 1078     52    95%
