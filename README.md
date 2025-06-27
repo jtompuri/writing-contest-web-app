@@ -279,6 +279,7 @@ list_contests_for_class                  |     0.004155 |       0.003808 |     1
 
 Testikattavuusraportti luotiin komennolla `pytest --cov --cov-report=html --cov-report=term`:
 
+```
 Name                 Stmts   Miss  Cover   Missing
 --------------------------------------------------
 app.py                  37      0   100%
@@ -293,3 +294,4 @@ users.py                80      0   100%
 utils.py                30      0   100%
 --------------------------------------------------
 TOTAL                 1078     52    95%
+```
