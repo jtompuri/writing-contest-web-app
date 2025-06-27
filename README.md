@@ -92,6 +92,27 @@ Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 	- [x] Käyttäjä pystyy lähettämään toisen käyttäjän tietokohteeseen liittyen jotain lisätietoa, joka tulee näkyviin sovelluksessa.
 - [x] README.md-tiedoston tulee kuvata, mikä on sovelluksen nykyinen tilanne.
 
+### Loppupalautus (27.6.2025) 
+
+Huomioitavaa kurssityön arvioinnissa:
+- Sovelluksen kaikki ominaisuudet on käytettävissä käyttäjätunnuksella `admin` ja salasanalla `admin`
+- Arviointia varten on hyvä rekisteröidä myös peruskäyttäjä, jolla ei ole ylläpito-oikeuksia
+- Sovelluksen koodi on jaettu Flask Blueprint -moduuleiksi kansiossa `routes/`
+- Demodataan on lisätty kilpailu, jonka arviointijakso päättyy 31.8.2025
+- "Tekstisi"-sivu on kurssivaatimusten *käyttäjäsivu*, josta löytyy kaikki käyttäjän jättämät kilpailutyöt ja tilastotietona käyttäjän jättämien kilpailutöiden ja arvosteluiden lukumäärä
+- Kilpailun asetuksissa valinnat "anonyymi arviointi" ja "julkinen arviointi" ovat erillisiä valintoja (eivät toistensa vastakohtia): 
+	- anonyymi arviointi tarkoittaa, että kilpailutyön tekijän nimeä ei esitetä arvioijalle
+	- julkinen arviointi tarkoittaa, että kaikki käyttäjät voivat arvoida kilpailutöitä; muussa tapauksessa vain salaisen avaimen sisältämän linkin saaneet voivat arvioida kilpailutöitä
+- Vertaisarvioinneissa ja kurssin ohjaajien palautteessa ehdotetut seuraavat parannukset on toteutettu:
+	- koodin liian pitkät rivit on jaettu useammalle riville
+	- pitkäksi kasvanut `app.py` on jaettu pienemmiksi moduuleiksi kansiossa `routes/`
+	- sovelluksen asennusohjeisiin on lisätty puuttuneet yksityiskohdat
+	- SQL-injektioriski tiedostossa `sql.py` on korjattu käyttämällä parametreja
+	- kirjautuneelta käyttäjältä piilotetaan rekisteröitymis- ja kirjautumislinkit
+	- demodataan lisätty arvostelu, jolla on pitkä arviointiperiodi, joten se on arvioitavissa
+- Koska sovellus kasvoi suhteellisen laajaksi, toteutin sille kattavat yksikkötestit, mikä helpotti merkittävästi tämän jälkeen laajempien muutosten tekemistä sovellukseen; yksikkötestit eivät olleet kurssin vaatimuksissa, mutta koin ne hyödyllisiksi joka tapauksessa
+- Testaus suurilla datamäärillä on tehty ja testien raportit löytyvät README:n lopusta
+
 ## Sovelluksen toiminnot
 
 ✅ = toteutettu
@@ -116,7 +137,7 @@ Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 - Käyttäjä voi lisätä, muokata ja poistaa oman tekstin. ✅
 - Tekstin muokkaus ja poisto on sallittu vain kilpailun keräysvaiheessa. ✅
 - Käyttäjä voi arvioida muiden kilpailutöitä antamalla pistemäärän 1-5. ✅
-- Sovelluksessa on käyttäjäsivu (Tekstisi) kilpailuista. ✅ 
+- Sovelluksessa on käyttäjäsivu ("Tekstisi"-sivu) kilpailuista. ✅ 
 - Käyttäjäsivu on käyttäjän sijoitus ja pistemäärä päättyneiden kilpailujen osalta. ✅
 - Käyttäjä voi tarkastella kilpailun tuloksia. ✅
 
