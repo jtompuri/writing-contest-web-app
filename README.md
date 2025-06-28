@@ -6,7 +6,7 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 
 1. Luo virtuaaliympäristö:
 	```bash
-	python3 -m venv venv 
+	python3 -m venv venv
 	```
 
 	Linux/Mac:
@@ -31,12 +31,12 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 
 	Jos `sqlite3` ei löydy, asenna se.
 
-	Linux: 
+	Linux:
 	```bash
 	sudo apt install sqlite3
 	```
 
-	Mac: 
+	Mac:
 	```bash
 	brew install sqlite3
 	```
@@ -60,11 +60,11 @@ Kirjoituskilpailusovelluksen (Writing Contest Web App) avulla voidaan järjestä
 	flask run --debug
 	```
 
-Voit kirjautua demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja salasanalla `admin`. Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä. 
+Voit kirjautua demoon pääkäyttäjänä käyttäjätunnuksella `admin` ja salasanalla `admin`. Pääkäyttäjänä voit hallinnoida kilpailuja, käyttäjiä ja kilpailutöitä.
 
 Jos luot tyhjän tietokannan, niin ensimmäisestä rekisteröidystä käyttäjästä tulee automaattisesti pääkäyttäjä, joka voi luoda, muokata ja poistaa käyttäjiä, kilpailuja ja kilpailutöitä.
 
-Kirjautumaton käyttäjä ei näe Arvioi, Tekstisi ja Ylläpito-välilehtiä. Voit luoda toisen käyttäjätunnuksen, jolla on peruskäyttäjän oikeudet. Peruskäyttäjä ei näe Ylläpito-välilehteä. 
+Kirjautumaton käyttäjä ei näe Arvioi, Tekstisi ja Ylläpito-välilehtiä. Voit luoda toisen käyttäjätunnuksen, jolla on peruskäyttäjän oikeudet. Peruskäyttäjä ei näe Ylläpito-välilehteä.
 
 ## Työn eteneminen
 
@@ -72,7 +72,7 @@ Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 
 ### Välipalautus 1 (18.5.2025) ✅
 - [x] Luo GitHubiin julkinen repositorio harjoitustyötä varten. Nimeä repositoriosi kuvaavasti.
-- [x] Valitse projektille aihe ja kirjoita README.md-tiedostoon kuvaus, joka esittelee sovelluksen keskeiset toiminnot. 
+- [x] Valitse projektille aihe ja kirjoita README.md-tiedostoon kuvaus, joka esittelee sovelluksen keskeiset toiminnot.
 - [x] Kirjoita kuvaus samassa muodossa kuin aloitussivun esimerkkiaiheissa ja esimerkkisovelluksessa.
 - [x] Kirjaudu Labtooliin ja ilmoita siellä projektisi GitHub-osoite.
 
@@ -92,15 +92,16 @@ Työn etenemistä voi seurata alla olevasta tehtävälistasta.
 	- [x] Käyttäjä pystyy lähettämään toisen käyttäjän tietokohteeseen liittyen jotain lisätietoa, joka tulee näkyviin sovelluksessa.
 - [x] README.md-tiedoston tulee kuvata, mikä on sovelluksen nykyinen tilanne.
 
-### Loppupalautus (27.6.2025) 
+### Loppupalautus (27.6.2025)
 
 Huomioitavaa kurssityön arvioinnissa:
 - Sovelluksen kaikki ominaisuudet on käytettävissä käyttäjätunnuksella `admin` ja salasanalla `admin`
 - Arviointia varten on hyvä rekisteröidä myös peruskäyttäjä, jolla ei ole ylläpito-oikeuksia
+- Tietokohteiden haku hakusanalla tai suodattamalla on toteutettu ylläpitokäyttöliittymään
 - Sovelluksen koodi on jaettu Flask Blueprint -moduuleiksi kansiossa `routes/`
 - Demodataan on lisätty kilpailu, jonka arviointijakso päättyy 31.8.2025
-- "Tekstisi"-sivu on kurssivaatimusten *käyttäjäsivu*, josta löytyy kaikki käyttäjän jättämät kilpailutyöt ja tilastotietona käyttäjän jättämien kilpailutöiden ja arvosteluiden lukumäärä
-- Kilpailun asetuksissa valinnat "anonyymi arviointi" ja "julkinen arviointi" ovat erillisiä valintoja (eivät toistensa vastakohtia): 
+- "Tekstisi"-sivu on kurssivaatimusten käyttäjäsivu, josta listaa käyttäjän kilpailutyöt ja näyttää tilastotietona käyttäjän jättämien kilpailutöiden ja arvosteluiden lukumäärän
+- Kilpailun asetuksissa valinnat "anonyymi arviointi" ja "julkinen arviointi" ovat erillisiä valintoja (eivät toistensa vastakohtia):
 	- anonyymi arviointi tarkoittaa, että kilpailutyön tekijän nimeä ei esitetä arvioijalle
 	- julkinen arviointi tarkoittaa, että kaikki käyttäjät voivat arvoida kilpailutöitä; muussa tapauksessa vain salaisen avaimen sisältämän linkin saaneet voivat arvioida kilpailutöitä
 - Vertaisarvioinneissa ja kurssin ohjaajien palautteessa ehdotetut seuraavat parannukset on toteutettu:
@@ -112,9 +113,85 @@ Huomioitavaa kurssityön arvioinnissa:
 	- demodataan lisätty arvostelu, jolla on pitkä arviointiperiodi, joten se on arvioitavissa
 - Koska sovellus kasvoi suhteellisen laajaksi, toteutin sille kattavat yksikkötestit
 	- yksikkötestit helpotti merkittävästi muutosten tekemistä sovellukseen
-	- yksikkötestit eivät olleet kurssin vaatimuksissa, mutta koin ne hyödyllisiksi 
+	- yksikkötestit eivät olleet kurssin vaatimuksissa, mutta koin ne hyödyllisiksi
 	- testikattavuus on tällä hetkellä 95 %, tarkempi testikattavuusraportti löytyy alta
 - Testaus suurilla datamäärillä on tehty ja testien raportit löytyvät alta
+
+### Toteutetut ominaisuudet
+
+Arvostelusivulla mainitut toteutetut vaatimukset:
+
+### Sovelluksen perusvaatimukset (7 p)
+- [x] Käyttäjä pystyy luomaan tunnuksen ja kirjautumaan sisään sovellukseen
+- [x] Käyttäjä pystyy lisäämään, muokkaamaan ja poistamaan tietokohteita
+- [x] Käyttäjä näkee sovellukseen lisätyt tietokohteet
+- [x] Käyttäjä pystyy etsimään tietokohteita hakusanalla tai muulla perusteella
+- [x] Käyttäjäsivu näyttää tilastoja ja käyttäjän lisäämät tietokohteet
+- [x] Käyttäjä pystyy valitsemaan tietokohteelle yhden tai useamman luokittelun
+- [x] Käyttäjä pystyy lisäämään tietokohteeseen toissijaisia tietokohteita
+
+### Tekniset perusvaatimukset (8 p)
+- [x] Sovellus toteutettu kurssimateriaalin mukaisesti
+- [x] Sovellus toteutettu Pythonilla käyttäen Flask-kirjastoa
+- [x] Sovellus käyttää SQLite-tietokantaa
+- [x] Kehitystyössä käytetty Gitiä ja GitHubia
+- [x] Sovelluksen käyttöliittymä muodostuu HTML-sivuista
+- [x] Sovelluksessa ei ole käytetty JavaScript-koodia
+- [x] Tietokantaa käytetään suoraan SQL-komennoilla (ei ORMia)
+- [x] Kirjaston flask lisäksi käytössä ei muita erikseen asennettavia kirjastoja
+ 
+### Toimivuus ja käytettävyys (15 p)
+- [x] Käyttäjän yleiskokemus sovelluksen toimivuudesta
+- [x] Käyttäjän yleiskokemus sovelluksen käytettävyydestä
+- [x] Käyttäjän lähettämässä tekstissä rivinvaihdot näkyvät selaimessa
+- [ ] Kuvissa käytetty alt-attribuuttia (jos sovelluksessa kuvia)
+- [x] Lomakkeissa käytetty label-elementtiä
+- [x] CSS:n avulla toteutettu ulkoasu (itse tehty, ei CSS-kirjastoa)
+
+### Versionhallinta (10 p)
+- [x] Kehitystyön aikana on tehty commiteja säännöllisesti
+- [x] Commit-viestit on kirjoitettu englanniksi
+- [x] Commitit ovat hyviä kokonaisuuksia ja niissä on hyvät viestit
+- [x] Versionhallinnassa ei ole sinne kuulumattomia tiedostoja
+- [x] Tiedosto README.md antaa hyvän kuvan sovelluksesta
+
+### Ohjelmointityyli (15 p)
+- [x] Yleiskuva koodin laadusta (selkeys, luettavuus ja tyyli)
+- [x] Sisennyksen leveys on neljä välilyöntiä
+- [x] Koodi on kirjoitettu englanniksi
+- [x] Muuttujien ja funktioiden nimet muotoa total_count (ei totalCount)
+- [ ] Merkkijonoissa käytetty aina joko ' tai "  
+- [x] Välit oikein =-merkin ympärillä
+- [x] Välit oikein ,-merkin ympärillä
+- [x] Ei koodia tyyliin `if success return True else return False`
+- [x] Jos funktio palauttaa arvon, tulee olla useita mahdollisia palautusarvoja
+- [x] Ei sulkeita if- ja while-rakenteiden ehtojen ympärillä
+- [ ] Ei ehtoja tyyliin result == None ja result is None
+
+### Tietokanta-asiat (15 p)
+- [x] Taulut ja sarakkeet on nimetty englanniksi
+- [x] Taulut ja sarakkeet on nimetty hyvin
+- [x] Käytetty REFERENCES-määrettä, kun viittaus toiseen tauluun
+- [x] Käytetty UNIQUE-määrettä, kun tulee olla eri arvo joka rivillä
+- [x] Ei kyselyjä muotoa SELECT *
+- [x] Pitkät SQL-komennot jaettu usealle riville
+- [x] Kaikki tiedot haetaan yhdellä SQL-kyselyllä, jos järkevästi mahdollista
+- [x] Koodissa ei tehdä asioita, jotka voi mielekkäästi tehdä SQL:ssä
+- [x] Käytetty try/except SQL-komennon ympärillä vain aiheellisesti
+
+### Sovelluksen turvallisuus (20 p)
+- [x] Salasanat tallennetaan tietokantaan asianmukaisesti
+- [x] Käyttäjän oikeus nähdä sivun sisältö tarkastetaan
+- [x] Käyttäjän oikeus lähettää lomake tarkastetaan
+- [x] Käyttäjän syötteet tarkastetaan ennen tietokantaan lisäämistä
+- [x] SQL-komennoissa käytetty parametreja
+- [x] Sivut muodostetaan sivupohjien kautta
+- [x] Lomakkeissa on estetty CSRF-aukko
+
+### Suuren tietomäärän käsittely (5 p)
+- [x] Sovellusta testattu suurella tietomäärällä ja raportoitu tulokset
+- [x] Sovelluksessa käytössä tietokohteiden sivutus
+- [x] Tietokantaan lisätty indeksi, joka nopeuttaa suuren tietomäärän käsittelyä
 
 ## Sovelluksen toiminnot
 
@@ -140,7 +217,7 @@ Huomioitavaa kurssityön arvioinnissa:
 - Käyttäjä voi lisätä, muokata ja poistaa oman tekstin. ✅
 - Tekstin muokkaus ja poisto on sallittu vain kilpailun keräysvaiheessa. ✅
 - Käyttäjä voi arvioida muiden kilpailutöitä antamalla pistemäärän 1-5. ✅
-- Sovelluksessa on käyttäjäsivu ("Tekstisi"-sivu) kilpailuista. ✅ 
+- Sovelluksessa on käyttäjäsivu ("Tekstisi"-sivu) kilpailuista. ✅
 - Käyttäjäsivu on käyttäjän sijoitus ja pistemäärä päättyneiden kilpailujen osalta. ✅
 - Käyttäjä voi tarkastella kilpailun tuloksia. ✅
 
