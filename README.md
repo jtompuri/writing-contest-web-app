@@ -363,13 +363,13 @@ Name                 Stmts   Miss  Cover   Missing
 app.py                  37      0   100%
 db.py                   43      0   100%
 routes/__init__.py       0      0   100%
-routes/admin.py        327     25    92%
+routes/admin.py        329     25    92%
 routes/auth.py         110      0   100%
 routes/entries.py      191     27    86%
 routes/main.py          91      0   100%
-sql.py                 169      0   100%
-users.py                80      0   100%
+sql.py                 146      0   100%
+users.py                76      0   100%
 utils.py                30      0   100%
 --------------------------------------------------
-TOTAL                 1078     52    95%
+TOTAL                 1053     52    95%
 ```
