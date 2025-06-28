@@ -608,8 +608,8 @@ class TestAdminContestManagement:
 
     def test_create_contest_db_error(self, client, monkeypatch):
         """Test generic exception handling during contest creation."""
-        monkeypatch.setattr("sql.create_contest", lambda *args,
-                            **kwargs: (_ for _ in ()).throw(Exception(
+        monkeypatch.setattr("sql.create_contest", lambda data:
+                            (_ for _ in ()).throw(Exception(
                                 "DB Error"
                                 )))
         response = client.post('/admin/contests/create', data={
@@ -911,8 +911,8 @@ class TestAdminCoverage:
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
-        monkeypatch.setattr("sql.create_contest", lambda *a,
-                            **kw: (_ for _ in ()).throw(Exception("fail")))
+        monkeypatch.setattr("sql.create_contest", lambda data:
+                            (_ for _ in ()).throw(Exception("fail")))
         response = client.post(
             '/admin/contests/create',
             data={
