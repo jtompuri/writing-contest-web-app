@@ -43,8 +43,28 @@ Functions:
 """
 
 import db
-from utils import build_paginated_query
 
+
+def build_paginated_query(query, params, limit=None, offset=None):
+    """
+    Appends LIMIT and OFFSET clauses to a SQL query string and parameter list.
+
+    Args:
+        query (str): The base SQL query.
+        params (list): The list of parameters for the query.
+        limit (int, optional): The LIMIT value.
+        offset (int, optional): The OFFSET value.
+
+    Returns:
+        tuple: A tuple containing the modified query string and parameter list.
+    """
+    if limit is not None:
+        query += " LIMIT ?"
+        params.append(limit)
+    if offset is not None:
+        query += " OFFSET ?"
+        params.append(offset)
+    return query, params
 
 # -------------------------------
 # Contest CRUD

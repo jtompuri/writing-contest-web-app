@@ -21,7 +21,7 @@ Functions:
 import sqlite3
 from werkzeug.security import check_password_hash, generate_password_hash
 import db
-from utils import build_paginated_query
+from sql import build_paginated_query
 
 
 def create_user(name, username, password, is_super):
