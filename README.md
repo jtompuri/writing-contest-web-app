@@ -160,7 +160,7 @@ Arvostelusivulla mainitut toteutetut vaatimukset:
 - [x] Sisennyksen leveys on neljä välilyöntiä
 - [x] Koodi on kirjoitettu englanniksi
 - [x] Muuttujien ja funktioiden nimet muotoa total_count (ei totalCount)
-- [ ] Merkkijonoissa käytetty aina joko ' tai "  
+- [x] Merkkijonoissa käytetty aina joko ' tai "  
 - [x] Välit oikein =-merkin ympärillä
 - [x] Välit oikein ,-merkin ympärillä
 - [x] Ei koodia tyyliin `if success return True else return False`
