@@ -117,7 +117,7 @@ Huomioitavaa kurssityön arvioinnissa:
 	- testikattavuus on tällä hetkellä 95 %, tarkempi testikattavuusraportti löytyy alta
 - Testaus suurilla datamäärillä on tehty ja testien raportit löytyvät alta
 
-### Toteutetut ominaisuudet
+## Toteutetut ominaisuudet
 
 Arvostelusivulla mainitut toteutetut vaatimukset:
 
