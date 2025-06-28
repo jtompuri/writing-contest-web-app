@@ -20,13 +20,11 @@ Functions:
     create_contest(title, class_id, short_description, long_description,
                   anonymity, public_reviews, public_results, collection_end,
                   review_end, private_key)
-    add_entry(contest_id, user_id, entry)
     get_all_entries(limit=None, offset=None, contest_id=None, user_search=None)
     get_entry_by_id(entry_id)
     update_entry(entry_id, contest_id, user_id, content)
     delete_entry(entry_id)
     create_entry(contest_id, user_id, content)
-    save_entry(contest_id, user_id, entry)
     entry_exists(contest_id, user_id)
     get_entry_count(contest_id=None, user_search=None)
     get_user_entry_for_contest(contest_id, user_id)
@@ -45,6 +43,8 @@ Functions:
 """
 
 import db
+from utils import build_paginated_query
+
 
 # -------------------------------
 # Contest CRUD
@@ -76,12 +76,7 @@ def get_all_contests(limit=None, offset=None, title_search=None):
         query += " WHERE contests.title LIKE ?"
         params.append(f"%{title_search}%")
     query += " ORDER BY contests.collection_end DESC"
-    if limit is not None:
-        query += " LIMIT ?"
-        params.append(limit)
-    if offset is not None:
-        query += " OFFSET ?"
-        params.append(offset)
+    query, params = build_paginated_query(query, params, limit, offset)
     return db.query(query, params)
 
 
@@ -188,12 +183,7 @@ def get_contests_for_entry(limit=None, offset=None):
             WHERE contests.collection_end >= DATE('now')
             ORDER BY contests.collection_end DESC"""
     params = []
-    if limit is not None:
-        query += " LIMIT ?"
-        params.append(limit)
-    if offset is not None:
-        query += " OFFSET ?"
-        params.append(offset)
+    query, params = build_paginated_query(query, params, limit, offset)
     return db.query(query, params)
 
 
@@ -221,12 +211,7 @@ def get_contests_for_review(limit=None, offset=None):
                 AND contests.public_reviews = 1
             ORDER BY contests.review_end DESC"""
     params = []
-    if limit is not None:
-        query += " LIMIT ?"
-        params.append(limit)
-    if offset is not None:
-        query += " OFFSET ?"
-        params.append(offset)
+    query, params = build_paginated_query(query, params, limit, offset)
     return db.query(query, params)
 
 
@@ -253,12 +238,7 @@ def get_contests_for_results(limit=None, offset=None):
                 AND contests.public_results = 1
             ORDER BY contests.collection_end DESC"""
     params = []
-    if limit is not None:
-        query += " LIMIT ?"
-        params.append(limit)
-    if offset is not None:
-        query += " OFFSET ?"
-        params.append(offset)
+    query, params = build_paginated_query(query, params, limit, offset)
     return db.query(query, params)
 
 
@@ -315,22 +295,6 @@ def create_contest(title, class_id, short_description, long_description,
 # Entry CRUD
 # -------------------------------
 
-def add_entry(contest_id, user_id, entry):
-    """
-    Add a new entry to the database for a specific contest and user.
-
-    Args:
-        contest_id (int): The ID of the contest.
-        user_id (int): The ID of the user submitting the entry.
-        entry (str): The content of the entry.
-
-    Returns:
-        None
-    """
-    query = """INSERT INTO entries (contest_id, user_id, entry)
-             VALUES (?, ?, ?)"""
-    db.execute(query, [contest_id, user_id, entry])
-
 
 def get_all_entries(limit=None, offset=None, contest_id=None,
                     user_search=None):
@@ -364,9 +328,7 @@ def get_all_entries(limit=None, offset=None, contest_id=None,
         query += " AND (users.name LIKE ? OR users.username LIKE ?)"
         params.extend([f"%{user_search}%", f"%{user_search}%"])
     query += " ORDER BY entries.id DESC"
-    if limit is not None and offset is not None:
-        query += " LIMIT ? OFFSET ?"
-        params.extend([limit, offset])
+    query, params = build_paginated_query(query, params, limit, offset)
     return db.query(query, params)
 
 
@@ -452,23 +414,6 @@ def create_entry(contest_id, user_id, content):
     query = """INSERT INTO entries (contest_id, user_id, entry)
              VALUES (?, ?, ?)"""
     db.execute(query, [contest_id, user_id, content])
-
-
-def save_entry(contest_id, user_id, entry):
-    """
-    Save a new entry to the database for a specific contest and user.
-
-    Args:
-        contest_id (int): The ID of the contest.
-        user_id (int): The ID of the user.
-        entry (str): The content of the entry.
-
-    Returns:
-        None
-    """
-    query = """INSERT INTO entries (contest_id, user_id, entry)
-             VALUES (?, ?, ?)"""
-    db.execute(query, [contest_id, user_id, entry])
 
 
 def entry_exists(contest_id, user_id):
