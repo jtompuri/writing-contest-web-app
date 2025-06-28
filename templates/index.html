@@ -12,7 +12,7 @@
 </p>
 
 <section class="front-feature">
-    <h2>Uusin kilpailu 🏁</h2>
+    <h2>Uusin kilpailu <span aria-hidden="true">🏁</span></h2>
     {% if contests_for_entry %}
         {% set latest_contest = contests_for_entry[0] %}
         {% set _contest = latest_contest %}
@@ -27,7 +27,7 @@
 </section>
 
 <section class="front-feature">
-    <h2>Viimeisimmät tulokset ⭐</h2>
+    <h2>Viimeisimmät tulokset <span aria-hidden="true">⭐</span></h2>
     {% if contests_for_results %}
         {% set latest_result = contests_for_results[0] %}
         {% set _contest = latest_result %}
@@ -42,7 +42,7 @@
 </section>
 
 <section class="front-feature">
-    <h2>Viimeisimmän kilpailun voittajat 🎉</h2>
+    <h2>Viimeisimmän kilpailun voittajat <span aria-hidden="true">🎉</span></h2>
     {% if winners %}
     <div class="cards">
         {% for entry in winners %}
@@ -51,9 +51,9 @@
                 {{ loop.index }}.
                 <strong>{{ entry.author_name }}</strong> ({{ entry.points }} p.)
                 <span class="entry-index">
-                    {% if loop.index == 1 %}🥇
-                    {% elif loop.index == 2 %}🥈
-                    {% elif loop.index == 3 %}🥉
+                    {% if loop.index == 1 %}<span role="img" aria-label="First place">🥇</span>
+                    {% elif loop.index == 2 %}<span role="img" aria-label="Second place">🥈</span>
+                    {% elif loop.index == 3 %}<span role="img" aria-label="Third place"></span>🥉</span>
                     {% endif %}
                 </span>
             </div>

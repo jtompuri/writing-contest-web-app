@@ -11,9 +11,9 @@
             {{ loop.index }}.
             <strong>{{ entry.author_name }}</strong> ({{ entry.points }} p.)
             <span class="entry-index">
-                {% if loop.index == 1 %}🥇
-                {% elif loop.index == 2 %}🥈
-                {% elif loop.index == 3 %}🥉
+                {% if loop.index == 1 %}<span role="img" aria-label="First place">🥇</span>
+                {% elif loop.index == 2 %}<span role="img" aria-label="Second place">🥈</span>
+                {% elif loop.index == 3 %}<span role="img" aria-label="Third place">🥉</span>
                 {% endif %}
             </span>
         </div>

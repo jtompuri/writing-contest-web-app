@@ -5,7 +5,7 @@
                 {{ _contest.title }}
                 {% if show_placement is defined and show_placement and _contest.review_end <= today %} (sija {{
                     _contest.placement }} /{{ _contest.total_entries }}, {{ _contest.points }} p.) {% if
-                    _contest.placement==1 %}🥇 {% elif _contest.placement==2 %}🥈 {% elif _contest.placement==3 %}🥉
+                    _contest.placement==1 %}<span role="img" aria-label="First place">🥇</span> {% elif _contest.placement==2 %}<span role="img" aria-label="Second place">🥈</span> {% elif _contest.placement==3 %}<span role="img" aria-label="Third place">🥉</span>
                     {% endif %} {% endif %} </strong>
         </a>
     </div>
