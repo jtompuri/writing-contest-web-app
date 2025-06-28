@@ -22,13 +22,6 @@ class TestSqlFunctions:
                         """LIMIT ? OFFSET ?""")
         mock_query.assert_called_with(expected_sql, ["%Test%", 10, 5])
 
-    def test_add_contest(self, monkeypatch):
-        mock_execute = MagicMock()
-        monkeypatch.setattr(db, "execute", mock_execute)
-        sql.add_contest("T", 1, "s", "l", True, True,
-                        True, "d1", "d2", "d3", "d4")
-        assert mock_execute.called
-
     def test_get_contest_by_id_not_found(self, monkeypatch):
         monkeypatch.setattr(db, "query", lambda *a: [])
         assert sql.get_contest_by_id(999) is None

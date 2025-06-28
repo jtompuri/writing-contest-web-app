@@ -8,9 +8,6 @@ and contest-related statistics.
 
 Functions:
     get_all_contests(limit=None, offset=None)
-    add_contest(title, class_id, short_description, long_description,
-               anonymity, public_reviews, public_results, collection_start,
-               collection_end, review_start, review_end)
     get_contest_by_id(contest_id)
     update_contest(contest_id, title, class_id, short_description,
                   long_description, anonymity, public_reviews, public_results,
@@ -86,37 +83,6 @@ def get_all_contests(limit=None, offset=None, title_search=None):
         query += " OFFSET ?"
         params.append(offset)
     return db.query(query, params)
-
-
-def add_contest(title, class_id, short_description, long_description,
-                anonymity, public_reviews, public_results, collection_start,
-                collection_end, review_start, review_end):
-    """
-    Add a new contest to the database with the specified details.
-
-    Args:
-        title (str): The title of the contest.
-        class_id (int): The ID of the class associated with the contest.
-        short_description (str): A short description of the contest.
-        long_description (str): A detailed description of the contest.
-        anonymity (bool): Whether the contest is anonymous.
-        public_reviews (bool): Whether reviews are public.
-        public_results (bool): Whether results are public.
-        collection_start (str): The start date for collection.
-        collection_end (str): The end date for collection.
-        review_start (str): The start date for review.
-        review_end (str): The end date for review.
-
-    Returns:
-        None
-    """
-    query = """INSERT INTO contests (title, class_id, short_description,
-                long_description, anonymity, public_reviews,
-                public_results, collection_end, review_end)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)"""
-    db.execute(query, [title, class_id, short_description, long_description,
-                       anonymity, public_reviews, public_results,
-                       collection_end, review_end])
 
 
 def get_contest_by_id(contest_id):
