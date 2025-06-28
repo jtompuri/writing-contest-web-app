@@ -14,8 +14,8 @@ import time
 import random
 import string
 from datetime import datetime, timedelta
-from werkzeug.security import generate_password_hash
 import secrets
+from werkzeug.security import generate_password_hash
 
 DATABASE = "database.db"
 SCHEMA = "schema.sql"
@@ -72,7 +72,7 @@ def recreate_db():
     """Remove and recreate the database from schema.sql."""
     if os.path.exists(DATABASE):
         os.remove(DATABASE)
-    with open(SCHEMA, "r") as f:
+    with open(SCHEMA, "r", encoding="utf-8") as f:
         schema_sql = f.read()
     conn = sqlite3.connect(DATABASE)
     conn.executescript(schema_sql)
@@ -80,133 +80,79 @@ def recreate_db():
     conn.close()
 
 
-def populate_db():
-    """Populate the database with random data."""
-    conn = sqlite3.connect(DATABASE)
-    cur = conn.cursor()
-
-    # Classes
-    class_values = [("Runo", "Runo"), ("Aforismi",
-                                       "Aforismi"), ("Essee", "Essee")]
-    for i, (title, value) in enumerate(class_values):
-        cur.execute(
-            "INSERT INTO classes (title, value) VALUES (?, ?)",
-            (title, value)
-        )
-
-    # Add admin user (superuser, username: admin, password: admin, hashed)
-    admin_name = "admin"
-    admin_username = "admin"
+def _populate_users(cur):
+    """Populate the users table with an admin and random users."""
+    # Add admin user
     admin_password_hash = generate_password_hash("admin")
-    admin_super_user = 1
     cur.execute(
         "INSERT INTO users (name, username, password_hash, super_user) "
         "VALUES (?, ?, ?, ?)",
-        (admin_name, admin_username, admin_password_hash, admin_super_user)
+        ("admin", "admin", admin_password_hash, 1)
     )
-
-    # Users
+    # Add random users
     for i in range(USER_COUNT):
         name = f"User {i + 1}"
         username = f"user{i + 1}@example.com"
         password_hash = random_string(60)
-        super_user = 0
         cur.execute(
             "INSERT INTO users (name, username, password_hash, super_user) "
             "VALUES (?, ?, ?, ?)",
-            (name, username, password_hash, super_user)
+            (name, username, password_hash, 0)
         )
 
-    today = datetime.now()
-    finished_count = int(CONTEST_COUNT * 0.3)
 
+def _populate_contests(cur):
+    """Populate contests and return the ID of the demo contest."""
+    today = datetime.now()
     # --- Ensure at least one contest is in review period ---
-    demo_title = "Demo Review Contest"
-    class_id = 1
-    short_description = "Demo contest with open review period."
-    long_description = "This contest is in review period for demo purposes."
-    anonymity = 0
-    public_reviews = 1
-    public_results = 0
+    private_key = secrets.token_urlsafe(16)
     collection_end = (today - timedelta(days=1)).strftime("%Y-%m-%d")
     review_end = (today + timedelta(days=7)).strftime("%Y-%m-%d")
-    private_key = secrets.token_urlsafe(16)
     cur.execute(
         "INSERT INTO contests (title, class_id, short_description, "
         "long_description, anonymity, public_reviews, public_results, "
         "collection_end, review_end, private_key) "
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        (
-            demo_title,
-            class_id,
-            short_description,
-            long_description,
-            anonymity,
-            public_reviews,
-            public_results,
-            collection_end,
-            review_end,
-            private_key
-        )
+        ("Demo Review Contest", 1, "Demo contest with open review period.",
+         "This contest is in review period for demo purposes.", 0, 1, 0,
+         collection_end, review_end, private_key)
     )
     demo_contest_id = cur.lastrowid
 
-    # Finished contests
-    for i in range(finished_count):
+    # Finished and ongoing contests
+    finished_count = int(CONTEST_COUNT * 0.3)
+    for i in range(CONTEST_COUNT):
+        is_finished = i < finished_count
         title = f"Contest {i + 1}"
-        class_id = random.randint(1, CLASS_COUNT)
-        short_description = random_lorem(100)
-        long_description = random_lorem(500)
-        anonymity = random.randint(0, 1)
-        public_reviews = random.randint(0, 1)
-        public_results = 1  # Results are public
-        # Ended in the past
-        collection_end_dt = today - timedelta(days=random.randint(30, 365))
-        review_end_dt = collection_end_dt + \
-            timedelta(days=random.randint(1, 29))
-        collection_end = collection_end_dt.strftime("%Y-%m-%d")
-        review_end = review_end_dt.strftime("%Y-%m-%d")
-        private_key = secrets.token_urlsafe(16)
+        if is_finished:
+            collection_end_dt = today - timedelta(days=random.randint(30, 365))
+            review_end_dt = collection_end_dt + \
+                timedelta(days=random.randint(1, 29))
+        else:
+            collection_end_dt = today + \
+                timedelta(days=random.randint(-10, 365))
+            review_end_dt = collection_end_dt + \
+                timedelta(days=random.randint(1, 365))
+
         cur.execute(
             "INSERT INTO contests (title, class_id, short_description, "
             "long_description, anonymity, public_reviews, public_results, "
             "collection_end, review_end, private_key) VALUES (?, ?, ?, ?, ?, "
             "?, ?, ?, ?, ?)",
-            (title, class_id, short_description, long_description, anonymity,
-             public_reviews, public_results, collection_end, review_end,
-             private_key)
+            (title, random.randint(1, CLASS_COUNT), random_lorem(100),
+             random_lorem(500), random.randint(0, 1), random.randint(0, 1),
+             1 if is_finished else random.randint(0, 1),
+             collection_end_dt.strftime("%Y-%m-%d"),
+             review_end_dt.strftime("%Y-%m-%d"), secrets.token_urlsafe(16))
         )
+    return demo_contest_id
 
-    # Ongoing/future contests (collection_end/review_end in future or ongoing)
-    for i in range(finished_count, CONTEST_COUNT):
-        title = f"Contest {i + 1}"
-        class_id = random.randint(1, CLASS_COUNT)
-        short_description = random_lorem(100)
-        long_description = random_lorem(500)
-        anonymity = random.randint(0, 1)
-        public_reviews = random.randint(0, 1)
-        public_results = random.randint(0, 1)
-        # Some ongoing, some in future
-        collection_end_dt = today + timedelta(days=random.randint(-10, 365))
-        review_end_dt = collection_end_dt + \
-            timedelta(days=random.randint(1, 365))
-        collection_end = collection_end_dt.strftime("%Y-%m-%d")
-        review_end = review_end_dt.strftime("%Y-%m-%d")
-        private_key = secrets.token_urlsafe(16)
-        cur.execute(
-            "INSERT INTO contests (title, class_id, short_description, "
-            "long_description, anonymity, public_reviews, public_results, "
-            "collection_end, review_end, private_key) VALUES (?, ?, ?, ?, ?, "
-            "?, ?, ?, ?, ?)",
-            (title, class_id, short_description, long_description, anonymity,
-             public_reviews, public_results, collection_end, review_end,
-             private_key)
-        )
 
-    # Entries (now include demo_contest_id in possible contest_ids)
+def _populate_entries(cur, demo_contest_id):
+    """Populate the entries table."""
     entry_pairs = set()
     all_contest_ids = list(range(1, CONTEST_COUNT + 1)) + [demo_contest_id]
-    for i in range(ENTRY_COUNT):
+    for _ in range(ENTRY_COUNT):
         while True:
             contest_id = random.choice(all_contest_ids)
             user_id = random.randint(1, USER_COUNT)
@@ -220,11 +166,16 @@ def populate_db():
             (contest_id, user_id, entry)
         )
 
-    # Reviews (now include entries from demo contest)
+
+def _populate_reviews(cur):
+    """Populate the reviews table."""
     review_pairs = set()
     attempts = 0
     cur.execute("SELECT id FROM entries")
     all_entry_ids = [row[0] for row in cur.fetchall()]
+    if not all_entry_ids:
+        return
+
     while len(review_pairs) < REVIEW_COUNT and attempts < REVIEW_COUNT * 10:
         entry_id = random.choice(all_entry_ids)
         user_id = random.randint(1, USER_COUNT)
@@ -240,6 +191,17 @@ def populate_db():
             (entry_id, user_id, points, review)
         )
         attempts += 1
+
+
+def populate_db():
+    """Populate the database with random data."""
+    conn = sqlite3.connect(DATABASE)
+    cur = conn.cursor()
+
+    _populate_users(cur)
+    demo_contest_id = _populate_contests(cur)
+    _populate_entries(cur, demo_contest_id)
+    _populate_reviews(cur)
 
     conn.commit()
     conn.close()
