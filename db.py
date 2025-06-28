@@ -1,5 +1,5 @@
 """
-Provides database connection management and helper functions for executing and 
+Provides database connection management and helper functions for executing and
 querying SQL statements using SQLite and Flask's application context.
 
 Functions:

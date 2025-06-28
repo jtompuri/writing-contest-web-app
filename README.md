@@ -144,7 +144,7 @@ Arvostelusivulla mainitut toteutetut vaatimukset:
 - [x] Käyttäjän yleiskokemus sovelluksen toimivuudesta
 - [x] Käyttäjän yleiskokemus sovelluksen käytettävyydestä
 - [x] Käyttäjän lähettämässä tekstissä rivinvaihdot näkyvät selaimessa
-- [ ] Kuvissa käytetty alt-attribuuttia (jos sovelluksessa kuvia)
+- [ ] Kuvissa käytetty alt-attribuuttia (jos sovelluksessa kuvia) [sovelluksessa ei ole kuvia]
 - [x] Lomakkeissa käytetty label-elementtiä
 - [x] CSS:n avulla toteutettu ulkoasu (itse tehty, ei CSS-kirjastoa)
 
@@ -166,7 +166,7 @@ Arvostelusivulla mainitut toteutetut vaatimukset:
 - [x] Ei koodia tyyliin `if success return True else return False`
 - [x] Jos funktio palauttaa arvon, tulee olla useita mahdollisia palautusarvoja
 - [x] Ei sulkeita if- ja while-rakenteiden ehtojen ympärillä
-- [ ] Ei ehtoja tyyliin result == None ja result is None
+- [x] Ei ehtoja tyyliin result == None ja result is None
 
 ### Tietokanta-asiat (15 p)
 - [x] Taulut ja sarakkeet on nimetty englanniksi
