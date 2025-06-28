@@ -52,17 +52,42 @@ LOREM = (
 
 
 def random_string(length):
+    """Generates a random alphanumeric string of a given length.
+
+    Args:
+        length (int): The desired length of the string.
+
+    Returns:
+        str: The generated random string.
+    """
     return "".join(
         random.choices(string.ascii_letters + string.digits, k=length)
     )
 
 
 def random_lorem(length):
+    """Generates a string of lorem ipsum text of a specific length.
+
+    Args:
+        length (int): The desired length of the lorem ipsum text.
+
+    Returns:
+        str: The generated lorem ipsum string.
+    """
     base = (LOREM + " ") * ((length // len(LOREM)) + 1)
     return base[:length]
 
 
 def random_date(start, end):
+    """Generates a random date between two given dates.
+
+    Args:
+        start (datetime.date): The start date of the range.
+        end (datetime.date): The end date of the range.
+
+    Returns:
+        str: The random date formatted as "YYYY-MM-DD".
+    """
     delta = end - start
     random_days = random.randint(0, delta.days)
     return (start + timedelta(days=random_days)).strftime("%Y-%m-%d")
@@ -275,6 +300,12 @@ def time_queries():
 
 
 def print_report(timings_no_idx, timings_idx):
+    """Prints a formatted report comparing query timings.
+
+    Args:
+        timings_no_idx (dict): A dictionary of query timings without indexes.
+        timings_idx (dict): A dictionary of query timings with indexes.
+    """
     print("\n--- Query Timing Comparison ---")
     print(
         f"{'Query':40} | {'No Index (s)':>12} | "
@@ -305,6 +336,7 @@ def print_table_counts():
 
 
 def main():
+    """Orchestrates the database seeding and query timing process."""
     print("Step 1: Recreate DB and populate with random data...")
     recreate_db()
     populate_db()
