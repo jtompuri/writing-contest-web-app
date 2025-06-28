@@ -116,6 +116,7 @@ Huomioitavaa kurssityön arvioinnissa:
 	- yksikkötestit eivät olleet kurssin vaatimuksissa, mutta koin ne hyödyllisiksi
 	- testikattavuus on tällä hetkellä 95 %, tarkempi testikattavuusraportti löytyy alta
 - Testaus suurilla datamäärillä on tehty ja testien raportit löytyvät alta
+- Olen korjannut kaikki `pylint *.py` komennolla löytämäni varoitukset ja virheet
 
 ## Toteutetut ominaisuudet
 
