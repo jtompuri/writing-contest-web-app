@@ -53,21 +53,21 @@ app.register_blueprint(entries_bp)
 @app.context_processor
 def inject_config():
     """Injects configuration constants into all templates."""
-    return dict(
-        SITE_TITLE=getattr(config, "SITE_TITLE", "Kirjoituskilpailut"),
-        TITLE_MAX_LENGTH=getattr(config, "TITLE_MAX_LENGTH", 100),
-        SHORT_DESCRIPTION_MAX_LENGTH=getattr(config,
-                                             "SHORT_DESCRIPTION_MAX_LENGTH",
-                                             255),
-        LONG_DESCRIPTION_MAX_LENGTH=getattr(config,
-                                            "LONG_DESCRIPTION_MAX_LENGTH",
-                                            2000),
-        ENTRY_MAX_LENGTH=getattr(config, "ENTRY_MAX_LENGTH", 5000),
-        FIELD_MAX_LENGTH=getattr(config, "FIELD_MAX_LENGTH", 50),
-        PASSWORD_MIN_LENGTH=getattr(config, "PASSWORD_MIN_LENGTH", 8),
-        DEFAULT_PER_PAGE=getattr(config, "DEFAULT_PER_PAGE", 5),
-        ADMIN_PER_PAGE=getattr(config, "ADMIN_PER_PAGE", 20)
-    )
+    return {
+        "SITE_TITLE": getattr(config, "SITE_TITLE", "Kirjoituskilpailut"),
+        "TITLE_MAX_LENGTH": getattr(config, "TITLE_MAX_LENGTH", 100),
+        "SHORT_DESCRIPTION_MAX_LENGTH": getattr(config,
+                                                "SHORT_DESCRIPTION_MAX_LENGTH",
+                                                255),
+        "LONG_DESCRIPTION_MAX_LENGTH": getattr(config,
+                                               "LONG_DESCRIPTION_MAX_LENGTH",
+                                               2000),
+        "ENTRY_MAX_LENGTH": getattr(config, "ENTRY_MAX_LENGTH", 5000),
+        "FIELD_MAX_LENGTH": getattr(config, "FIELD_MAX_LENGTH", 50),
+        "PASSWORD_MIN_LENGTH": getattr(config, "PASSWORD_MIN_LENGTH", 8),
+        "DEFAULT_PER_PAGE": getattr(config, "DEFAULT_PER_PAGE", 5),
+        "ADMIN_PER_PAGE": getattr(config, "ADMIN_PER_PAGE", 20)
+    }
 
 
 @app.template_filter("format_date")
