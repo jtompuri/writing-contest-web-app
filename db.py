@@ -103,12 +103,14 @@ def last_insert_id():
     return g.get("last_insert_id", None)
 
 
-def close_connection(e=None):
+def close_connection(_=None):
     """
     Close the database connection for the current Flask application context.
 
     Args:
-        e (Exception, optional): Exception, if any, that triggered teardown.
+        _ (Exception, optional): Exception passed by Flask's teardown context.
+                                 This argument is unused but required by the
+                                 teardown function signature.
 
     Returns:
         None
