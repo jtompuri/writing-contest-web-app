@@ -29,7 +29,13 @@ class TestSqlFunctions:
     def test_update_contest(self, monkeypatch):
         mock_execute = MagicMock()
         monkeypatch.setattr(db, "execute", mock_execute)
-        sql.update_contest(1, "T", 1, "s", "l", True, True, True, "d1", "d2")
+        contest_data = {
+            "title": "T", "class_id": 1, "short_description": "s",
+            "long_description": "l", "anonymity": True,
+            "public_reviews": True, "public_results": True,
+            "collection_end": "d1", "review_end": "d2"
+        }
+        sql.update_contest(1, contest_data)
         assert mock_execute.called
 
     def test_delete_contest(self, monkeypatch):
@@ -42,8 +48,13 @@ class TestSqlFunctions:
     def test_create_contest(self, monkeypatch):
         mock_execute = MagicMock()
         monkeypatch.setattr(db, "execute", mock_execute)
-        sql.create_contest("T", 1, "s", "l", True, True,
-                           True, "d1", "d2", "key")
+        contest_data = {
+            "title": "T", "class_id": 1, "short_description": "s",
+            "long_description": "l", "anonymity": True,
+            "public_reviews": True, "public_results": True,
+            "collection_end": "d1", "review_end": "d2", "private_key": "key"
+        }
+        sql.create_contest(contest_data)
         assert mock_execute.called
 
     # Contest Listings
