@@ -73,7 +73,7 @@ def add_entry(contest_id):
                 flash("Olet jo osallistunut tähän kilpailuun.")
                 return redirect(url_for("main.contest", contest_id=contest_id))
 
-            sql.save_entry(contest_id, user_id, entry)
+            sql.create_entry(contest_id, user_id, entry)
             flash("Kilpailutyö on tallennettu.")
             return redirect(url_for("main.contest", contest_id=contest_id))
 

@@ -96,12 +96,10 @@ class TestSqlFunctions:
         assert func() == 0
 
     # Entry CRUD
-    @pytest.mark.parametrize("func", [sql.add_entry, sql.create_entry,
-                                      sql.save_entry])
-    def test_entry_creation_functions(self, monkeypatch, func):
+    def test_create_entry(self, monkeypatch):
         mock_execute = MagicMock()
         monkeypatch.setattr(db, "execute", mock_execute)
-        func(1, 1, "content")
+        sql.create_entry(1, 1, "content")
         mock_execute.assert_called_with(
             "INSERT INTO entries (contest_id, user_id, entry)\n"
             "             VALUES (?, ?, ?)",

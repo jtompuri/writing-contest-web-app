@@ -294,7 +294,7 @@ class TestEntryRoutes:
             }
         )
         # Prevent actual DB call
-        monkeypatch.setattr("sql.save_entry", lambda cid, uid, entry: None)
+        monkeypatch.setattr("sql.create_entry", lambda cid, uid, entry: None)
         response = client.post(
             '/contests/contest/1/add_entry',
             data={'csrf_token': 'test_token',
