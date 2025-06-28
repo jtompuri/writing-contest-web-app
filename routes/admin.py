@@ -17,7 +17,7 @@ from utils import check_csrf, sanitize_input, is_valid_email, total_pages
 import secrets
 import sqlite3
 
-admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 
 @admin_bp.route("/")
@@ -401,7 +401,7 @@ def delete_user(user_id):
         return redirect(url_for("admin.admin_users"))
 
     # Prevent deleting a superuser
-    if user_to_delete['super_user']:
+    if user_to_delete["super_user"]:
         flash("Pääkäyttäjiä ei voi poistaa.")
         return redirect(url_for("admin.admin_users"))
 

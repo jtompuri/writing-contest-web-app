@@ -87,13 +87,13 @@ def ensure_csrf_token():
         session["csrf_token"] = secrets.token_hex(16)
 
 
-@app.template_filter('richtext')
+@app.template_filter("richtext")
 def richtext_filter(s):
     """Applies rich text formatting without links."""
     return format_text(s, links_allowed=False)
 
 
-@app.template_filter('richtext_with_links')
+@app.template_filter("richtext_with_links")
 def richtext_with_links_filter(s):
     """Applies rich text formatting with links."""
     return format_text(s, links_allowed=True)

@@ -266,7 +266,7 @@ def review(contest_id):
                         errors.append("Arvosanan tulee olla välillä 0–5. "
                                       f"({entry['author_name']})")
                     else:
-                        rated_entry_ids.add(entry['id'])
+                        rated_entry_ids.add(entry["id"])
                 except ValueError:
                     errors.append("Virheellinen arvosana: "
                                   f"{entry['author_name']}")
@@ -283,7 +283,7 @@ def review(contest_id):
 
         for entry in entries:
             points = int(request.form[f"points_{entry['id']}"])
-            sql.save_review(entry['id'], user_id, points)
+            sql.save_review(entry["id"], user_id, points)
         flash("Arviot tallennettu.")
         return redirect(url_for("main.reviews"))
 

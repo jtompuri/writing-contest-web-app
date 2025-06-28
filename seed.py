@@ -52,7 +52,7 @@ LOREM = (
 
 
 def random_string(length):
-    return ''.join(
+    return "".join(
         random.choices(string.ascii_letters + string.digits, k=length)
     )
 
@@ -266,21 +266,21 @@ def time_queries():
     t0 = time.perf_counter()
     cur.execute("SELECT * FROM users WHERE username = ?", (username,))
     cur.fetchall()
-    timings['search_user_by_username'] = time.perf_counter() - t0
+    timings["search_user_by_username"] = time.perf_counter() - t0
 
     # 2. List entries for a contest
     contest_id = random.randint(1, CONTEST_COUNT)
     t0 = time.perf_counter()
     cur.execute("SELECT * FROM entries WHERE contest_id = ?", (contest_id,))
     cur.fetchall()
-    timings['list_entries_for_contest'] = time.perf_counter() - t0
+    timings["list_entries_for_contest"] = time.perf_counter() - t0
 
     # 3. List entries for a user
     user_id = random.randint(1, USER_COUNT)
     t0 = time.perf_counter()
     cur.execute("SELECT * FROM entries WHERE user_id = ?", (user_id,))
     cur.fetchall()
-    timings['list_entries_for_user'] = time.perf_counter() - t0
+    timings["list_entries_for_user"] = time.perf_counter() - t0
 
     # 4. Search entries by username (join)
     search = f"user{random.randint(1, USER_COUNT)}"
@@ -292,21 +292,21 @@ def time_queries():
         (f"%{search}%",)
     )
     cur.fetchall()
-    timings['search_entries_by_username'] = time.perf_counter() - t0
+    timings["search_entries_by_username"] = time.perf_counter() - t0
 
     # 5. List reviews for an entry
     entry_id = random.randint(1, ENTRY_COUNT)
     t0 = time.perf_counter()
     cur.execute("SELECT * FROM reviews WHERE entry_id = ?", (entry_id,))
     cur.fetchall()
-    timings['list_reviews_for_entry'] = time.perf_counter() - t0
+    timings["list_reviews_for_entry"] = time.perf_counter() - t0
 
     # 6. List contests for a class
     class_id = random.randint(1, CLASS_COUNT)
     t0 = time.perf_counter()
     cur.execute("SELECT * FROM contests WHERE class_id = ?", (class_id,))
     cur.fetchall()
-    timings['list_contests_for_class'] = time.perf_counter() - t0
+    timings["list_contests_for_class"] = time.perf_counter() - t0
 
     conn.close()
     return timings
@@ -322,7 +322,7 @@ def print_report(timings_no_idx, timings_idx):
     for key in timings_no_idx:
         t1 = timings_no_idx[key]
         t2 = timings_idx[key]
-        speedup = (t1 / t2) if t2 > 0 else float('inf')
+        speedup = (t1 / t2) if t2 > 0 else float("inf")
         print(
             f"{key:40} | {t1:12.6f} | {t2:14.6f} | {speedup:8.2f}x"
         )

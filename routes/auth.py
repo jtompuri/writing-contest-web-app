@@ -13,7 +13,7 @@ from flask import (Blueprint, render_template, request, session, flash,
 import users
 from utils import check_csrf, sanitize_input, is_valid_email
 
-auth_bp = Blueprint('auth', __name__)
+auth_bp = Blueprint("auth", __name__)
 
 
 @auth_bp.route("/register")

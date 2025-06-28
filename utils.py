@@ -13,9 +13,9 @@ def sanitize_input(text):
     if not isinstance(text, str):
         return ""
     text = text.strip()
-    text = re.sub(r'<.*?>', '', text)
-    text = re.sub(r'on\w+=".*?"', '', text, flags=re.IGNORECASE)
-    text = re.sub(r'(javascript:|data:|vbscript:)', '', text,
+    text = re.sub(r"<.*?>", "", text)
+    text = re.sub(r'on\w+=".*?"', "", text, flags=re.IGNORECASE)
+    text = re.sub(r"(javascript:|data:|vbscript:)", "", text,
                   flags=re.IGNORECASE)
     return text
 
@@ -25,12 +25,12 @@ def is_valid_email(email):
 
 
 def format_text(text, links_allowed=False):
-    text = text.replace('\n', '<br />')
-    text = re.sub(r' {2,}', lambda m: '&nbsp;' * len(m.group()), text)
-    text = re.sub(r'\*(\S(?:.*?\S)?)\*', r'<strong>\1</strong>', text)
-    text = re.sub(r'_(\S(?:.*?\S)?)_', r'<em>\1</em>', text)
+    text = text.replace("\n", "<br />")
+    text = re.sub(r" {2,}", lambda m: "&nbsp;" * len(m.group()), text)
+    text = re.sub(r"\*(\S(?:.*?\S)?)\*", r"<strong>\1</strong>", text)
+    text = re.sub(r"_(\S(?:.*?\S)?)_", r"<em>\1</em>", text)
     if links_allowed:
-        email_regex = r'([\w\.-]+@[\w\.-]+\.\w+)'
+        email_regex = r"([\w\.-]+@[\w\.-]+\.\w+)"
         text = re.sub(email_regex, r'<a href="mailto:\1">\1</a>', text)
         url_regex = r'(?<!href=")(https?://[^\s<>"]+)'
         text = re.sub(url_regex,
