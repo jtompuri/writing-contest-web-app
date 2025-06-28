@@ -145,7 +145,7 @@ Arvostelusivulla mainitut toteutetut vaatimukset:
 - [x] Käyttäjän yleiskokemus sovelluksen toimivuudesta
 - [x] Käyttäjän yleiskokemus sovelluksen käytettävyydestä
 - [x] Käyttäjän lähettämässä tekstissä rivinvaihdot näkyvät selaimessa
-- [ ] Kuvissa käytetty alt-attribuuttia (jos sovelluksessa kuvia) [sovelluksessa ei ole kuvia]
+- [x] Kuvissa käytetty alt-attribuuttia [emojeissa on käytetty `aria-label`-kuvauksia]
 - [x] Lomakkeissa käytetty label-elementtiä
 - [x] CSS:n avulla toteutettu ulkoasu (itse tehty, ei CSS-kirjastoa)
 
