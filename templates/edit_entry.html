@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Muokkaa kilpailutyötä – {{ contest.title }} – {{ SITE_TITLE }}{% endblock %}
 {% block content %}
-<form action="" method="post" class="form-box" aria-label="Kilpailutyön muokkauslomake">
+<form action="{{ request.path }}" method="post" class="form-box" aria-label="Kilpailutyön muokkauslomake">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <input type="hidden" name="source" value="{{ source }}">
     <h1>Muokkaa kilpailutyötä</h1>
