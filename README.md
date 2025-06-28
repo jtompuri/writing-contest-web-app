@@ -230,7 +230,7 @@ Arvostelusivulla mainitut toteutetut vaatimukset:
 
 Testasin tietokannan nopeutta suurilla tietomäärillä ilman indeksejä ja lisäämällä indeksit. Haut, jotka kohdistuvat suuriin tietomääriin nopeutuivat merkittävästi:
 
-### 10 000 reviews
+### 10 000 arviota
 ```
 Step 1: Recreate DB and populate with random data...
 
@@ -262,7 +262,7 @@ list_reviews_for_entry                   |     0.000691 |       0.000047 |    14
 list_contests_for_class                  |     0.000058 |       0.000084 |     0.69x
 --------------------------------------------------------------------------------
 ```
-### 100 000 reviews
+### 100 000 arvioita
 ```
 --- Table Record Counts ---
 Users     : 1001
@@ -292,7 +292,7 @@ list_reviews_for_entry                   |     0.007820 |       0.000063 |   124
 list_contests_for_class                  |     0.000487 |       0.000419 |     1.16x
 --------------------------------------------------------------------------------
 ```
-### 1 000 000 reviews
+### 1 000 000 arviota
 ```
 --- Table Record Counts ---
 Users     : 1001
@@ -322,7 +322,7 @@ list_reviews_for_entry                   |     0.077450 |       0.000070 |  1109
 list_contests_for_class                  |     0.003987 |       0.003726 |     1.07x
 --------------------------------------------------------------------------------
 ```
-### 10 000 users, 1 000 000 reviews
+### 10 000 käyttäjää, 1 000 000 arviota
 ```
 --- Table Record Counts ---
 Users     : 10001
