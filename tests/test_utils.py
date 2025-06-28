@@ -43,7 +43,7 @@ class TestUtils:
         assert format_date('not-a-date') == 'not-a-date'
 
     def test_format_text(self):
-        assert format_text('Hello\nWorld') == 'Hello<br />World'
+        assert format_text('Hello\nWorld') == 'Hello<br>World'
         assert format_text('*bold*') == '<strong>bold</strong>'
         assert format_text('_italic_') == '<em>italic</em>'
 

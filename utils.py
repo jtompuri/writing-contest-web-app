@@ -25,7 +25,7 @@ def is_valid_email(email):
 
 
 def format_text(text, links_allowed=False):
-    text = text.replace("\n", "<br />")
+    text = text.replace("\n", "<br>")
     text = re.sub(r" {2,}", lambda m: "&nbsp;" * len(m.group()), text)
     text = re.sub(r"\*(\S(?:.*?\S)?)\*", r"<strong>\1</strong>", text)
     text = re.sub(r"_(\S(?:.*?\S)?)_", r"<em>\1</em>", text)
