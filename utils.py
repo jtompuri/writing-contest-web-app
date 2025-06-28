@@ -42,3 +42,25 @@ def format_text(text, links_allowed=False):
 def total_pages(total_items, per_page):
     """Calculates the total number of pages for pagination."""
     return (total_items + per_page - 1) // per_page
+
+
+def build_paginated_query(query, params, limit=None, offset=None):
+    """
+    Appends LIMIT and OFFSET clauses to a SQL query string and parameter list.
+
+    Args:
+        query (str): The base SQL query.
+        params (list): The list of parameters for the query.
+        limit (int, optional): The LIMIT value.
+        offset (int, optional): The OFFSET value.
+
+    Returns:
+        tuple: A tuple containing the modified query string and parameter list.
+    """
+    if limit is not None:
+        query += " LIMIT ?"
+        params.append(limit)
+    if offset is not None:
+        query += " OFFSET ?"
+        params.append(offset)
+    return query, params

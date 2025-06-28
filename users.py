@@ -18,9 +18,10 @@ Functions:
     check_login(username, password)
 """
 
-from werkzeug.security import check_password_hash, generate_password_hash
 import sqlite3
+from werkzeug.security import check_password_hash, generate_password_hash
 import db
+from utils import build_paginated_query
 
 
 def create_user(name, username, password, is_super):
@@ -91,12 +92,7 @@ def get_all_users(limit=None, offset=None, name_search=None,
         query += " AND super_user = ?"
         params.append(int(super_user))
     query += " ORDER BY id ASC"
-    if limit is not None:
-        query += " LIMIT ?"
-        params.append(limit)
-    if offset is not None:
-        query += " OFFSET ?"
-        params.append(offset)
+    query, params = build_paginated_query(query, params, limit, offset)
     return db.query(query, params)
 
 
@@ -239,5 +235,4 @@ def check_login(username, password):
     password_hash = result[0]["password_hash"]
     if check_password_hash(password_hash, password):
         return user_id
-    else:
-        return None
+    return None
