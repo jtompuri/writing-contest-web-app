@@ -7,22 +7,22 @@
     <p>
         <label for="username">Sähköpostiosoite:</label>
         <input type="text" name="username" id="username" value="{{ user.username }}" class="input-chars-40" maxlength="50" readonly
-            autocomplete="username" />
-        <small id="password-help">Sähköpostiosoitetta ei voi muuttaa rekisteröitymisen jälkeen.</small>
+            autocomplete="username" aria-describedby="email-help">
+        <small id="email-help">Sähköpostiosoitetta ei voi muuttaa rekisteröitymisen jälkeen.</small>
     </p>
     <p>
         <label for="name">Nimi tai nimimerkki:</label>
-        <input type="text" name="name" id="name" value="{{ user.name }}" class="input-chars-40" maxlength="50" required autocomplete="name" />
+        <input type="text" name="name" id="name" value="{{ user.name }}" class="input-chars-40" maxlength="50" required autocomplete="name">
     </p>
     <p>
         <label for="password1">Uusi salasana:</label>
         <input type="password" name="password1" id="password1" class="input-chars-30" maxlength="50" minlength="8" autocomplete="new-password"
-            aria-describedby="password-help" />
+            aria-describedby="password-help">
         <small id="password-help">Vähintään 8 merkkiä pitkä. Jätä tyhjäksi, jos et halua vaihtaa salasanaa.</small>
     </p>
     <p>
         <label for="password2">Uusi salasana uudestaan:</label>
-        <input type="password" name="password2" id="password2" class="input-chars-30" maxlength="50" autocomplete="new-password" />
+        <input type="password" name="password2" id="password2" class="input-chars-30" maxlength="50" autocomplete="new-password">
     </p>
     <p>
         <button type="submit" class="btn btn-primary">Tallenna muutokset</button>
@@ -36,8 +36,8 @@
     <p>Voit poistaa käyttäjäprofiilisi pysyvästi. Tämä poistaa myös kaikki palveluun jättämäsi kilpailutyöt ja
         arviot. Huomaa, että voit muokata ja poistaa kilpailutöitäsi kilpailun keräysvaiheen aikana <a
             href="{{ url_for('entries.my_texts') }}">Tekstisi-sivulla</a>.</p>
-    <button type="submit" class="btn btn-secondary" style="background:#fff0f0;color:#a00;border:1px solid #a00;">Poista
+    <button type="submit" class="btn btn-secondary" style="background:#fff0f0;color:#a00;border:1px solid #a00;" aria-describedby="delete-help">Poista
         profiili pysyvästi</button>
-    <small id="password-help">Varoitus: tätä toimenpidettä ei voi peruuttaa.</small>
+    <small id="delete-help">Varoitus: tätä toimenpidettä ei voi peruuttaa.</small>
 </form>
 {% endblock %}
