@@ -11,14 +11,14 @@
     <p>
         <label for="username">Sähköposti:</label>
         <input type="text" name="username" class="input-chars-40" id="username" value="{{ username or '' }}"
-            maxlength="{{ FIELD_MAX_LENGTH }}" required autocomplete="username" />
+            maxlength="{{ FIELD_MAX_LENGTH }}" required autocomplete="username">
     </p>
     <p>
         <label for="password">Salasana:</label>
         <input type="password" name="password" class="input-chars-30" id="password" maxlength="{{ FIELD_MAX_LENGTH }}"
-            required autocomplete="current-password" />
+            required autocomplete="current-password">
     </p>
-    <input type="hidden" name="next_page" value="{{ next_page or '/' }}" />
+    <input type="hidden" name="next_page" value="{{ next_page or '/' }}">
     <p>
         <button type="submit" class="btn btn-primary">Kirjaudu</button>
     </p>

@@ -8,26 +8,26 @@
     <p>
         <label for="name">Nimi tai nimimerkki:</label>
         <input type="text" name="name" id="name" value="{{ session.get('form_data', {}).get('name', '') }}"
-            maxlength="{{ FIELD_MAX_LENGTH }}" class="input-chars-40" required aria-describedby="name-help" autocomplete="name" />
+            maxlength="{{ FIELD_MAX_LENGTH }}" class="input-chars-40" required aria-describedby="name-help" autocomplete="name">
         <small id="name-help">Esitetään julkisissa tuloksissa ja avoimmissa arvoinneissa.</small>
         </p>
     <p>
         <label for="username">Sähköposti:</label>
         <input type="email" name="username" id="username" value="{{ session.get('form_data', {}).get('username', '') }}"
-            maxlength="{{ FIELD_MAX_LENGTH }}" class="input-chars-40" required aria-describedby="email-help" autocomplete="email" />
+            maxlength="{{ FIELD_MAX_LENGTH }}" class="input-chars-40" required aria-describedby="email-help" autocomplete="email">
         <small id="email-help">Ei esitetä julkisesti.</small>
     </p>
     <p>
         <label for="password1">Salasana:</label>
         <input type="password" name="password1" id="password1" maxlength="{{ FIELD_MAX_LENGTH }}"
             minlength="{{ PASSWORD_MIN_LENGTH }}" class="input-chars-30" required aria-describedby="password-help"
-            autocomplete="new-password" />
+            autocomplete="new-password">
         <small id="password-help">Vähintään 8 merkkiä pitkä.</small>
     </p>
     <p>
         <label for="password2">Salasana uudestaan:</label>
         <input type="password" name="password2" id="password2" maxlength="{{ FIELD_MAX_LENGTH }}" class="input-chars-30" required
-            autocomplete="new-password" />
+            autocomplete="new-password">
     </p>
     <p>
         <button type="submit" class="btn btn-primary">Luo tunnus</button>
