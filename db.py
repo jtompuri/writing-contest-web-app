@@ -1,6 +1,6 @@
 """
-Provides database connection management and helper functions for executing and querying SQL statements
-using SQLite and Flask's application context.
+Provides database connection management and helper functions for executing and 
+querying SQL statements using SQLite and Flask's application context.
 
 Functions:
     get_connection()
