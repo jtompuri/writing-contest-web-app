@@ -193,13 +193,21 @@ def create_contest():
     public_results = 1 if form.get("public_results") == "on" else 0
     private_key = secrets.token_urlsafe(16)
 
+    contest_data = {
+        "title": title,
+        "class_id": class_id,
+        "short_description": short_description,
+        "long_description": long_description,
+        "anonymity": anonymity,
+        "public_reviews": public_reviews,
+        "public_results": public_results,
+        "collection_end": collection_end,
+        "review_end": review_end,
+        "private_key": private_key
+    }
+
     try:
-        sql.create_contest(
-            title, class_id, short_description, long_description,
-            anonymity, public_reviews, public_results,
-            collection_end, review_end,
-            private_key
-        )
+        sql.create_contest(contest_data)
         flash("Kilpailu on luotu.")
         return redirect(url_for("admin.admin_contests"))
     except Exception as e:
@@ -270,11 +278,19 @@ def update_contest(contest_id):
     public_reviews = 1 if form.get("public_reviews") == "on" else 0
     public_results = 1 if form.get("public_results") == "on" else 0
 
-    sql.update_contest(
-        contest_id, title, class_id, short_description, long_description,
-        anonymity, public_reviews, public_results,
-        collection_end, review_end
-    )
+    contest_data = {
+        "title": title,
+        "class_id": class_id,
+        "short_description": short_description,
+        "long_description": long_description,
+        "anonymity": anonymity,
+        "public_reviews": public_reviews,
+        "public_results": public_results,
+        "collection_end": collection_end,
+        "review_end": review_end
+    }
+
+    sql.update_contest(contest_id, contest_data)
 
     flash("Kilpailun tiedot päivitetty.")
     return redirect(url_for("admin.admin_contests"))

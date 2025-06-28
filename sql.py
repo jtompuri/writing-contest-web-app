@@ -106,23 +106,13 @@ def get_contest_by_id(contest_id):
     return result[0] if result else None
 
 
-def update_contest(contest_id, title, class_id, short_description,
-                   long_description, anonymity, public_reviews, public_results,
-                   collection_end, review_end):
+def update_contest(contest_id, data):
     """
     Update an existing contest with new details.
 
     Args:
         contest_id (int): The ID of the contest to update.
-        title (str): The new title of the contest.
-        class_id (int): The new class ID associated with the contest.
-        short_description (str): The new short description of the contest.
-        long_description (str): The new detailed description of the contest.
-        anonymity (bool): Whether the contest is anonymous.
-        public_reviews (bool): Whether reviews are public.
-        public_results (bool): Whether results are public.
-        collection_end (str): The new end date for collection.
-        review_end (str): The new end date for review.
+        data (dict): A dictionary containing the new contest details.
 
     Returns:
         None
@@ -140,9 +130,11 @@ def update_contest(contest_id, title, class_id, short_description,
             review_end = ?
         WHERE id = ?
     """
-    db.execute(query, [title, class_id, short_description, long_description,
-                       anonymity, public_reviews, public_results,
-                       collection_end, review_end, contest_id])
+    db.execute(query, [data["title"], data["class_id"],
+                       data["short_description"], data["long_description"],
+                       data["anonymity"], data["public_reviews"],
+                       data["public_results"], data["collection_end"],
+                       data["review_end"], contest_id])
 
 
 def delete_contest(contest_id):
@@ -258,23 +250,12 @@ def get_contest_count(title_search=None):
     return result[0][0] if result else 0
 
 
-def create_contest(title, class_id, short_description, long_description,
-                   anonymity, public_reviews, public_results,
-                   collection_end, review_end, private_key):
+def create_contest(data):
     """
     Create a new contest with the specified details.
 
     Args:
-        title (str): The title of the contest.
-        class_id (int): The ID of the class associated with the contest.
-        short_description (str): A short description of the contest.
-        long_description (str): A detailed description of the contest.
-        anonymity (bool): Whether the contest is anonymous.
-        public_reviews (bool): Whether reviews are public.
-        public_results (bool): Whether results are public.
-        collection_end (str): The end date for collection.
-        review_end (str): The end date for review.
-        private_key (str): The private key for the contest.
+        data (dict): A dictionary containing the contest details.
 
     Returns:
         None
@@ -286,9 +267,11 @@ def create_contest(title, class_id, short_description, long_description,
          collection_end, review_end, private_key)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """
-    db.execute(query, [title, class_id, short_description, long_description,
-                       anonymity, public_reviews, public_results,
-                       collection_end, review_end, private_key])
+    db.execute(query, [data["title"], data["class_id"],
+                       data["short_description"], data["long_description"],
+                       data["anonymity"], data["public_reviews"],
+                       data["public_results"], data["collection_end"],
+                       data["review_end"], data["private_key"]])
 
 
 # -------------------------------
