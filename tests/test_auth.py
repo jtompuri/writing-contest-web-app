@@ -106,7 +106,7 @@ class TestAuth:
     def test_csrf_protection(self, client):
         """Test that an invalid CSRF token prevents logout."""
         response = client.post('/logout', data={'csrf_token': 'wrong_token'})
-        assert response.status_code == 400 or response.status_code == 403
+        assert response.status_code in (400, 403)
 
     def test_logout_route(self, client):
         """Test that the logout route redirects successfully."""
@@ -324,7 +324,7 @@ class TestProfileEdit:
             return {"id": user_id, "username": "test@example.com",
                     "name": "Test"}
 
-        def fake_update_user_name(user_id, name):
+        def fake_update_user_name(_user_id, name):
             assert name == "Uusi Nimi"
         monkeypatch.setattr("users.get_user", fake_get_user)
         monkeypatch.setattr("users.update_user_name", fake_update_user_name)
@@ -348,7 +348,7 @@ class TestProfileEdit:
         monkeypatch.setattr("users.get_user", fake_get_user)
         monkeypatch.setattr("users.update_user_name", lambda uid, name: None)
 
-        def fake_update_user_password(user_id, password):
+        def fake_update_user_password(_user_id, password):
             assert password == "uusiSalasana123"
         monkeypatch.setattr("users.update_user_password",
                             fake_update_user_password)
