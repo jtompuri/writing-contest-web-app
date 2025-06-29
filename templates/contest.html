@@ -6,8 +6,14 @@
     <p><strong>{{ contest.short_description }}</strong></p>
     <p>{{ contest.long_description | richtext_with_links }}</p>
 </section>
-<p><em>Keräysvaihe käynnissä, päättyy {{ contest.collection_end | format_date }}. Arviointivaihe päättyy {{ contest.review_end | format_date }}.</em>
-</p>
+<p><em>
+{% if collection_open %}    
+Keräysvaihe päättyy {{ contest.collection_end | format_date }}. 
+{% else %}
+Keräysvaihe päättyi {{ contest.collection_end | format_date }}. 
+{% endif %}
+Arviointivaihe päättyy {{ contest.review_end | format_date }}.
+</em></p>
 
 {% if not collection_open and not review_open and contest.public_results %}
 <form action="{{ url_for('entries.add_entry', contest_id=contest.id) }}" method="post" style="margin-top: 2rem;">
@@ -17,9 +23,8 @@
     </button>
 </form>
 {% elif not collection_open and review_open and session.user_id and contest.public_reviews %}
-<form action="{{ url_for('entries.add_entry', contest_id=contest.id) }}" method="post" style="margin-top: 2rem;">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    <button type="submit" class="btn btn-primary" aria-label="Vertaisarvioi kilpailutöitä">
+<form action="{{ url_for('entries.review', contest_id=contest.id) }}" method="get" style="margin-top: 2rem;">
+    <button type="submit" class="btn btn-primary" aria-label="Arvioi kilpailutyöt">
         Arvioi kilpailutyöt
     </button>
 </form>
@@ -38,11 +43,11 @@
         </button>
     </form>
     {% endif %}
-{% elif not collection_open or not review_open %}
+{% elif not session.user_id and (collection_open or (review_open and contest.public_reviews)) %}
 <p style="margin-top: 2rem; font-style: italic;">
-    <a href="/login" aria-label="Kirjaudu sisään osallistuaksesi kilpailuun">
+    <a href="{{ url_for('auth.login', next_page=request.path) }}" aria-label="Kirjaudu sisään osallistuaksesi kilpailuun">
         Kirjaudu sisään
-    </a> osallistuaksesi.
+    </a> osallistuaksesi tai arvioidaksesi.
 </p>
 {% endif %}
 {% endblock %}

@@ -183,11 +183,6 @@ class TestPublicRoutes:
         response = client.get('/register')
         assert response.status_code == 200
 
-    def test_terms_of_use(self, client):
-        """Test that the terms of use page is accessible."""
-        response = client.get('/terms_of_use')
-        assert response.status_code == 200
-
     def test_nonexistent_route(self, client):
         """Test that a nonexistent route returns a 404 error."""
         response = client.get('/thispagedoesnotexist')
@@ -238,6 +233,8 @@ class TestPublicRoutes:
         response = client.get('/reviews')
         assert response.status_code == 200
         assert b"Public Review Contest" in response.data
+        # The link should now point to the contest page, not the review page
+        assert b'href="/contests/contest/1"' in response.data
         assert b"Private Review Contest" not in response.data
 
     def test_reviews_page_shows_private_contest_with_key(self, client,

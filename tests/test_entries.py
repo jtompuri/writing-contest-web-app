@@ -499,7 +499,8 @@ class TestReviewing:
     def test_review_not_logged_in(self, client):
         """Test that a non-logged-in user is redirected from the review
         page."""
-        response = client.get('/review/1')
+        response = client.get('/review/1',
+                              headers={"Referer": "/contests/contest/1"})
         assert response.status_code == 302
 
     def test_review_contest_not_found(self, client, monkeypatch):
@@ -508,7 +509,8 @@ class TestReviewing:
         with client.session_transaction() as sess:
             sess['user_id'] = 1
         monkeypatch.setattr("sql.get_contest_by_id", lambda cid: None)
-        response = client.get('/review/1')
+        response = client.get('/review/1',
+                              headers={"Referer": "/contests/contest/1"})
         assert response.status_code == 404
 
     def test_review_private_invalid_key(self, client, monkeypatch):
@@ -518,7 +520,8 @@ class TestReviewing:
         monkeypatch.setattr("sql.get_contest_by_id", lambda cid: {
                             "id": cid, "public_reviews": False,
                             "private_key": "sekret"})
-        response = client.get('/review/1?key=wrong', follow_redirects=True)
+        response = client.get('/review/1?key=wrong', follow_redirects=True,
+                              headers={"Referer": "/contests/contest/1"})
         assert b'arviointi ei ole julkinen' in response.data
 
     def test_review_not_in_review_period(self, client, monkeypatch):
@@ -529,7 +532,8 @@ class TestReviewing:
             "id": cid, "public_reviews": True, "private_key": "sekret",
             "collection_end": "2100-01-01", "review_end": "2101-01-01"
         })
-        response = client.get('/review/1', follow_redirects=True)
+        response = client.get('/review/1', follow_redirects=True,
+                              headers={"Referer": "/contests/contest/1"})
         # Now the error message should be in the response after redirect
         assert (b'arviointijakso ei ole '
                 b'k\xc3\xa4ynniss\xc3\xa4') in response.data
@@ -538,7 +542,8 @@ class TestReviewing:
         """Test that a logged-in user can access the review page."""
         with client.session_transaction() as session:
             session['user_id'] = 1
-        response = client.get('/review/1')
+        response = client.get('/review/1',
+                              headers={"Referer": "/contests/contest/1"})
         assert response.status_code in (200, 404, 302)
 
     def test_review_post_missing_points(self, client):
@@ -548,7 +553,8 @@ class TestReviewing:
             session['csrf_token'] = 'test_token'
         response = client.post(
             '/review/1',
-            data={'csrf_token': 'test_token', 'points_1': '5'}
+            data={'csrf_token': 'test_token', 'points_1': '5'},
+            headers={"Referer": "/contests/contest/1"}
         )
         assert response.status_code in (200, 302, 404)
         if response.status_code == 200:
@@ -563,7 +569,8 @@ class TestReviewing:
         response = client.post(
             '/review/1',
             data={'csrf_token': 'test_token', 'points_1': '10'},
-            follow_redirects=True
+            follow_redirects=True,
+            headers={"Referer": "/contests/contest/1"}
         )
         assert response.status_code in (200, 302, 404)
         if response.status_code == 200:
@@ -598,7 +605,8 @@ class TestReviewing:
         ])
         monkeypatch.setattr(
             "sql.get_user_reviews_for_contest", lambda cid, uid: {})
-        response = client.get('/review/1?key=secret')
+        response = client.get('/review/1?key=secret',
+                              headers={"Referer": "/contests/contest/1"})
         assert response.status_code == 200
         # Try a more robust check for the review form or entry text
         assert (
@@ -624,7 +632,8 @@ class TestReviewing:
             "sql.get_user_reviews_for_contest", lambda cid, uid: {})
         response = client.post(
             '/review/1',
-            data={'csrf_token': 'test_token', 'points_1': '-1'}
+            data={'csrf_token': 'test_token', 'points_1': '-1'},
+            headers={"Referer": "/contests/contest/1"}
         )
         assert response.status_code == 200
         # "Arvosanan tulee olla välillä 0–5"

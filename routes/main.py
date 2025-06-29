@@ -97,6 +97,14 @@ def contest(contest_id):
             has_entry = True
             user_entry_id = entry["id"]
 
+    # Determine source for navigation based on referrer
+    source = "contest"
+    if request.referrer:
+        # If the user came from the reviews page or a review-related URL
+        if url_for("main.reviews") in request.referrer or \
+           "review" in request.referrer:
+            source = "review"
+
     return render_template(
         "contest.html",
         contest=contest_data,
@@ -104,7 +112,7 @@ def contest(contest_id):
         review_open=review_open,
         has_entry=has_entry,
         user_entry_id=user_entry_id,
-        source="contest"
+        source=source
     )
 
 
@@ -189,12 +197,6 @@ def reviews():
         base_url="/reviews?page=",
         key=key
     )
-
-
-@main_bp.route("/terms_of_use")
-def terms_of_use():
-    """Renders the terms of use page."""
-    return render_template("terms_of_use.html")
 
 
 @main_bp.route("/result/<int:contest_id>")

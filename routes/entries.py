@@ -89,7 +89,8 @@ def add_entry(contest_id):
         contest=contest,
         collection_open=collection_open,
         review_open=review_open,
-        entry=entry_text
+        entry=entry_text,
+        source="contest"
     )
 
 
@@ -331,6 +332,13 @@ def review(contest_id):
     Args:
         contest_id (int): The ID of the contest to review.
     """
+    # Add this check to enforce the user flow
+    if request.referrer is None or url_for(
+            "main.contest", contest_id=contest_id) not in request.referrer:
+        flash("Käytä kilpailun sivulla olevaa linkkiä päästäksesi"
+              "arviointiin.")
+        return redirect(url_for("main.contest", contest_id=contest_id))
+
     if not session.get("user_id"):
         flash("Kirjaudu sisään arvioidaksesi kilpailutöitä.")
         return redirect(url_for("auth.login", next_page=request.path))
