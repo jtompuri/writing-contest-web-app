@@ -1,5 +1,10 @@
-import pytest
+"""Tests for the database utility functions defined in db.py.
+
+This module contains tests for database connection handling, executing queries,
+and error handling within the db module.
+"""
 import sqlite3
+import pytest
 from flask import g
 from app import app
 import db
