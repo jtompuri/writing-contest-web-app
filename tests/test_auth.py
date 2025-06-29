@@ -151,7 +151,8 @@ class TestUserActions:
             'password2': 'password123'
         }, follow_redirects=True)
         assert response.status_code == 200
-        assert "Tarkista syötteet" in response.get_data(as_text=True)
+        assert ("Nimi on pakollinen ja saa olla enintään 50 "
+                "merkkiä.") in response.get_data(as_text=True)
 
     def test_register_post_missing_fields(self, client):
         client.get('/register')
@@ -164,8 +165,8 @@ class TestUserActions:
             'password1': '',
             'password2': ''
         }, follow_redirects=True)
-        assert response.status_code in (302, 200)
-        assert b'Virhe' in response.data or b'error' in response.data.lower()
+        assert response.status_code == 200
+        assert "Nimi on pakollinen" in response.get_data(as_text=True)
 
     def test_register_post_password_mismatch(self, client):
         client.get('/register')
@@ -179,8 +180,7 @@ class TestUserActions:
             'password2': 'password321'
         }, follow_redirects=True)
         assert response.status_code == 200
-        assert 'salasanat' in response.get_data(
-            as_text=True) or 'Virhe' in response.get_data(as_text=True)
+        assert "Salasanat eivät ole samat." in response.get_data(as_text=True)
 
     def test_register_post_short_password(self, client):
         client.get('/register')
@@ -194,8 +194,8 @@ class TestUserActions:
             'password2': 'short'
         }, follow_redirects=True)
         assert response.status_code == 200
-        assert 'salasanan on oltava' in response.get_data(
-            as_text=True) or 'Virhe' in response.get_data(as_text=True)
+        assert ("Salasanan on oltava "
+                "vähintään 8") in response.get_data(as_text=True)
 
     def test_register_post_invalid_email(self, client):
         client.get('/register')

@@ -26,40 +26,40 @@ def register():
 def create():
     """Handles the user registration form submission."""
     check_csrf()
-    name = sanitize_input(request.form["name"])
-    username = sanitize_input(request.form["username"])
-    password1 = request.form["password1"]
-    password2 = request.form["password2"]
+    name = sanitize_input(request.form.get("name", ""))
+    username = sanitize_input(request.form.get("username", ""))
+    password = request.form.get("password1", "")
+    password2 = request.form.get("password2", "")
 
-    if (not username or len(username) > 50 or not name or len(name) > 50
-       or len(password1) > 50 or len(password2) > 50):
-        session["form_data"] = {"name": name, "username": username}
-        flash("Virhe: Tarkista syötteet.")
-        return redirect("/register")
+    errors = []
+    if not name or len(name) > 50:
+        errors.append("Nimi on pakollinen ja saa olla enintään 50 merkkiä.")
+    if not username or len(username) > 50:
+        errors.append(
+            "Sähköposti on pakollinen ja saa olla enintään 50 merkkiä.")
+    elif not is_valid_email(username):
+        errors.append("Sähköpostiosoite ei ole kelvollinen.")
 
-    if password1 != password2:
-        session["form_data"] = {"name": name, "username": username}
-        flash("Virhe: salasanat eivät ole samat.")
-        return redirect("/register")
+    if len(password) < 8 or len(password) > 50:
+        errors.append(
+            "Salasanan on oltava vähintään 8 ja enintään 50 merkkiä pitkä.")
+    if password != password2:
+        errors.append("Salasanat eivät ole samat.")
 
-    if len(password1) < 8:
+    if errors:
         session["form_data"] = {"name": name, "username": username}
-        flash("Virhe: salasanan on oltava vähintään 8 merkkiä pitkä.")
-        return redirect("/register")
-
-    if not is_valid_email(username):
-        session["form_data"] = {"name": name, "username": username}
-        flash("Virhe: Sähköpostiosoite ei ole kelvollinen.")
-        return redirect("/register")
+        for error in errors:
+            flash(error)
+        return redirect(url_for("auth.register"))
 
     user_count = users.get_user_count()
     is_super = 1 if user_count == 0 else 0
 
-    success = users.create_user(name, username, password1, is_super)
+    success = users.create_user(name, username, password, is_super)
     if not success:
         session["form_data"] = {"name": name, "username": username}
         flash("Virhe: tunnus on jo varattu.")
-        return redirect("/register")
+        return redirect(url_for("auth.register"))
 
     session["form_data"] = {"username": username}
     if is_super:
