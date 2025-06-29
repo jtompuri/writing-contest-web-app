@@ -92,7 +92,8 @@ def login():
 
     user = users.get_user(user_id)
     if not user:
-        # This case is unlikely if check_login succeeds, but good for robustness
+        # This case is unlikely if check_login succeeds,
+        # but good for robustness
         flash("Virheellinen käyttäjätunnus tai salasana.")
         session["form_data"] = {"username": username}
         return redirect(url_for("auth.login"))
