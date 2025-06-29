@@ -284,7 +284,7 @@ def review(contest_id):
     collection_end = datetime.strptime(contest["collection_end"],
                                        "%Y-%m-%d").date()
     review_end = datetime.strptime(contest["review_end"], "%Y-%m-%d").date()
-    if not (collection_end <= today < review_end):
+    if not collection_end <= today < review_end:
         flash("Kilpailun arviointijakso ei ole käynnissä.")
         return redirect(url_for("main.reviews"))
 
