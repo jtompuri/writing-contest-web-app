@@ -161,14 +161,16 @@ def new_contest():
     return render_template("admin/new_contest.html", classes=classes)
 
 
-@admin_bp.route("/contests/create", methods=["POST"])
-def create_contest():
-    """Handles the POST request to create a new contest."""
-    check_csrf()
-    if not session.get("super_user"):
-        abort(403)
+def _get_contest_form_data_and_validate(form):
+    """Extracts and validates contest data from a form.
 
-    form = request.form
+    Args:
+        form (ImmutableMultiDict): The form data from the request.
+
+    Returns:
+        tuple: A tuple containing the contest data dictionary and a list of
+               validation errors. The data is None if validation fails.
+    """
     title = sanitize_input(form.get("title", ""))
     class_id_str = form.get("class_id", "")
     short_description = sanitize_input(form.get("short_description", ""))
@@ -179,38 +181,48 @@ def create_contest():
     class_id = int(class_id_str) if class_id_str.isdigit() else None
 
     errors = []
-    if (not title or not class_id or not collection_end or not review_end
-       or not short_description or not long_description):
+    required_values = [
+        title, class_id, collection_end, review_end,
+        short_description, long_description
+    ]
+    if not all(required_values):
         errors.append("Kaikki pakolliset kentät on täytettävä.")
-
     if len(short_description) > 255:
         errors.append("Lyhyt kuvaus saa olla enintään 255 merkkiä.")
-
     if len(long_description) > 2000:
         errors.append("Pitkä kuvaus saa olla enintään 2000 merkkiä.")
 
     if errors:
-        for error in errors:
-            flash(error)
-        return redirect(url_for("admin.new_contest"))
-
-    anonymity = 1 if form.get("anonymity") == "on" else 0
-    public_reviews = 1 if form.get("public_reviews") == "on" else 0
-    public_results = 1 if form.get("public_results") == "on" else 0
-    private_key = secrets.token_urlsafe(16)
+        return None, errors
 
     contest_data = {
         "title": title,
         "class_id": class_id,
         "short_description": short_description,
         "long_description": long_description,
-        "anonymity": anonymity,
-        "public_reviews": public_reviews,
-        "public_results": public_results,
         "collection_end": collection_end,
         "review_end": review_end,
-        "private_key": private_key
+        "anonymity": 1 if form.get("anonymity") == "on" else 0,
+        "public_reviews": 1 if form.get("public_reviews") == "on" else 0,
+        "public_results": 1 if form.get("public_results") == "on" else 0,
+        "private_key": secrets.token_urlsafe(16)
     }
+    return contest_data, []
+
+
+@admin_bp.route("/contests/create", methods=["POST"])
+def create_contest():
+    """Handles the POST request to create a new contest."""
+    check_csrf()
+    if not session.get("super_user"):
+        abort(403)
+
+    contest_data, errors = _get_contest_form_data_and_validate(request.form)
+
+    if errors:
+        for error in errors:
+            flash(error)
+        return redirect(url_for("admin.new_contest"))
 
     try:
         sql.create_contest(contest_data)
