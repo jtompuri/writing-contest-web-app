@@ -77,33 +77,32 @@ def login():
     if request.method == "GET":
         username = session.pop("form_data", {}).get("username", "")
         next_page = request.args.get("next_page", "/")
-        return render_template("login.html", next_page=next_page,
-                               username=username)
+        session["next_page"] = next_page
+        return render_template("login.html", username=username)
 
-    if request.method == "POST":
-        check_csrf()
-        username = sanitize_input(request.form["username"])
-        password = request.form["password"]
-        next_page = request.form.get("next_page", "/")
+    check_csrf()
+    username = sanitize_input(request.form["username"])
+    password = request.form["password"]
+    user_id = users.check_login(username, password)
 
-        user_id = users.check_login(username, password)
-        if user_id:
-            user = users.get_user(user_id)
-            if user is None:
-                flash("Virheellinen käyttäjätunnus.")
-                return redirect("/login")
+    if not user_id:
+        flash("Virheellinen käyttäjätunnus tai salasana.")
+        session["form_data"] = {"username": username}
+        return redirect(url_for("auth.login"))
 
-            session["user_id"] = user["id"]
-            session["username"] = user["username"]
-            session["super_user"] = bool(user["super_user"])
+    user = users.get_user(user_id)
+    if not user:
+        # This case is unlikely if check_login succeeds, but good for robustness
+        flash("Virheellinen käyttäjätunnus tai salasana.")
+        session["form_data"] = {"username": username}
+        return redirect(url_for("auth.login"))
 
-            return redirect(next_page)
-        else:
-            flash("Virhe: Väärä tunnus tai salasana.")
-            return render_template("login.html", next_page=next_page,
-                                   username=username)
-
-    return redirect("/login")  # pragma: no cover  # Exclude from coverage
+    session["user_id"] = user["id"]
+    session["username"] = user["username"]
+    session["super_user"] = user["super_user"]
+    session.pop("form_data", None)
+    next_page = session.pop("next_page", "/")
+    return redirect(next_page)
 
 
 @auth_bp.route("/logout", methods=["POST"])

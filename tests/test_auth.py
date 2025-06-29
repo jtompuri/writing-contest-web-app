@@ -88,10 +88,10 @@ class TestAuth:
             'username': 'x',
             'password': 'y',
             'csrf_token': csrf_token
-        })
-        assert response.status_code in (200, 403)
-        if response.status_code == 200:
-            assert 'Virhe'.encode('utf-8') in response.data
+        }, follow_redirects=True)
+        assert response.status_code == 200
+        assert ('Virheellinen käyttäjätunnus tai '
+                'salasana.').encode('utf-8') in response.data
 
     def test_csrf_token(self, client):
         with client.session_transaction() as session:
@@ -220,10 +220,9 @@ class TestUserActions:
             'csrf_token': csrf_token,
             'username': '',
             'password': ''
-        })
-        assert response.status_code in (200, 403)
-        assert b'Virhe' in response.data or 'Väärä'.encode(
-            'utf-8') in response.data or b'error' in response.data.lower()
+        }, follow_redirects=True)
+        assert response.status_code == 200
+        assert b'Virheellinen' in response.data
 
     def test_register_post_duplicate_email(self, client):
         client.get('/register')
