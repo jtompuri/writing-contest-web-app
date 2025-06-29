@@ -42,12 +42,12 @@ def app():
 
 
 @pytest.fixture
-def client(app):
+def client(app):  # pylint: disable=redefined-outer-name
     """A test client for the app."""
     return app.test_client()
 
 
 @pytest.fixture
-def runner(app):
+def runner(app):  # pylint: disable=redefined-outer-name
     """A test runner for the app's Click commands."""
     return app.test_cli_runner()

@@ -1,3 +1,4 @@
+"""Unit tests for the users.py module."""
 import sqlite3
 from unittest.mock import patch, MagicMock
 import users
