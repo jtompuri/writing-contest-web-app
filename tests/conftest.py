@@ -17,22 +17,24 @@ def app():
     """Create and configure a new app instance for each test."""
     db_fd, db_path = tempfile.mkstemp()
 
-    app = flask_app
-    app.config.update({
+    # Use a different name for the local app instance to avoid shadowing
+    # the fixture name
+    _app = flask_app
+    _app.config.update({
         "TESTING": True,
         "DATABASE": db_path,
         "WTF_CSRF_ENABLED": False,
     })
 
     # Manually initialize the database for the test
-    with app.app_context():
+    with _app.app_context():
         # Get the database connection using the function from your db.py
         db_conn = get_connection()
         # Open and execute the schema file to set up the tables
-        with app.open_resource('schema.sql') as f:
+        with _app.open_resource('schema.sql') as f:
             db_conn.executescript(f.read().decode('utf8'))
 
-    yield app
+    yield _app
 
     # Clean up: close and remove the temporary database file
     os.close(db_fd)
