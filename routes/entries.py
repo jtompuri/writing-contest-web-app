@@ -166,6 +166,66 @@ def entry(entry_id):
                            source=source)
 
 
+def _validate_entry_edit_access(entry_id):
+    """Validates if the current user can edit the specified entry."""
+    if not session.get("user_id"):
+        abort(403)
+
+    entry_data = sql.get_entry_by_id(entry_id)
+    if not entry_data or entry_data["user_id"] != session["user_id"]:
+        abort(403)
+
+    contest = sql.get_contest_by_id(entry_data["contest_id"])
+    if not contest:
+        flash("Kilpailua ei löytynyt.")
+        return None, None
+
+    collection_end = datetime.strptime(
+        contest["collection_end"], "%Y-%m-%d").date()
+    if collection_end < date.today():
+        flash("Et voi enää muokata tätä tekstiä.")
+        return None, None
+
+    return entry_data, contest
+
+
+def _handle_edit_entry_post(entry_data, contest, entry_id):
+    """Handles the POST logic for editing an entry."""
+    check_csrf()
+    action = request.form.get("action")
+    new_text = sanitize_input(request.form.get("entry", ""))
+    source = request.form.get("source", "")
+
+    if not new_text:
+        flash("Teksti ei saa olla tyhjä.")
+        return render_template("edit_entry.html", entry=entry_data,
+                               contest=contest, source=source)
+
+    if action == "preview":
+        return render_template(
+            "preview_entry.html", contest=contest, entry=new_text,
+            edit_mode=True, entry_id=entry_id, source=source
+        )
+
+    if action == "back":
+        entry_data = dict(entry_data)
+        entry_data["entry"] = new_text
+        return render_template("edit_entry.html", entry=entry_data,
+                               contest=contest, source=source)
+
+    if action == "submit":
+        sql.update_entry(entry_id, entry_data["contest_id"],
+                         session["user_id"], new_text)
+        flash("Kilpailutyö on päivitetty.")
+        if source == "contest":
+            return redirect(url_for("main.contest",
+                                    contest_id=entry_data["contest_id"]))
+        return redirect(url_for("entries.my_texts"))
+
+    # Fallback for unknown actions
+    return redirect(url_for("entries.my_texts"))
+
+
 @entries_bp.route("/entry/<int:entry_id>/edit", methods=["GET", "POST"])
 def edit_entry(entry_id):
     """Renders the form for editing an entry and handles its update.
@@ -177,61 +237,21 @@ def edit_entry(entry_id):
     Args:
         entry_id (int): The ID of the entry to edit.
     """
-    if not session.get("user_id"):
-        abort(403)
-    entry_data = sql.get_entry_by_id(entry_id)
-    if not entry_data or entry_data["user_id"] != session["user_id"]:
-        abort(403)
-    contest = sql.get_contest_by_id(entry_data["contest_id"])
-    if not contest:
-        flash("Kilpailua ei löytynyt.")
+    entry_data, contest = _validate_entry_edit_access(entry_id)
+    if not entry_data:
         return redirect(url_for("entries.my_texts"))
-    collection_end = datetime.strptime(contest["collection_end"],
-                                       "%Y-%m-%d").date()
-    if collection_end < date.today():
-        flash("Et voi enää muokata tätä tekstiä.")
-        return redirect(url_for("entries.my_texts"))
-    source = request.args.get("source") or request.form.get("source", "")
-    if request.method == "GET":
-        entry_text = request.args.get("entry")
-        if entry_text is not None:
-            entry_data = dict(entry_data)
-            entry_data["entry"] = entry_text
-        return render_template("edit_entry.html", entry=entry_data,
-                               contest=contest, source=source)
+
     if request.method == "POST":
-        check_csrf()
-        action = request.form.get("action")
-        new_text = sanitize_input(request.form.get("entry", ""))
-        if not new_text:
-            flash("Teksti ei saa olla tyhjä.")
-            return render_template("edit_entry.html", entry=entry_data,
-                                   contest=contest, source=source)
-        if action == "preview":
-            return render_template(
-                "preview_entry.html",
-                contest=contest,
-                entry=new_text,
-                edit_mode=True,
-                entry_id=entry_id,
-                source=source
-            )
-        if action == "back":
-            entry_data = dict(entry_data)
-            entry_data["entry"] = new_text
-            return render_template("edit_entry.html", entry=entry_data,
-                                   contest=contest, source=source)
-        if action == "submit":
-            sql.update_entry(entry_id, entry_data["contest_id"],
-                             session["user_id"], new_text)
-            flash("Kilpailutyö on päivitetty.")
-            if source == "contest":
-                return redirect(url_for("main.contest",
-                                        contest_id=entry_data["contest_id"]))
-            return redirect(url_for("entries.my_texts"))
-        # Fallback for unknown actions
-        return redirect(url_for("entries.my_texts"))
-    return redirect(url_for("entries.my_texts"))
+        return _handle_edit_entry_post(entry_data, contest, entry_id)
+
+    # This handles the GET request
+    source = request.args.get("source", "")
+    entry_text = request.args.get("entry")
+    if entry_text is not None:
+        entry_data = dict(entry_data)
+        entry_data["entry"] = entry_text
+    return render_template("edit_entry.html", entry=entry_data,
+                           contest=contest, source=source)
 
 
 @entries_bp.route("/entry/<int:entry_id>/delete", methods=["POST"])
