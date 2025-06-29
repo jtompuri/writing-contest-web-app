@@ -15,7 +15,10 @@ from datetime import date, timedelta, datetime
 
 
 class TestFrontpage:
+    """Tests for the frontpage functionality."""
+
     def test_frontpage_winners_display(self, client, monkeypatch):
+        """Test that winners are correctly displayed on the frontpage."""
         fake_contests = [
             {"id": 1, "title": "Test Contest", "public_results": True,
              "short_description": "Desc", "class_value": "Essee",
@@ -69,6 +72,7 @@ class TestFrontpage:
         assert b"Kaikki tulokset t" in resp.data
 
     def test_frontpage_no_winners(self, client, monkeypatch):
+        """Test frontpage display when there are no winners for a contest."""
         fake_contests = [
             {"id": 1, "title": "Test Contest", "public_results": False,
              "short_description": "Desc", "class_value": "Essee",
@@ -91,6 +95,7 @@ class TestFrontpage:
             'utf-8') in resp.data
 
     def test_frontpage_no_contests(self, client, monkeypatch):
+        """Test frontpage display when there are no contests."""
         monkeypatch.setattr("sql.get_contests_for_entry", lambda n: [])
         monkeypatch.setattr("sql.get_contests_for_review", lambda n: [])
         monkeypatch.setattr("sql.get_contests_for_results", lambda n: [])
@@ -102,6 +107,7 @@ class TestFrontpage:
             'utf-8') in resp.data
 
     def test_frontpage_winner_entry_links(self, client, monkeypatch):
+        """Test that links to winner entries on the frontpage are correct."""
         fake_contests = [
             {"id": 1, "title": "Test Contest", "public_results": True,
              "short_description": "Desc", "class_value": "Essee",
@@ -152,30 +158,38 @@ class TestFrontpage:
 
 
 class TestPublicRoutes:
+    """Tests for publicly accessible routes."""
+
     def test_index_route(self, client):
+        """Test that the index route is accessible."""
         response = client.get('/')
         assert response.status_code == 200
         assert 'Tervetuloa!'.encode('utf-8') in response.data
 
     def test_register_route(self, client):
+        """Test that the register route is accessible."""
         response = client.get('/register')
         assert response.status_code == 200
         assert 'Rekisteröidy'.encode('utf-8') in response.data
 
     def test_login_get_route(self, client):
+        """Test that the login GET route is accessible."""
         response = client.get('/login')
         assert response.status_code == 200
         assert 'Kirjaudu sisään'.encode('utf-8') in response.data
 
     def test_register_get(self, client):
+        """Test that the register GET route is accessible."""
         response = client.get('/register')
         assert response.status_code == 200
 
     def test_terms_of_use(self, client):
+        """Test that the terms of use page is accessible."""
         response = client.get('/terms_of_use')
         assert response.status_code == 200
 
     def test_nonexistent_route(self, client):
+        """Test that a nonexistent route returns a 404 error."""
         response = client.get('/thispagedoesnotexist')
         assert response.status_code == 404
 
@@ -247,16 +261,21 @@ class TestPublicRoutes:
 
 
 class TestContestRoutes:
+    """Tests for contest-related routes."""
+
     def test_contest_detail_valid(self, client):
+        """Test that a valid contest detail page is accessible."""
         response = client.get('/contests/contest/1')
         assert response.status_code in (200, 404)
 
     def test_contest_detail_invalid(self, client):
+        """Test that an invalid contest detail page returns a 404 error."""
         response = client.get('/contests/contest/999999')
         assert response.status_code == 404
 
 
 class TestMainCoverage:
+    """Tests for increasing test coverage of the main blueprint."""
 
     def test_index_winner_missing_review_end(self, client, monkeypatch):
         """Test the fallback logic for a winner's review_end date on
