@@ -9,9 +9,9 @@ Test Classes:
                        and validation.
 """
 
-import pytest
 from unittest.mock import patch, MagicMock
 from datetime import date, timedelta, datetime
+import pytest
 
 
 class TestFrontpage:
@@ -315,30 +315,48 @@ class TestMainCoverage:
         detail page."""
         days_offset, expected_collection_open, expected_review_open = params
         today = date.today()
+        # Set collection_end to today to make the date boundaries clearer
         collection_end = today.isoformat()
         review_end = (today + timedelta(days=10)).isoformat()
+
+        # Log in a user to ensure participation/review links can be shown
+        with client.session_transaction() as sess:
+            sess['user_id'] = 1
 
         # Patch datetime.now() to control the current date in the route
         with patch('routes.main.datetime') as mock_dt:
             mock_dt.now.return_value.date.return_value = today + \
                 timedelta(days=days_offset)
-            mock_dt.strptime.side_effect = lambda d, f: datetime.strptime(d, f)
+            mock_dt.strptime.side_effect = datetime.strptime
 
             # Provide a complete mock object for the contest
             mock_contest = {
                 "id": 1, "collection_end": collection_end,
                 "review_end": review_end,
                 "title": "Test Contest", "short_description": "Short desc.",
-                "long_description": "Long desc."
+                "long_description": "Long desc.",
+                "public_reviews": True  # Add this key to satisfy the template
             }
             monkeypatch.setattr("sql.get_contest_by_id",
                                 lambda contest_id: mock_contest)
+            # Ensure the user is not considered a participant for this test
+            monkeypatch.setattr("sql.get_user_entry_for_contest",
+                                lambda cid, uid: None)
 
             response = client.get('/contests/contest/1')
             assert response.status_code == 200
-            # The template context variables are not directly testable,
-            # but we can check for text that appears based on these flags.
-            # This test primarily ensures the logic runs and doesn't crash.
+
+            # Check for content that appears based on the contest state flags.
+            # This makes the test more meaningful and uses the variables.
+            if expected_collection_open:
+                assert b'Osallistu kilpailuun' in response.data
+            else:
+                assert b'Osallistu kilpailuun' not in response.data
+
+            if expected_review_open:
+                assert b'Arvioi kilpailuty\xc3\xb6t' in response.data
+            else:
+                assert b'Arvioi kilpailuty\xc3\xb6t' not in response.data
 
     def test_contest_page_user_has_entry(self, client, monkeypatch):
         """Test the contest page logic when a logged-in user has

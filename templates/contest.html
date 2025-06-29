@@ -20,7 +20,7 @@
 <form action="{{ url_for('entries.add_entry', contest_id=contest.id) }}" method="post" style="margin-top: 2rem;">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <button type="submit" class="btn btn-primary" aria-label="Vertaisarvioi kilpailutöitä">
-        Vertaisarvioi kilpailutöitä
+        Arvioi kilpailutyöt
     </button>
 </form>
 {% elif collection_open and session.user_id %}
