@@ -1,3 +1,9 @@
+"""Tests for core application setup, features, and custom template filters.
+
+This module contains tests for application-wide functionalities that are not
+specific to a single blueprint, such as CSRF token handling and custom Jinja2
+template filters.
+"""
 from flask import render_template_string
 from app import app
 

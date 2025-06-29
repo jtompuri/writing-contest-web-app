@@ -15,6 +15,8 @@ import users
 
 
 class TestAuth:
+    """Tests for login, logout, and CSRF protection."""
+
     def test_register_post_normal_user_flash(self, client, monkeypatch):
         """Covers flash('Tunnus on luotu.') for non-superuser registration."""
         monkeypatch.setattr("users.get_user_count",
@@ -81,6 +83,7 @@ class TestAuth:
         assert "Virheellinen käyttäjätunnus" in response.get_data(as_text=True)
 
     def test_login_post_invalid(self, client):
+        """Test login failure with invalid credentials."""
         client.get('/login')
         with client.session_transaction() as session:
             csrf_token = session["csrf_token"]
@@ -94,27 +97,33 @@ class TestAuth:
                 'salasana.').encode('utf-8') in response.data
 
     def test_csrf_token(self, client):
+        """Test that a valid CSRF token allows logout."""
         with client.session_transaction() as session:
             session['csrf_token'] = 'test_token'
         response = client.post('/logout', data={'csrf_token': 'test_token'})
         assert response.status_code == 302
 
     def test_csrf_protection(self, client):
+        """Test that an invalid CSRF token prevents logout."""
         response = client.post('/logout', data={'csrf_token': 'wrong_token'})
         assert response.status_code == 400 or response.status_code == 403
 
     def test_logout_route(self, client):
+        """Test that the logout route redirects successfully."""
         with client.session_transaction() as session:
             session['csrf_token'] = 'test_token'
         response = client.post('/logout', data={'csrf_token': 'test_token'})
         assert response.status_code == 302
 
     def test_logout_missing_csrf(self, client):
+        """Test that a missing CSRF token prevents logout."""
         response = client.post('/logout')
         assert response.status_code in (400, 403)
 
 
 class TestUserActions:
+    """Tests for user registration and related validation."""
+
     def test_register_post_first_user_is_super(self, client, monkeypatch):
         """Test that the first user created is automatically a superuser."""
         # Mock get_user_count to simulate an empty database
@@ -155,6 +164,7 @@ class TestUserActions:
                 "merkkiä.") in response.get_data(as_text=True)
 
     def test_register_post_missing_fields(self, client):
+        """Test registration failure with missing required fields."""
         client.get('/register')
         with client.session_transaction() as session:
             csrf_token = session['csrf_token']
@@ -169,6 +179,7 @@ class TestUserActions:
         assert "Nimi on pakollinen" in response.get_data(as_text=True)
 
     def test_register_post_password_mismatch(self, client):
+        """Test registration failure with mismatched passwords."""
         client.get('/register')
         with client.session_transaction() as session:
             csrf_token = session['csrf_token']
@@ -183,6 +194,7 @@ class TestUserActions:
         assert "Salasanat eivät ole samat." in response.get_data(as_text=True)
 
     def test_register_post_short_password(self, client):
+        """Test registration failure with a password that is too short."""
         client.get('/register')
         with client.session_transaction() as session:
             csrf_token = session['csrf_token']
@@ -198,6 +210,7 @@ class TestUserActions:
                 "vähintään 8") in response.get_data(as_text=True)
 
     def test_register_post_invalid_email(self, client):
+        """Test registration failure with an invalid email address."""
         client.get('/register')
         with client.session_transaction() as session:
             csrf_token = session['csrf_token']
@@ -213,6 +226,7 @@ class TestUserActions:
             as_text=True) or 'Virhe' in response.get_data(as_text=True)
 
     def test_login_post_missing_fields(self, client):
+        """Test login failure with missing username and password fields."""
         client.get('/login')
         with client.session_transaction() as session:
             csrf_token = session['csrf_token']
@@ -225,6 +239,7 @@ class TestUserActions:
         assert b'Virheellinen' in response.data
 
     def test_register_post_duplicate_email(self, client):
+        """Test registration failure with a duplicate email address."""
         client.get('/register')
         with client.session_transaction() as session:
             csrf_token = session['csrf_token']
@@ -251,7 +266,16 @@ class TestUserActions:
 
 
 class TestProfileEdit:
+    """Tests for profile editing features."""
+
     def login_as(self, client, user_id=1, username="test@example.com"):
+        """Log in a user by setting session variables.
+
+        Args:
+            client: The Flask test client.
+            user_id: The user ID to set in the session.
+            username: The username to set in the session.
+        """
         with client.session_transaction() as sess:
             sess["user_id"] = user_id
             sess["username"] = username
@@ -281,6 +305,7 @@ class TestProfileEdit:
         assert "Käyttäjää ei löytynyt" in response.get_data(as_text=True)
 
     def test_edit_profile_get(self, client, monkeypatch):
+        """Test that a logged-in user can access the edit profile page."""
         self.login_as(client)
 
         def fake_get_user(user_id):
@@ -292,6 +317,7 @@ class TestProfileEdit:
         assert b"Muokkaa profiilia" in response.data
 
     def test_edit_profile_post_name(self, client, monkeypatch):
+        """Test that a user can successfully update their name."""
         self.login_as(client)
 
         def fake_get_user(user_id):
@@ -313,6 +339,7 @@ class TestProfileEdit:
         assert "Profiili päivitetty" in response.get_data(as_text=True)
 
     def test_edit_profile_post_password(self, client, monkeypatch):
+        """Test that a user can successfully update their password."""
         self.login_as(client)
 
         def fake_get_user(user_id):
@@ -335,6 +362,7 @@ class TestProfileEdit:
         assert "Profiili päivitetty" in response.get_data(as_text=True)
 
     def test_edit_profile_post_password_mismatch(self, client, monkeypatch):
+        """Test profile edit failure with mismatched passwords."""
         self.login_as(client)
 
         def fake_get_user(user_id):
@@ -354,6 +382,7 @@ class TestProfileEdit:
             as_text=True) or "salasanat" in response.get_data(as_text=True)
 
     def test_edit_profile_post_short_password(self, client, monkeypatch):
+        """Test profile edit failure with a password that is too short."""
         self.login_as(client)
 
         def fake_get_user(user_id):
@@ -374,6 +403,7 @@ class TestProfileEdit:
                 or "salasanan on oltava" in response.get_data(as_text=True))
 
     def test_edit_profile_post_invalid_name(self, client, monkeypatch):
+        """Test profile edit failure with an empty name field."""
         self.login_as(client)
 
         def fake_get_user(user_id):
@@ -416,6 +446,7 @@ class TestProfileEdit:
         assert "Kirjaudu sisään" in response.get_data(as_text=True)
 
     def test_delete_profile(self, client, monkeypatch):
+        """Test successful profile deletion for a logged-in user."""
         self.login_as(client)
         monkeypatch.setattr("users.delete_user", lambda user_id: True)
         response = client.post(
@@ -424,3 +455,14 @@ class TestProfileEdit:
         assert response.status_code in (200, 302)
         assert "Profiili poistettu" in response.get_data(
             as_text=True) or "poistettu" in response.get_data(as_text=True)
+
+    def test_delete_profile_failure(self, client, monkeypatch):
+        """Test profile deletion failure."""
+        self.login_as(client)
+        monkeypatch.setattr("users.delete_user", lambda user_id: False)
+        response = client.post(
+            "/profile/delete", data={"csrf_token": "test_token"},
+            follow_redirects=True)
+        assert response.status_code in (200, 302)
+        assert "Profiilia ei voitu poistaa" in response.get_data(
+            as_text=True) or "virhe" in response.get_data(as_text=True)
