@@ -7,6 +7,9 @@ Blueprints:
     admin_bp (Blueprint): Handles admin-related routes.
 """
 
+import secrets
+import sqlite3
+
 from flask import (Blueprint, render_template, request, session, abort, flash,
                    redirect, url_for)
 
@@ -14,8 +17,7 @@ import config
 import sql
 import users
 from utils import check_csrf, sanitize_input, is_valid_email, total_pages
-import secrets
-import sqlite3
+
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -281,51 +283,23 @@ def update_contest(contest_id):
     if not session.get("super_user"):
         abort(403)
 
-    form = request.form
-    title = sanitize_input(form.get("title", ""))
-    class_id_str = form.get("class_id", "")
-    short_description = sanitize_input(form.get("short_description", ""))
-    long_description = sanitize_input(form.get("long_description", ""))
-    collection_end = form.get("collection_end", "")
-    review_end = form.get("review_end", "")
+    contest_data, errors = _get_contest_form_data_and_validate(request.form)
 
-    class_id = int(class_id_str) if class_id_str.isdigit() else None
-
-    errors = []
-    if (not title or not class_id or not collection_end or not review_end
-       or not short_description or not long_description):
-        errors.append("Kaikki pakolliset kentät on täytettävä.")
-
-    if len(short_description) > 255:
-        errors.append("Lyhyt kuvaus saa olla enintään 255 merkkiä.")
-
-    if len(long_description) > 2000:
-        errors.append("Pitkä kuvaus saa olla enintään 2000 merkkiä.")
-
-    if errors:
+    if not contest_data:
         for error in errors:
             flash(error)
         return redirect(url_for("admin.edit_contest", contest_id=contest_id))
 
-    anonymity = 1 if form.get("anonymity") == "on" else 0
-    public_reviews = 1 if form.get("public_reviews") == "on" else 0
-    public_results = 1 if form.get("public_results") == "on" else 0
+    # The private_key is not needed for an update, so remove it.
+    contest_data.pop("private_key", None)
 
-    contest_data = {
-        "title": title,
-        "class_id": class_id,
-        "short_description": short_description,
-        "long_description": long_description,
-        "anonymity": anonymity,
-        "public_reviews": public_reviews,
-        "public_results": public_results,
-        "collection_end": collection_end,
-        "review_end": review_end
-    }
+    try:
+        sql.update_contest(contest_id, contest_data)
+        flash("Kilpailun tiedot päivitetty.")
+    except sqlite3.Error as e:
+        print(f"Virhe kilpailun päivityksessä: {e}")
+        flash("Kilpailun tietoja ei voitu päivittää.")
 
-    sql.update_contest(contest_id, contest_data)
-
-    flash("Kilpailun tiedot päivitetty.")
     return redirect(url_for("admin.admin_contests"))
 
 
