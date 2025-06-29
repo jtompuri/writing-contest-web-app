@@ -154,7 +154,18 @@ def delete_profile():
     if "user_id" not in session:
         return redirect(url_for("auth.login"))
     check_csrf()
-    users.delete_user(session["user_id"])
-    session.clear()
-    flash("Profiili poistettu pysyvästi.")
+
+    user = users.get_user(session["user_id"])
+    if user and user["super_user"]:
+        flash("Pääkäyttäjän tunnusta ei voi poistaa.")
+        return redirect(url_for("auth.edit_profile"))
+
+    success = users.delete_user(session["user_id"])
+    session.clear()  # Log out the user regardless of deletion outcome
+
+    if success:
+        flash("Profiili poistettu pysyvästi.")
+    else:
+        flash("Profiilia ei voitu poistaa. Sinut on kirjattu ulos.")
+
     return redirect("/")

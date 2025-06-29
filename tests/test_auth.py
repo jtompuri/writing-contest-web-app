@@ -463,6 +463,5 @@ class TestProfileEdit:
         response = client.post(
             "/profile/delete", data={"csrf_token": "test_token"},
             follow_redirects=True)
-        assert response.status_code in (200, 302)
-        assert "Profiilia ei voitu poistaa" in response.get_data(
-            as_text=True) or "virhe" in response.get_data(as_text=True)
+        assert response.status_code == 200
+        assert "Profiilia ei voitu poistaa" in response.get_data(as_text=True)
