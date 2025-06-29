@@ -609,13 +609,13 @@ class TestAdminContestManagement:
     def test_create_contest_db_error(self, client, monkeypatch):
         """Test generic exception handling during contest creation."""
         monkeypatch.setattr("sql.create_contest", lambda data:
-                            (_ for _ in ()).throw(Exception(
+                            (_ for _ in ()).throw(sqlite3.Error(
                                 "DB Error"
                                 )))
         response = client.post('/admin/contests/create', data={
             'csrf_token': 'test_token', 'title': 'T', 'class_id': 1,
-            'collection_end': 'd', 'review_end': 'd',
-            'short_description': 's', 'long_description': 'l'
+            'short_description': 's', 'long_description': 'l',
+            'collection_end': '2025-12-31', 'review_end': '2026-01-31'
         }, follow_redirects=True)
         assert b'Kilpailua ei voitu luoda.' in response.data
 
@@ -848,7 +848,7 @@ class TestAdminCoverage:
     def test_new_entry_post_generic_db_error(self, client, monkeypatch):
         """Test the generic exception handler in the new entry POST route."""
         monkeypatch.setattr("sql.create_entry", lambda *a, **
-                            kw: (_ for _ in ()).throw(Exception(
+                            kw: (_ for _ in ()).throw(sqlite3.Error(
                                 "Generic DB Error"
                                 )))
         monkeypatch.setattr("sql.get_all_contests", lambda: [
@@ -896,8 +896,8 @@ class TestAdminCoverage:
 
     def test_delete_contest_db_error(self, client, monkeypatch):
         """Test generic exception handling during contest deletion."""
-        monkeypatch.setattr("sql.delete_contest", lambda *a,
-                            **kw: (_ for _ in ()).throw(Exception("DB Error")))
+        monkeypatch.setattr("sql.delete_contest", lambda *a, **kw:
+                            (_ for _ in ()).throw(sqlite3.Error("DB Error")))
         response = client.post('/admin/contests/delete/1',
                                data={'csrf_token': 'test_token'},
                                follow_redirects=True)
@@ -912,7 +912,7 @@ class TestAdminCoverage:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
         monkeypatch.setattr("sql.create_contest", lambda data:
-                            (_ for _ in ()).throw(Exception("fail")))
+                            (_ for _ in ()).throw(sqlite3.Error("fail")))
         response = client.post(
             '/admin/contests/create',
             data={
@@ -934,7 +934,7 @@ class TestAdminCoverage:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
         monkeypatch.setattr("sql.delete_contest", lambda *a,
-                            **kw: (_ for _ in ()).throw(Exception("fail")))
+                            **kw: (_ for _ in ()).throw(sqlite3.Error("fail")))
         response = client.post(
             '/admin/contests/delete/1',
             data={'csrf_token': 'test_token'},
@@ -1140,7 +1140,7 @@ class TestAdminCoverage:
                             'username': 'test@example.com'})
 
         def raise_exception(*a, **kw):
-            raise Exception("fail")
+            raise sqlite3.Error("fail")
         monkeypatch.setattr("users.update_user", raise_exception)
         response = client.post(
             '/admin/users/update/1',
@@ -1197,7 +1197,7 @@ class TestAdminCoverage:
                             'id': 3, 'name': 'User',
                             'username': 'user@example.com', 'super_user': 0})
         monkeypatch.setattr("users.delete_user", lambda uid: (
-            _ for _ in ()).throw(Exception("fail")))
+            _ for _ in ()).throw(sqlite3.Error("fail")))
         response = client.post(
             '/admin/users/delete/3', data={'csrf_token': 'test_token'},
             follow_redirects=True)

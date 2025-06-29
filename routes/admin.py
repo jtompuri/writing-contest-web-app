@@ -228,7 +228,7 @@ def create_contest():
         sql.create_contest(contest_data)
         flash("Kilpailu on luotu.")
         return redirect(url_for("admin.admin_contests"))
-    except Exception as e:
+    except sqlite3.Error as e:
         print("Virhe kilpailun luomisessa:", e)
         flash("Kilpailua ei voitu luoda.")
         return redirect(url_for("admin.new_contest"))
@@ -247,7 +247,7 @@ def delete_contest(contest_id):
     try:
         sql.delete_contest(contest_id)
         flash("Kilpailu on poistettu.")
-    except Exception as e:
+    except sqlite3.Error as e:
         print(f"Virhe kilpailun poistossa: {e}")
         flash("Kilpailua ei voitu poistaa.")
     return redirect(url_for("admin.admin_contests"))
@@ -436,7 +436,7 @@ def update_user(user_id):
     except sqlite3.IntegrityError:
         flash("Käyttäjätunnus on jo käytössä.")
         return render_template("admin/edit_user.html", user=user)
-    except Exception as e:
+    except sqlite3.Error as e:
         print(f"Error updating user: {e}")
         flash("Käyttäjän tietoja ei voitu päivittää.")
         return render_template("admin/edit_user.html", user=user)
@@ -474,7 +474,7 @@ def delete_user(user_id):
     try:
         users.delete_user(user_id)
         flash("Käyttäjä on poistettu.")
-    except Exception as e:
+    except sqlite3.Error as e:
         print(f"Error deleting user: {e}")
         flash("Käyttäjää ei voitu poistaa.")
 
@@ -511,12 +511,18 @@ def new_entry():
             sql.create_entry(contest_id, user_id, entry_text)
             flash("Teksti on luotu.")
             return redirect(url_for("admin.admin_entries"))
-        except Exception as e:
-            if ("UNIQUE constraint failed" in str(e)
-               or "duplicate key" in str(e)):
-                flash("Tällä käyttäjällä on jo teksti tässä kilpailussa.")
-            else:
-                flash("Tekstiä ei voitu luoda.")
+        except sqlite3.IntegrityError:
+            flash("Tällä käyttäjällä on jo teksti tässä kilpailussa.")
+            return render_template(
+                "admin/new_entry.html",
+                contests=contests,
+                users=users_list,
+                entry=entry_text,
+                selected_contest_id=contest_id,
+                selected_user_id=user_id
+            )
+        except sqlite3.Error:
+            flash("Tekstiä ei voitu luoda.")
             return render_template(
                 "admin/new_entry.html",
                 contests=contests,
@@ -549,7 +555,7 @@ def create_entry():
         sql.create_entry(contest_id, user_id, entry_text)
         flash("Teksti on luotu.")
         return redirect(url_for("admin.admin_entries"))
-    except Exception as e:
+    except sqlite3.Error as e:
         print("Virhe tekstin luomisessa:", e)
         flash("Tekstiä ei voitu luoda.")
         return redirect(url_for("admin.new_entry"))
@@ -596,7 +602,7 @@ def update_entry(entry_id):
         sql.update_entry(entry_id, contest_id, user_id, entry_text)
         flash("Tekstin tiedot päivitetty.")
         return redirect(url_for("admin.admin_entries"))
-    except Exception as e:
+    except sqlite3.Error as e:
         print("Virhe tekstin päivittämisessä:", e)
         flash("Tekstiä ei voitu päivittää.")
         return redirect(url_for("admin.edit_entry", entry_id=entry_id))
@@ -615,7 +621,7 @@ def delete_entry(entry_id):
     try:
         sql.delete_entry(entry_id)
         flash("Teksti on poistettu.")
-    except Exception as e:
+    except sqlite3.Error as e:
         print("Virhe tekstin poistossa:", e)
         flash("Tekstiä ei voitu poistaa.")
     return redirect(url_for("admin.admin_entries"))
