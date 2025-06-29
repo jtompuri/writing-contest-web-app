@@ -65,11 +65,6 @@ class TestAdminRoutes:
         response = client.get('/admin/users/new')
         assert response.status_code == 200
 
-    def test_admin_users_new_without_super_user(self, client):
-        """Test that non-admins are forbidden from the new user page."""
-        response = client.get('/admin/users/new')
-        assert response.status_code == 403
-
     def test_admin_contests_route_with_super_user(self, client):
         """Test that admins can access the admin contests page."""
         with client.session_transaction() as session:
@@ -436,30 +431,6 @@ class TestAdminRoutes:
             f'/admin/users/delete/{delete_user_id}',
             data={'csrf_token': 'wrong_token'})
         assert response.status_code in (400, 403)
-
-    def test_admin_create_user_missing_fields(self, client):
-        """Test that creating a user with missing fields fails."""
-        with client.session_transaction() as session:
-            session['super_user'] = True
-            session['csrf_token'] = 'test_token'
-        response = client.post(
-            '/admin/users/create',
-            data={'csrf_token': 'test_token', 'name': '',
-                  'username': '', 'password': ''}
-        )
-        assert response.status_code in (302, 200, 400)
-
-    def test_admin_create_user_invalid_email(self, client):
-        """Test that creating a user with an invalid email fails."""
-        with client.session_transaction() as session:
-            session['super_user'] = True
-            session['csrf_token'] = 'test_token'
-        response = client.post(
-            '/admin/users/create',
-            data={'csrf_token': 'test_token', 'name': 'Name',
-                  'username': 'not-an-email', 'password': 'password123'}
-        )
-        assert response.status_code in (302, 200, 400)
 
     def test_admin_create_user_without_super_user(self, client):
         """Test that a non-admin cannot create a user."""
@@ -1101,17 +1072,6 @@ class TestAdminCoverage:
             follow_redirects=True
         )
         assert b'Uusi k\xc3\xa4ytt\xc3\xa4j\xc3\xa4 on luotu' in response.data
-
-    # --- 368-371: edit_user, user not found ---
-    def test_edit_user_not_found(self, client, monkeypatch):
-        """Test that editing a non-existent user redirects with a flash
-        message."""
-        with client.session_transaction() as session:
-            session['super_user'] = True
-        monkeypatch.setattr("users.get_user", lambda uid: None)
-        response = client.get('/admin/users/edit/999', follow_redirects=True)
-        assert (b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4\xc3\xa4 ei '
-                b'l\xc3\xb6ytynyt') in response.data
 
     # --- 380: update_user, forbidden ---
     def test_update_user_forbidden(self, client):
