@@ -40,8 +40,8 @@ def index():
                 break
         if latest_result:
             winners = sql.get_contest_results(latest_result["id"])[:3]
-            for i in range(len(winners)):
-                winner = dict(winners[i])  # Convert Row to dict
+            for i, winner_row in enumerate(winners):
+                winner = dict(winner_row)  # Convert Row to dict
                 winner["id"] = winner.get("entry_id", winner.get("id"))
                 # Only set contest-level fields if not present in the entry
                 for field in [
