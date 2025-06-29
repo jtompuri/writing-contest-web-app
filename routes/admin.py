@@ -22,6 +22,7 @@ admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 @admin_bp.route("/")
 def admin():
+    """Renders the main admin dashboard page."""
     if not session.get("super_user"):
         abort(403)
     contest_count = sql.get_contest_count()
@@ -43,6 +44,7 @@ def admin():
 
 @admin_bp.route("/contests")
 def admin_contests():
+    """Renders the contest management page with pagination and search."""
     if not session.get("super_user"):
         abort(403)
     page = request.args.get("page", 1, type=int)
@@ -71,6 +73,7 @@ def admin_contests():
 
 @admin_bp.route("/users")
 def admin_users():
+    """Renders the user management page with pagination and filters."""
     if not session.get("super_user"):
         abort(403)
     page = request.args.get("page", 1, type=int)
@@ -113,6 +116,7 @@ def admin_users():
 
 @admin_bp.route("/entries")
 def admin_entries():
+    """Renders the entry management page with pagination and filters."""
     if not session.get("super_user"):
         abort(403)
     page = request.args.get("page", 1, type=int)
@@ -150,6 +154,7 @@ def admin_entries():
 
 @admin_bp.route("/contests/new")
 def new_contest():
+    """Renders the form for creating a new contest."""
     if not session.get("super_user"):
         abort(403)
     classes = sql.get_all_classes()
@@ -158,6 +163,7 @@ def new_contest():
 
 @admin_bp.route("/contests/create", methods=["POST"])
 def create_contest():
+    """Handles the POST request to create a new contest."""
     check_csrf()
     if not session.get("super_user"):
         abort(403)
@@ -218,6 +224,11 @@ def create_contest():
 
 @admin_bp.route("/contests/delete/<int:contest_id>", methods=["POST"])
 def delete_contest(contest_id):
+    """Handles the POST request to delete a contest.
+
+    Args:
+        contest_id (int): The ID of the contest to delete.
+    """
     check_csrf()
     if not session.get("super_user"):
         abort(403)
@@ -232,6 +243,11 @@ def delete_contest(contest_id):
 
 @admin_bp.route("/contests/edit/<int:contest_id>")
 def edit_contest(contest_id):
+    """Renders the form for editing an existing contest.
+
+    Args:
+        contest_id (int): The ID of the contest to edit.
+    """
     if not session.get("super_user"):
         abort(403)
     contest = sql.get_contest_by_id(contest_id)
@@ -244,6 +260,11 @@ def edit_contest(contest_id):
 
 @admin_bp.route("/contests/update/<int:contest_id>", methods=["POST"])
 def update_contest(contest_id):
+    """Handles the POST request to update a contest's details.
+
+    Args:
+        contest_id (int): The ID of the contest to update.
+    """
     check_csrf()
     if not session.get("super_user"):
         abort(403)
@@ -298,6 +319,7 @@ def update_contest(contest_id):
 
 @admin_bp.route("/users/new")
 def new_user():
+    """Renders the form for creating a new user."""
     if not session.get("super_user"):
         abort(403)
     return render_template("admin/new_user.html")
@@ -305,6 +327,7 @@ def new_user():
 
 @admin_bp.route("/users/create", methods=["POST"])
 def create_user():
+    """Handles the POST request to create a new user."""
     check_csrf()
     if not session.get("super_user"):
         abort(403)
@@ -341,6 +364,11 @@ def create_user():
 
 @admin_bp.route("/users/edit/<int:user_id>")
 def edit_user(user_id):
+    """Renders the form for editing an existing user.
+
+    Args:
+        user_id (int): The ID of the user to edit.
+    """
     if not session.get("super_user"):
         abort(403)
     user = users.get_user(user_id)
@@ -352,6 +380,11 @@ def edit_user(user_id):
 
 @admin_bp.route("/users/update/<int:user_id>", methods=["POST"])
 def update_user(user_id):
+    """Handles the POST request to update a user's details.
+
+    Args:
+        user_id (int): The ID of the user to update.
+    """
     check_csrf()  # Add CSRF check for security
     if not session.get("super_user"):
         abort(403)
@@ -401,6 +434,11 @@ def update_user(user_id):
 
 @admin_bp.route("/users/delete/<int:user_id>", methods=["POST"])
 def delete_user(user_id):
+    """Handles the POST request to delete a user.
+
+    Args:
+        user_id (int): The ID of the user to delete.
+    """
     check_csrf()
     if not session.get("super_user"):
         abort(403)
@@ -433,6 +471,7 @@ def delete_user(user_id):
 
 @admin_bp.route("/entries/new", methods=["GET", "POST"])
 def new_entry():
+    """Renders the form for creating a new entry and handles its submission."""
     if not session.get("super_user"):
         abort(403)
 
@@ -481,6 +520,7 @@ def new_entry():
 
 @admin_bp.route("/entries/create", methods=["POST"])
 def create_entry():
+    """Handles the POST request to create a new entry."""
     check_csrf()
     if not session.get("super_user"):
         abort(403)
@@ -505,6 +545,11 @@ def create_entry():
 
 @admin_bp.route("/entries/edit/<int:entry_id>")
 def edit_entry(entry_id):
+    """Renders the form for editing an existing entry.
+
+    Args:
+        entry_id (int): The ID of the entry to edit.
+    """
     if not session.get("super_user"):
         abort(403)
     entry = sql.get_entry_by_id(entry_id)
@@ -518,6 +563,11 @@ def edit_entry(entry_id):
 
 @admin_bp.route("/entries/update/<int:entry_id>", methods=["POST"])
 def update_entry(entry_id):
+    """Handles the POST request to update an entry.
+
+    Args:
+        entry_id (int): The ID of the entry to update.
+    """
     check_csrf()
     if not session.get("super_user"):
         abort(403)
@@ -542,6 +592,11 @@ def update_entry(entry_id):
 
 @admin_bp.route("/entries/delete/<int:entry_id>", methods=["POST"])
 def delete_entry(entry_id):
+    """Handles the POST request to delete an entry.
+
+    Args:
+        entry_id (int): The ID of the entry to delete.
+    """
     check_csrf()
     if not session.get("super_user"):
         abort(403)

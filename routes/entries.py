@@ -22,6 +22,14 @@ entries_bp = Blueprint('entries', __name__)
 @entries_bp.route("/contests/contest/<int:contest_id>/add_entry",
                   methods=["GET", "POST"])
 def add_entry(contest_id):
+    """Renders the form for adding an entry and handles its submission.
+
+    On GET, displays the submission form. On POST, handles previewing or
+    submitting a new contest entry.
+
+    Args:
+        contest_id (int): The ID of the contest to add an entry to.
+    """
     if not session.get("user_id"):
         flash("Kirjaudu sisään osallistuaksesi kilpailuun.")
         return redirect(url_for("auth.login", next_page=request.path))
@@ -82,6 +90,7 @@ def add_entry(contest_id):
 
 @entries_bp.route("/my_texts")
 def my_texts():
+    """Displays a paginated list of the current user's entries and results."""
     if not session.get("user_id"):
         flash("Kirjaudu sisään nähdäksesi omat tekstisi.")
         return redirect(url_for("auth.login", next_page=request.path))
@@ -116,6 +125,14 @@ def my_texts():
 
 @entries_bp.route("/entry/<int:entry_id>")
 def entry(entry_id):
+    """Displays a single contest entry.
+
+    Handles access control for private results or reviews via a 'key'
+    URL parameter.
+
+    Args:
+        entry_id (int): The ID of the entry to display.
+    """
     entry = sql.get_entry_by_id(entry_id)
     if not entry:
         abort(404)
@@ -146,6 +163,15 @@ def entry(entry_id):
 
 @entries_bp.route("/entry/<int:entry_id>/edit", methods=["GET", "POST"])
 def edit_entry(entry_id):
+    """Renders the form for editing an entry and handles its update.
+
+    On GET, displays the edit form. On POST, handles previewing or
+    submitting the updated entry. Ensures the user owns the entry and
+    the contest collection period is still open.
+
+    Args:
+        entry_id (int): The ID of the entry to edit.
+    """
     if not session.get("user_id"):
         abort(403)
     entry = sql.get_entry_by_id(entry_id)
@@ -205,6 +231,14 @@ def edit_entry(entry_id):
 
 @entries_bp.route("/entry/<int:entry_id>/delete", methods=["POST"])
 def delete_entry(entry_id):
+    """Handles the POST request to delete an entry.
+
+    Ensures the user owns the entry and the contest collection period
+    is still open.
+
+    Args:
+        entry_id (int): The ID of the entry to delete.
+    """
     if not session.get("user_id"):
         abort(403)
     entry = sql.get_entry_by_id(entry_id)
@@ -222,6 +256,14 @@ def delete_entry(entry_id):
 
 @entries_bp.route("/review/<int:contest_id>", methods=["GET", "POST"])
 def review(contest_id):
+    """Renders the review page and handles submission of reviews.
+
+    On GET, displays all entries for a contest for reviewing. On POST,
+    validates and saves the user's reviews for all entries.
+
+    Args:
+        contest_id (int): The ID of the contest to review.
+    """
     if not session.get("user_id"):
         flash("Kirjaudu sisään arvioidaksesi kilpailutöitä.")
         return redirect(url_for("auth.login", next_page=request.path))

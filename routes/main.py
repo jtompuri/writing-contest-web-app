@@ -20,6 +20,11 @@ main_bp = Blueprint("main", __name__)
 
 @main_bp.route("/")
 def index():
+    """Renders the main index page.
+
+    Fetches lists of contests for entry, review, and results, as well as
+    the winners of the most recent contest with results.
+    """
     contests_for_entry = sql.get_contests_for_entry(3)
     contests_for_review = sql.get_contests_for_review(3)
     contests_for_results = sql.get_contests_for_results(3)
@@ -63,6 +68,14 @@ def index():
 
 @main_bp.route("/contests/contest/<int:contest_id>")
 def contest(contest_id):
+    """Renders the detailed page for a single contest.
+
+    Determines the contest's status (collection open, review open) and
+    checks if the current user has already submitted an entry.
+
+    Args:
+        contest_id (int): The ID of the contest to display.
+    """
     contest = sql.get_contest_by_id(contest_id)
     if not contest:
         abort(404)
@@ -96,6 +109,7 @@ def contest(contest_id):
 
 @main_bp.route("/contests")
 def contests():
+    """Renders a paginated list of contests open for entries."""
     page = request.args.get("page", 1, type=int)
     per_page = config.DEFAULT_PER_PAGE
     offset = (page - 1) * per_page
@@ -116,6 +130,10 @@ def contests():
 
 @main_bp.route("/results")
 def results():
+    """Renders a paginated list of contests with available results.
+
+    Handles access to private results via a 'key' URL parameter.
+    """
     page = request.args.get("page", 1, type=int)
     per_page = config.DEFAULT_PER_PAGE
     offset = (page - 1) * per_page
@@ -144,6 +162,10 @@ def results():
 
 @main_bp.route("/reviews")
 def reviews():
+    """Renders a paginated list of contests open for review.
+
+    Handles access to private reviews via a 'key' URL parameter.
+    """
     page = request.args.get("page", 1, type=int)
     per_page = config.DEFAULT_PER_PAGE
     offset = (page - 1) * per_page
@@ -170,11 +192,19 @@ def reviews():
 
 @main_bp.route("/terms_of_use")
 def terms_of_use():
+    """Renders the terms of use page."""
     return render_template("terms_of_use.html")
 
 
 @main_bp.route("/result/<int:contest_id>")
 def result(contest_id):
+    """Renders the detailed results page for a single contest.
+
+    Handles access control for private results via a 'key' URL parameter.
+
+    Args:
+        contest_id (int): The ID of the contest whose results are to be shown.
+    """
     contest = sql.get_contest_by_id(contest_id)
     if not contest:
         abort(404)

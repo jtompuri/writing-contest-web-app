@@ -18,11 +18,13 @@ auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/register")
 def register():
+    """Renders the user registration page."""
     return render_template("register.html")
 
 
 @auth_bp.route("/create", methods=["POST"])
 def create():
+    """Handles the user registration form submission."""
     check_csrf()
     name = sanitize_input(request.form["name"])
     username = sanitize_input(request.form["username"])
@@ -71,6 +73,7 @@ def create():
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 def login():
+    """Handles user login for both GET and POST requests."""
     if request.method == "GET":
         username = session.pop("form_data", {}).get("username", "")
         next_page = request.args.get("next_page", "/")
@@ -105,6 +108,7 @@ def login():
 
 @auth_bp.route("/logout", methods=["POST"])
 def logout():
+    """Logs the current user out by clearing the session."""
     check_csrf()
     session.clear()
     return redirect("/")
@@ -112,6 +116,7 @@ def logout():
 
 @auth_bp.route("/profile/edit", methods=["GET", "POST"])
 def edit_profile():
+    """Renders the profile edit page and handles profile updates."""
     if "user_id" not in session:
         return redirect(url_for("auth.login"))
     user = users.get_user(session["user_id"])
@@ -145,6 +150,7 @@ def edit_profile():
 
 @auth_bp.route("/profile/delete", methods=["POST"])
 def delete_profile():
+    """Handles the permanent deletion of the current user's profile."""
     if "user_id" not in session:
         return redirect(url_for("auth.login"))
     check_csrf()
