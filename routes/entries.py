@@ -46,21 +46,21 @@ def add_entry(contest_id):
     review_open = collection_end < today <= review_end
 
     if request.method == "GET":
-        entry = request.args.get("entry", "")
+        entry_text = request.args.get("entry", "")
         return render_template(
             "add_entry.html",
             contest=contest,
             collection_open=collection_open,
             review_open=review_open,
-            entry=entry
+            entry=entry_text
         )
 
     if request.method == "POST":
         check_csrf()
         action = request.form.get("action")
-        entry = sanitize_input(request.form.get("entry", ""))
+        entry_text = sanitize_input(request.form.get("entry", ""))
 
-        if not entry:
+        if not entry_text:
             flash("Kilpailutyö ei saa olla tyhjä.")
             return redirect(url_for("entries.add_entry",
                                     contest_id=contest_id))
@@ -69,7 +69,7 @@ def add_entry(contest_id):
             return render_template(
                 "preview_entry.html",
                 contest=contest,
-                entry=entry,
+                entry=entry_text,
                 collection_open=collection_open,
                 review_open=review_open
             )
@@ -81,7 +81,7 @@ def add_entry(contest_id):
                 flash("Olet jo osallistunut tähän kilpailuun.")
                 return redirect(url_for("main.contest", contest_id=contest_id))
 
-            sql.create_entry(contest_id, user_id, entry)
+            sql.create_entry(contest_id, user_id, entry_text)
             flash("Kilpailutyö on tallennettu.")
             return redirect(url_for("main.contest", contest_id=contest_id))
 
@@ -101,11 +101,11 @@ def my_texts():
 
     # Normalize: ensure each entry has .id for contest id
     normalized_entries = []
-    for entry in entries:
-        entry = dict(entry)
-        if "contest_id" in entry:
-            entry["id"] = entry["contest_id"]
-        normalized_entries.append(entry)
+    for entry_data in entries:
+        entry_data = dict(entry_data)
+        if "contest_id" in entry_data:
+            entry_data["id"] = entry_data["contest_id"]
+        normalized_entries.append(entry_data)
 
     per_page = config.DEFAULT_PER_PAGE
     page = int(request.args.get("page", 1))
@@ -133,14 +133,14 @@ def entry(entry_id):
     Args:
         entry_id (int): The ID of the entry to display.
     """
-    entry = sql.get_entry_by_id(entry_id)
-    if not entry:
+    entry_data = sql.get_entry_by_id(entry_id)
+    if not entry_data:
         abort(404)
     idx = request.args.get("idx")
     source = request.args.get("source")
     private_key_param = request.args.get("key", "")
 
-    contest = sql.get_contest_by_id(entry["contest_id"])
+    contest = sql.get_contest_by_id(entry_data["contest_id"])
     if not contest:
         abort(404)
 
@@ -156,7 +156,7 @@ def entry(entry_id):
             flash("Tämän kilpailun arviointi ei ole julkista.")
             return redirect(url_for("main.reviews"))
 
-    return render_template("entry.html", entry=entry,
+    return render_template("entry.html", entry=entry_data,
                            now=date.today().isoformat(), idx=idx,
                            source=source)
 
@@ -174,10 +174,10 @@ def edit_entry(entry_id):
     """
     if not session.get("user_id"):
         abort(403)
-    entry = sql.get_entry_by_id(entry_id)
-    if not entry or entry["user_id"] != session["user_id"]:
+    entry_data = sql.get_entry_by_id(entry_id)
+    if not entry_data or entry_data["user_id"] != session["user_id"]:
         abort(403)
-    contest = sql.get_contest_by_id(entry["contest_id"])
+    contest = sql.get_contest_by_id(entry_data["contest_id"])
     if not contest:
         flash("Kilpailua ei löytynyt.")
         return redirect(url_for("entries.my_texts"))
@@ -190,17 +190,17 @@ def edit_entry(entry_id):
     if request.method == "GET":
         entry_text = request.args.get("entry")
         if entry_text is not None:
-            entry = dict(entry)
-            entry["entry"] = entry_text
-        return render_template("edit_entry.html", entry=entry, contest=contest,
-                               ource=source)
+            entry_data = dict(entry_data)
+            entry_data["entry"] = entry_text
+        return render_template("edit_entry.html", entry=entry_data,
+                               contest=contest, source=source)
     if request.method == "POST":
         check_csrf()
         action = request.form.get("action")
         new_text = sanitize_input(request.form.get("entry", ""))
         if not new_text:
             flash("Teksti ei saa olla tyhjä.")
-            return render_template("edit_entry.html", entry=entry,
+            return render_template("edit_entry.html", entry=entry_data,
                                    contest=contest, source=source)
         if action == "preview":
             return render_template(
@@ -212,17 +212,17 @@ def edit_entry(entry_id):
                 source=source
             )
         if action == "back":
-            entry = dict(entry)
-            entry["entry"] = new_text
-            return render_template("edit_entry.html", entry=entry,
+            entry_data = dict(entry_data)
+            entry_data["entry"] = new_text
+            return render_template("edit_entry.html", entry=entry_data,
                                    contest=contest, source=source)
         if action == "submit":
-            sql.update_entry(entry_id, entry["contest_id"], session["user_id"],
-                             new_text)
+            sql.update_entry(entry_id, entry_data["contest_id"],
+                             session["user_id"], new_text)
             flash("Kilpailutyö on päivitetty.")
             if source == "contest":
                 return redirect(url_for("main.contest",
-                                        contest_id=entry["contest_id"]))
+                                        contest_id=entry_data["contest_id"]))
             return redirect(url_for("entries.my_texts"))
         # Fallback for unknown actions
         return redirect(url_for("entries.my_texts"))
@@ -241,10 +241,10 @@ def delete_entry(entry_id):
     """
     if not session.get("user_id"):
         abort(403)
-    entry = sql.get_entry_by_id(entry_id)
-    if not entry or entry["user_id"] != session["user_id"]:
+    entry_data = sql.get_entry_by_id(entry_id)
+    if not entry_data or entry_data["user_id"] != session["user_id"]:
         abort(403)
-    contest = sql.get_contest_by_id(entry["contest_id"])
+    contest = sql.get_contest_by_id(entry_data["contest_id"])
     today = date.today().isoformat()
     if not contest or contest["collection_end"] <= today:
         flash("Et voi enää poistaa tätä tekstiä.")
@@ -295,23 +295,23 @@ def review(contest_id):
         user_id = session["user_id"]
         errors = []
         rated_entry_ids = set()
-        for entry in entries:
-            key = f"points_{entry['id']}"
+        for entry_item in entries:
+            key = f"points_{entry_item['id']}"
             value = request.form.get(key)
             if value is None or value == "":
                 errors.append("Kaikki tekstit on arvioitava. Puuttuu: "
-                              f"{entry['author_name']}")
+                              f"{entry_item['author_name']}")
             else:
                 try:
                     points = int(value)
                     if points < 0 or points > 5:
                         errors.append("Arvosanan tulee olla välillä 0–5. "
-                                      f"({entry['author_name']})")
+                                      f"({entry_item['author_name']})")
                     else:
-                        rated_entry_ids.add(entry["id"])
+                        rated_entry_ids.add(entry_item["id"])
                 except ValueError:
                     errors.append("Virheellinen arvosana: "
-                                  f"{entry['author_name']}")
+                                  f"{entry_item['author_name']}")
 
         if errors or len(rated_entry_ids) != len(entries):
             flash("Kaikki tekstit on arvioitava ja arvosanojen tulee olla "
@@ -323,9 +323,9 @@ def review(contest_id):
             return render_template("review.html", contest=contest,
                                    entries=entries, user_reviews=user_reviews)
 
-        for entry in entries:
-            points = int(request.form[f"points_{entry['id']}"])
-            sql.save_review(entry["id"], user_id, points)
+        for entry_item in entries:
+            points = int(request.form[f"points_{entry_item['id']}"])
+            sql.save_review(entry_item["id"], user_id, points)
         flash("Arviot tallennettu.")
         return redirect(url_for("main.reviews"))
 
