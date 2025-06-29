@@ -279,6 +279,48 @@ def delete_entry(entry_id):
     return redirect(url_for("entries.my_texts"))
 
 
+def _handle_review_post(contest, entries):
+    """Handles the POST logic for submitting reviews."""
+    check_csrf()
+    user_id = session["user_id"]
+    errors = []
+    rated_entry_ids = set()
+
+    for entry_item in entries:
+        key = f"points_{entry_item['id']}"
+        value = request.form.get(key)
+        if value is None or value == "":
+            errors.append("Kaikki tekstit on arvioitava. Puuttuu: "
+                          f"{entry_item['author_name']}")
+        else:
+            try:
+                points = int(value)
+                if not 0 <= points <= 5:
+                    errors.append("Arvosanan tulee olla välillä 0–5. "
+                                  f"({entry_item['author_name']})")
+                else:
+                    rated_entry_ids.add(entry_item["id"])
+            except ValueError:
+                errors.append("Virheellinen arvosana: "
+                              f"{entry_item['author_name']}")
+
+    if errors or len(rated_entry_ids) != len(entries):
+        flash("Kaikki tekstit on arvioitava ja arvosanojen tulee olla "
+              "välillä 0-5.")
+        for error in errors:
+            flash(error)
+        user_reviews = sql.get_user_reviews_for_contest(contest["id"], user_id)
+        return render_template("review.html", contest=contest,
+                               entries=entries, user_reviews=user_reviews)
+
+    for entry_item in entries:
+        points = int(request.form[f"points_{entry_item['id']}"])
+        sql.save_review(entry_item["id"], user_id, points)
+
+    flash("Arviot tallennettu.")
+    return redirect(url_for("main.reviews"))
+
+
 @entries_bp.route("/review/<int:contest_id>", methods=["GET", "POST"])
 def review(contest_id):
     """Renders the review page and handles submission of reviews.
@@ -316,56 +358,14 @@ def review(contest_id):
     entries = sql.get_entries_for_review(contest_id)
 
     if request.method == "POST":
-        check_csrf()
-        user_id = session["user_id"]
-        errors = []
-        rated_entry_ids = set()
-        for entry_item in entries:
-            key = f"points_{entry_item['id']}"
-            value = request.form.get(key)
-            if value is None or value == "":
-                errors.append("Kaikki tekstit on arvioitava. Puuttuu: "
-                              f"{entry_item['author_name']}")
-            else:
-                try:
-                    points = int(value)
-                    if points < 0 or points > 5:
-                        errors.append("Arvosanan tulee olla välillä 0–5. "
-                                      f"({entry_item['author_name']})")
-                    else:
-                        rated_entry_ids.add(entry_item["id"])
-                except ValueError:
-                    errors.append("Virheellinen arvosana: "
-                                  f"{entry_item['author_name']}")
+        return _handle_review_post(contest, entries)
 
-        if errors or len(rated_entry_ids) != len(entries):
-            flash("Kaikki tekstit on arvioitava ja arvosanojen tulee olla "
-                  "välillä 0-5.")
-            for error in errors:
-                flash(error)
-            user_reviews = sql.get_user_reviews_for_contest(contest_id,
-                                                            session["user_id"])
-            return render_template("review.html", contest=contest,
-                                   entries=entries, user_reviews=user_reviews)
-
-        for entry_item in entries:
-            points = int(request.form[f"points_{entry_item['id']}"])
-            sql.save_review(entry_item["id"], user_id, points)
-        flash("Arviot tallennettu.")
-        return redirect(url_for("main.reviews"))
-
-    if request.method == "GET":
-        user_reviews = sql.get_user_reviews_for_contest(contest_id,
-                                                        session["user_id"])
-        return render_template(
-            "review.html",
-            contest=contest,
-            entries=entries,
-            user_reviews=user_reviews
-        )
-
+    # This handles the GET request
+    user_reviews = sql.get_user_reviews_for_contest(contest_id,
+                                                    session["user_id"])
     return render_template(
         "review.html",
         contest=contest,
-        entries=entries
+        entries=entries,
+        user_reviews=user_reviews
     )
