@@ -17,28 +17,36 @@ import sqlite3
 
 
 class TestAdminRoutes:
+    """Tests for admin dashboard and access control."""
+
     def test_new_entry_forbidden(self, client):
+        """Test that non-admins cannot access the new entry page."""
         response = client.get('/admin/entries/new')
         assert response.status_code == 403
 
     def test_delete_user_forbidden(self, client):
+        """Test that non-admins cannot delete users."""
         response = client.post('/admin/users/delete/1',
                                data={'csrf_token': 'test_token'})
         assert response.status_code == 403
 
     def test_edit_user_forbidden(self, client):
+        """Test that non-admins cannot access the edit user page."""
         response = client.get('/admin/users/edit/1', follow_redirects=True)
         assert response.status_code == 403
 
     def test_new_user_forbidden(self, client):
+        """Test that non-admins cannot access the new user page."""
         response = client.get('/admin/users/new')
         assert response.status_code == 403
 
     def test_admin_route_without_super_user(self, client):
+        """Test that non-admins are forbidden from the main admin page."""
         response = client.get('/admin/')
         assert response.status_code == 403
 
     def test_admin_route_with_super_user(self, client):
+        """Test that admins can access the main admin page."""
         with client.session_transaction() as session:
             session['super_user'] = True
         response = client.get('/admin/')
@@ -46,44 +54,53 @@ class TestAdminRoutes:
         assert 'Ylläpito'.encode('utf-8') in response.data
 
     def test_admin_users_route_without_super_user(self, client):
+        """Test that non-admins are forbidden from the admin users page."""
         response = client.get('/admin/users')
         assert response.status_code == 403
 
     def test_admin_users_new_with_super_user(self, client):
+        """Test that admins can access the new user page."""
         with client.session_transaction() as session:
             session['super_user'] = True
         response = client.get('/admin/users/new')
         assert response.status_code == 200
 
     def test_admin_users_new_without_super_user(self, client):
+        """Test that non-admins are forbidden from the new user page."""
         response = client.get('/admin/users/new')
         assert response.status_code == 403
 
     def test_admin_contests_route_with_super_user(self, client):
+        """Test that admins can access the admin contests page."""
         with client.session_transaction() as session:
             session['super_user'] = True
         response = client.get('/admin/contests')
         assert response.status_code == 200
 
     def test_admin_contests_route_without_super_user(self, client):
+        """Test that non-admins are forbidden from the admin contests page."""
         response = client.get('/admin/contests')
         assert response.status_code == 403
 
     def test_admin_entries_route_with_super_user(self, client):
+        """Test that admins can access the admin entries page."""
         with client.session_transaction() as session:
             session['super_user'] = True
         response = client.get('/admin/entries')
         assert response.status_code == 200
 
     def test_admin_entries_route_without_super_user(self, client):
+        """Test that non-admins are forbidden from the admin entries page."""
         response = client.get('/admin/entries')
         assert response.status_code == 403
 
     def test_admin_edit_contest_without_super_user(self, client):
+        """Test that non-admins are forbidden from the edit contest page."""
         response = client.get('/admin/contests/edit/1')
         assert response.status_code == 403
 
     def test_admin_update_contest_without_super_user(self, client):
+        """Test that non-admins cannot update contests."""
         response = client.post(
             '/admin/contests/update/1',
             data={
@@ -99,14 +116,18 @@ class TestAdminRoutes:
         assert response.status_code == 403
 
     def test_admin_new_contest_without_super_user(self, client):
+        """Test that non-admins are forbidden from the new contest page."""
         response = client.get('/admin/contests/new')
         assert response.status_code == 403
 
     def test_admin_route_forbidden(self, client):
+        """Test that the main admin route is forbidden for non-admins."""
         response = client.get('/admin/')
         assert response.status_code == 403
 
     def test_admin_index_contest_phase_listings(self, client, monkeypatch):
+        """Test that the admin index correctly lists contests in different
+        phases."""
         # Mock contest data for each phase
         contests_collection = [
             {"id": 1, "title": "Keräysvaihe",
@@ -150,6 +171,8 @@ class TestAdminRoutes:
         assert expected_contest_url in html
 
     def test_admin_index_no_contests(self, client, monkeypatch):
+        """Test that the admin index displays correctly when there are no
+        contests."""
         # Mock all contest-fetching and count functions to ensure a truly
         # empty state
         monkeypatch.setattr("sql.get_contests_for_entry", lambda *a, **kw: [])
@@ -175,6 +198,8 @@ class TestAdminRoutes:
 
     def test_admin_index_shows_only_latest_three_per_phase(self, client,
                                                            monkeypatch):
+        """Test that the admin index paginates correctly, showing only 3 per
+        phase."""
         # Mock 5 contests, only 3 latest should be shown
         contests_collection = [
             {"id": i, "title": f"Keräys {i}",
@@ -201,6 +226,8 @@ class TestAdminRoutes:
         assert "Keräys 4" not in html
 
     def test_admin_index_contest_details_rendered(self, client, monkeypatch):
+        """Test that contest details are rendered correctly on the admin
+        index."""
         contests_collection = [
             {"id": 1, "title": "Testikisa",
              "short_description": "Lyhyt kuvaus", "class_value": "Runo",
@@ -225,6 +252,7 @@ class TestAdminRoutes:
         assert "Ei-julkinen arviointi" in html
 
     def test_admin_index_contest_links(self, client, monkeypatch):
+        """Test that links to contests on the admin index are correct."""
         contests_collection = [
             {"id": 1, "title": "Linkkitesti", "short_description": "Kuvaus",
              "class_value": "Runo", "anonymity": 1, "public_reviews": 1,
@@ -247,6 +275,7 @@ class TestAdminRoutes:
         assert 'href="/contests/contest/1"' in html
 
     def test_admin_users_edit_with_super_user(self, app, client):
+        """Test that an admin can access the edit page for a user."""
         # Manually push an application context to perform database operations
         with app.app_context():
             edit_user_id = users.create_user(
@@ -260,6 +289,8 @@ class TestAdminRoutes:
 
     def test_admin_users_edit_with_super_user_valid_and_invalid(self, app,
                                                                 client):
+        """Test editing a valid user and attempting to edit a non-existent
+        user."""
         with app.app_context():
             edit_user_id = users.create_user(
                 'EditMe2', 'editme2@example.com', 'password123', 0)
@@ -273,6 +304,7 @@ class TestAdminRoutes:
         assert response.status_code in (302, 404)
 
     def test_admin_users_update_with_super_user(self, app, client):
+        """Test that an admin can successfully update a user."""
         with app.app_context():
             update_user_id = users.create_user(
                 'UpdateMe', 'updateme@example.com', 'password123', 0)
@@ -292,6 +324,7 @@ class TestAdminRoutes:
         assert response.status_code in (302, 200, 404)
 
     def test_admin_users_update_missing_fields(self, app, client):
+        """Test that updating a user with missing fields fails as expected."""
         with app.app_context():
             update_user_id = users.create_user(
                 'UpdateMe2', 'updateme2@example.com', 'password123', 0)
@@ -308,6 +341,7 @@ class TestAdminRoutes:
         assert response.status_code in (302, 200, 400)
 
     def test_admin_users_update_invalid_email(self, app, client):
+        """Test that updating a user with an invalid email fails."""
         with app.app_context():
             update_user_id = users.create_user(
                 'UpdateMe3', 'updateme3@example.com', 'password123', 0)
@@ -325,6 +359,7 @@ class TestAdminRoutes:
         assert response.status_code in (302, 200, 400)
 
     def test_admin_users_update_short_password(self, app, client):
+        """Test that updating a user with a short password fails."""
         with app.app_context():
             update_user_id = users.create_user(
                 'UpdateMe4', 'updateme4@example.com', 'password123', 0)
@@ -342,6 +377,7 @@ class TestAdminRoutes:
         assert response.status_code in (302, 200, 400)
 
     def test_admin_users_update_without_super_user(self, app, client):
+        """Test that a non-admin cannot update a user."""
         with app.app_context():
             update_user_id = users.create_user(
                 'UpdateMe5', 'updateme5@example.com', 'password123', 0)
@@ -354,6 +390,7 @@ class TestAdminRoutes:
         assert response.status_code == 403
 
     def test_admin_users_delete_with_super_user(self, app, client):
+        """Test that an admin can delete a user."""
         with app.app_context():
             delete_user_id = users.create_user(
                 'DeleteMe', 'deleteme@example.com', 'password123', 0)
@@ -372,6 +409,7 @@ class TestAdminRoutes:
         assert response.status_code in (302, 200)
 
     def test_admin_users_delete_without_super_user(self, app, client):
+        """Test that a non-admin cannot delete a user."""
         with app.app_context():
             delete_user_id = users.create_user(
                 'DeleteMe2', 'deleteme2@example.com', 'password123', 0)
@@ -384,6 +422,7 @@ class TestAdminRoutes:
         assert response.status_code == 403
 
     def test_admin_users_delete_invalid_csrf(self, app, client):
+        """Test that deleting a user with an invalid CSRF token fails."""
         with app.app_context():
             delete_user_id = users.create_user(
                 'DeleteMe3', 'deleteme3@example.com', 'password123', 0)
@@ -399,6 +438,7 @@ class TestAdminRoutes:
         assert response.status_code in (400, 403)
 
     def test_admin_create_user_missing_fields(self, client):
+        """Test that creating a user with missing fields fails."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -410,6 +450,7 @@ class TestAdminRoutes:
         assert response.status_code in (302, 200, 400)
 
     def test_admin_create_user_invalid_email(self, client):
+        """Test that creating a user with an invalid email fails."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -421,6 +462,7 @@ class TestAdminRoutes:
         assert response.status_code in (302, 200, 400)
 
     def test_admin_create_user_without_super_user(self, client):
+        """Test that a non-admin cannot create a user."""
         response = client.post(
             '/admin/users/create',
             data={'csrf_token': 'test_token', 'name': 'Name',
@@ -429,22 +471,26 @@ class TestAdminRoutes:
         assert response.status_code == 403
 
     def test_admin_new_user_without_super_user(self, client):
+        """Test that a non-admin cannot access the new user page."""
         response = client.get('/admin/users/new')
         assert response.status_code == 403
 
     def test_admin_new_user_with_super_user(self, client):
+        """Test that an admin can access the new user page."""
         with client.session_transaction() as session:
             session['super_user'] = True
         response = client.get('/admin/users/new')
         assert response.status_code == 200
 
     def test_admin_edit_user_with_super_user_invalid(self, client):
+        """Test that editing a non-existent user fails as expected."""
         with client.session_transaction() as session:
             session['super_user'] = True
         response = client.get('/admin/users/edit/999999')
         assert response.status_code in (302, 404)
 
     def test_admin_update_user_duplicate_username(self, app, client):
+        """Test that updating a user to a duplicate username fails."""
         with app.app_context():
             users.create_user('User1', 'dupe@example.com', 'password123', 0)
             update_user_id = users.create_user(
@@ -464,6 +510,7 @@ class TestAdminRoutes:
         assert response.status_code == 200
 
     def test_admin_delete_super_user(self, app, client):
+        """Test that an admin cannot delete a super user."""
         with app.app_context():
             super_user_id = users.create_user(
                 'SuperDelete', 'superdelete@example.com', 'password123', 1)
@@ -482,6 +529,7 @@ class TestAdminRoutes:
         ) or 'virhe' in response.get_data(as_text=True).lower()
 
     def test_admin_delete_own_user(self, app, client):
+        """Test that an admin cannot delete their own account."""
         with app.app_context():
             own_user_id = users.create_user(
                 'OwnUserDelete', 'ownuserdelete@example.com', 'password123', 0)
@@ -499,6 +547,7 @@ class TestAdminRoutes:
             as_text=True)
 
     def test_edit_entry_as_non_owner(self, client):
+        """Test that a user cannot edit an entry they do not own."""
         # Assume entry 2 belongs to user 2, but we log in as user 1
         with client.session_transaction() as sess:
             sess['user_id'] = 1
@@ -506,6 +555,7 @@ class TestAdminRoutes:
         assert response.status_code == 403
 
     def test_delete_entry_invalid_csrf(self, client):
+        """Test that deleting an entry with an invalid CSRF token fails."""
         with client.session_transaction() as sess:
             sess['user_id'] = 1
             sess['csrf_token'] = 'correct_token'
@@ -514,12 +564,14 @@ class TestAdminRoutes:
         assert response.status_code in (400, 403)
 
     def test_review_get_logged_in(self, client):
+        """Test that a logged-in user can access the review page."""
         with client.session_transaction() as sess:
             sess['user_id'] = 1
         response = client.get('/review/1')
         assert response.status_code in (200, 404, 302)
 
     def test_review_post_valid(self, client):
+        """Test that a valid review can be submitted."""
         with client.session_transaction() as sess:
             sess['user_id'] = 1
             sess['csrf_token'] = 'test_token'
@@ -626,6 +678,7 @@ class TestAdminContestManagement:
         assert response.status_code == 404
 
     def test_admin_contests_create_post(self, client):
+        """Test successful contest creation via POST request."""
         response = client.post(
             '/admin/contests/create',
             data={
@@ -641,6 +694,7 @@ class TestAdminContestManagement:
         assert response.status_code in (302, 200, 400)
 
     def test_admin_contests_delete_post(self, client):
+        """Test successful contest deletion via POST request."""
         response = client.post(
             '/admin/contests/delete/1',
             data={'csrf_token': 'test_token'}
@@ -648,10 +702,12 @@ class TestAdminContestManagement:
         assert response.status_code in (302, 200, 404)
 
     def test_admin_edit_contest_with_super_user(self, client):
+        """Test that an admin can access the edit contest page."""
         response = client.get('/admin/contests/edit/1')
         assert response.status_code in (200, 404)
 
     def test_admin_update_contest_with_super_user(self, client):
+        """Test that an admin can successfully update a contest."""
         response = client.post(
             '/admin/contests/update/1',
             data={
@@ -667,10 +723,12 @@ class TestAdminContestManagement:
         assert response.status_code in (302, 200, 404)
 
     def test_admin_new_contest_with_super_user(self, client):
+        """Test that an admin can access the new contest page."""
         response = client.get('/admin/contests/new')
         assert response.status_code == 200
 
     def test_admin_create_contest_short_description_too_long(self, client):
+        """Test validation for short description length on contest creation."""
         long_desc = 'a' * 256
         response = client.post(
             '/admin/contests/create',
@@ -690,6 +748,7 @@ class TestAdminContestManagement:
             as_text=True) or 'Virhe' in response.get_data(as_text=True)
 
     def test_admin_create_contest_long_description_too_long(self, client):
+        """Test validation for long description length on contest creation."""
         long_desc = 'a' * 2001
         response = client.post(
             '/admin/contests/create',
@@ -709,6 +768,7 @@ class TestAdminContestManagement:
             as_text=True) or 'Virhe' in response.get_data(as_text=True)
 
     def test_admin_create_contest_missing_fields(self, client):
+        """Test validation for missing fields on contest creation."""
         response = client.post(
             '/admin/contests/create',
             data={
@@ -726,6 +786,7 @@ class TestAdminContestManagement:
 
     def test_admin_update_contest_short_description_too_long(self, client,
                                                              monkeypatch):
+        """Test validation for short description length on contest update."""
         # Mock the DB calls for the redirected-to page
         monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: {
                             'id': 1, 'title': 'Test Contest'})
@@ -751,6 +812,7 @@ class TestAdminContestManagement:
 
     def test_admin_update_contest_long_description_too_long(self, client,
                                                             monkeypatch):
+        """Test validation for long description length on contest update."""
         # Mock the DB calls for the redirected-to page
         monkeypatch.setattr("sql.get_contest_by_id", lambda contest_id: {
                             'id': 1, 'title': 'Test Contest'})
@@ -825,9 +887,11 @@ class TestAdminUserManagement:
 
 
 class TestAdminCoverage:
+    """Tests for increasing test coverage of admin routes."""
 
     @pytest.fixture(autouse=True)
     def admin_session(self, client):
+        """Set up an admin session for all tests in this class."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -908,6 +972,7 @@ class TestAdminCoverage:
         # to your route.
 
     def test_create_contest_db_exception(self, client, monkeypatch):
+        """Test database exception handling during contest creation."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -930,6 +995,7 @@ class TestAdminCoverage:
 
     # --- 208: delete_contest, except block ---
     def test_delete_contest_db_exception(self, client, monkeypatch):
+        """Test database exception handling during contest deletion."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -944,6 +1010,7 @@ class TestAdminCoverage:
 
     # --- 233: edit_contest, abort(404) ---
     def test_edit_contest_not_found(self, client, monkeypatch):
+        """Test that editing a non-existent contest returns a 404."""
         with client.session_transaction() as session:
             session['super_user'] = True
         monkeypatch.setattr("sql.get_contest_by_id", lambda cid: None)
@@ -953,6 +1020,7 @@ class TestAdminCoverage:
 
     # --- 247: update_contest, errors branch ---
     def test_update_contest_missing_fields(self, client, monkeypatch):
+        """Test contest update failure with missing fields."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -976,6 +1044,7 @@ class TestAdminCoverage:
 
     # --- 312-314: create_user, missing fields ---
     def test_create_user_missing_fields(self, client):
+        """Test user creation failure with missing fields."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -989,6 +1058,7 @@ class TestAdminCoverage:
 
     # --- 320: create_user, invalid email ---
     def test_create_user_invalid_email(self, client):
+        """Test user creation failure with an invalid email."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -1003,6 +1073,7 @@ class TestAdminCoverage:
 
     # --- 332: create_user, duplicate username ---
     def test_create_user_duplicate_username(self, client, monkeypatch):
+        """Test user creation failure with a duplicate username."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -1018,6 +1089,7 @@ class TestAdminCoverage:
 
     # --- 336: create_user, success ---
     def test_create_user_success(self, client, monkeypatch):
+        """Test successful user creation."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -1032,6 +1104,8 @@ class TestAdminCoverage:
 
     # --- 368-371: edit_user, user not found ---
     def test_edit_user_not_found(self, client, monkeypatch):
+        """Test that editing a non-existent user redirects with a flash
+        message."""
         with client.session_transaction() as session:
             session['super_user'] = True
         monkeypatch.setattr("users.get_user", lambda uid: None)
@@ -1041,6 +1115,7 @@ class TestAdminCoverage:
 
     # --- 380: update_user, forbidden ---
     def test_update_user_forbidden(self, client):
+        """Test that a non-admin is forbidden from updating a user."""
         response = client.post(
             '/admin/users/update/1', data={'name': 'Test',
                                            'username': 'test@example.com'})
@@ -1048,6 +1123,7 @@ class TestAdminCoverage:
 
     # --- 398-405: update_user, missing fields, invalid email ---
     def test_update_user_missing_fields(self, client, monkeypatch):
+        """Test user update failure with missing fields."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -1063,6 +1139,7 @@ class TestAdminCoverage:
                 b'pakollisia') in response.data
 
     def test_update_user_invalid_email(self, client, monkeypatch):
+        """Test user update failure with an invalid email."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -1079,6 +1156,7 @@ class TestAdminCoverage:
                 b'kelvollinen') in response.data
 
     def test_update_user_short_password(self, client, monkeypatch):
+        """Test user update failure with a short password."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -1096,6 +1174,7 @@ class TestAdminCoverage:
 
     # --- 411: update_user, user not found ---
     def test_update_user_user_not_found(self, client, monkeypatch):
+        """Test that updating a non-existent user returns a 404."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -1110,6 +1189,7 @@ class TestAdminCoverage:
 
     # --- 423-424: update_user, IntegrityError ---
     def test_update_user_integrity_error(self, client, monkeypatch):
+        """Test user update failure due to a database integrity error."""
         import sqlite3
         with client.session_transaction() as session:
             session['super_user'] = True
@@ -1132,6 +1212,7 @@ class TestAdminCoverage:
 
     # --- 435-436, 439: update_user, generic Exception ---
     def test_update_user_generic_exception(self, client, monkeypatch):
+        """Test generic exception handling during user update."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -1153,6 +1234,7 @@ class TestAdminCoverage:
 
     # --- 470-471: delete_user, delete own user ---
     def test_delete_own_user(self, client):
+        """Test that an admin cannot delete their own user account."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['user_id'] = 1
@@ -1164,6 +1246,7 @@ class TestAdminCoverage:
 
     # --- 494: delete_user, user not found ---
     def test_delete_user_not_found(self, client, monkeypatch):
+        """Test that deleting a non-existent user shows a flash message."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -1176,6 +1259,7 @@ class TestAdminCoverage:
 
     # --- 501-502: delete_user, super user ---
     def test_delete_super_user(self, client, monkeypatch):
+        """Test that deleting a super user is not allowed."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -1190,6 +1274,7 @@ class TestAdminCoverage:
 
     # --- 508-511: delete_user, generic Exception ---
     def test_delete_user_generic_exception(self, client, monkeypatch):
+        """Test generic exception handling during user deletion."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
@@ -1206,6 +1291,7 @@ class TestAdminCoverage:
 
     # --- 522-524: new_entry, missing fields POST ---
     def test_new_entry_post_missing_fields(self, client, monkeypatch):
+        """Test creating a new entry with missing fields."""
         with client.session_transaction() as session:
             session['super_user'] = True
             session['csrf_token'] = 'test_token'
