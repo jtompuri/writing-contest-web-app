@@ -382,7 +382,7 @@ class TestMainCoverage:
             # Set a fixed date to make the test deterministic
             mock_dt.now.return_value.date.return_value = date(2025, 1, 1)
             # Ensure strptime continues to function correctly
-            mock_dt.strptime.side_effect = lambda d, f: datetime.strptime(d, f)
+            mock_dt.strptime.side_effect = datetime.strptime
             response = client.get('/contests/contest/1')
 
         assert response.status_code == 200
