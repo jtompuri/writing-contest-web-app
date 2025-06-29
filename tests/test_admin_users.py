@@ -1,7 +1,7 @@
 """Tests for admin user management features."""
 
-import pytest
 import sqlite3
+import pytest
 import users
 
 
