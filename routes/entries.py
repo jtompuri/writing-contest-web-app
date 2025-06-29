@@ -19,6 +19,40 @@ from utils import check_csrf, sanitize_input
 entries_bp = Blueprint('entries', __name__)
 
 
+def _handle_add_entry_post(contest, collection_open, review_open):
+    """Handles the POST logic for adding a new contest entry."""
+    check_csrf()
+    action = request.form.get("action")
+    entry_text = sanitize_input(request.form.get("entry", ""))
+
+    if not entry_text:
+        flash("Kilpailutyö ei saa olla tyhjä.")
+        return redirect(url_for("entries.add_entry",
+                                contest_id=contest["id"]))
+
+    if action == "preview":
+        return render_template(
+            "preview_entry.html",
+            contest=contest,
+            entry=entry_text,
+            collection_open=collection_open,
+            review_open=review_open
+        )
+
+    if action == "submit":
+        user_id = session["user_id"]
+        if sql.entry_exists(contest["id"], user_id):
+            flash("Olet jo osallistunut tähän kilpailuun.")
+            return redirect(url_for("main.contest", contest_id=contest["id"]))
+
+        sql.create_entry(contest["id"], user_id, entry_text)
+        flash("Kilpailutyö on tallennettu.")
+        return redirect(url_for("main.contest", contest_id=contest["id"]))
+
+    # Fallback for unknown actions
+    return redirect(url_for("main.index"))
+
+
 @entries_bp.route("/contests/contest/<int:contest_id>/add_entry",
                   methods=["GET", "POST"])
 def add_entry(contest_id):
@@ -45,47 +79,18 @@ def add_entry(contest_id):
     collection_open = today <= collection_end
     review_open = collection_end < today <= review_end
 
-    if request.method == "GET":
-        entry_text = request.args.get("entry", "")
-        return render_template(
-            "add_entry.html",
-            contest=contest,
-            collection_open=collection_open,
-            review_open=review_open,
-            entry=entry_text
-        )
-
     if request.method == "POST":
-        check_csrf()
-        action = request.form.get("action")
-        entry_text = sanitize_input(request.form.get("entry", ""))
+        return _handle_add_entry_post(contest, collection_open, review_open)
 
-        if not entry_text:
-            flash("Kilpailutyö ei saa olla tyhjä.")
-            return redirect(url_for("entries.add_entry",
-                                    contest_id=contest_id))
-
-        if action == "preview":
-            return render_template(
-                "preview_entry.html",
-                contest=contest,
-                entry=entry_text,
-                collection_open=collection_open,
-                review_open=review_open
-            )
-
-        if action == "submit":
-            user_id = session["user_id"]
-
-            if sql.entry_exists(contest_id, user_id):
-                flash("Olet jo osallistunut tähän kilpailuun.")
-                return redirect(url_for("main.contest", contest_id=contest_id))
-
-            sql.create_entry(contest_id, user_id, entry_text)
-            flash("Kilpailutyö on tallennettu.")
-            return redirect(url_for("main.contest", contest_id=contest_id))
-
-    return redirect(url_for("main.index"))
+    # This handles the GET request
+    entry_text = request.args.get("entry", "")
+    return render_template(
+        "add_entry.html",
+        contest=contest,
+        collection_open=collection_open,
+        review_open=review_open,
+        entry=entry_text
+    )
 
 
 @entries_bp.route("/my_texts")
