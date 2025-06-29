@@ -305,17 +305,15 @@ class TestMainCoverage:
         # We can also assert the winner's name is present.
         assert b"Winner" in response.data
 
-    @pytest.mark.parametrize("days_offset, expected_collection_open, "
-                             "expected_review_open", [
-                                 (-10, True, False),  # Collection is open
-                                 (5, False, True),    # Review is open
-                                 (20, False, False)   # Contest is closed
-                             ])
-    def test_contest_page_states(self, client, monkeypatch, days_offset,
-                                 expected_collection_open,
-                                 expected_review_open):
+    @pytest.mark.parametrize("params", [
+        (-10, True, False),  # Collection is open
+        (5, False, True),    # Review is open
+        (20, False, False)   # Contest is closed
+    ])
+    def test_contest_page_states(self, client, monkeypatch, params):
         """Test the collection_open and review_open states on the contest
         detail page."""
+        days_offset, expected_collection_open, expected_review_open = params
         today = date.today()
         collection_end = today.isoformat()
         review_end = (today + timedelta(days=10)).isoformat()
