@@ -76,14 +76,15 @@ def contest(contest_id):
     Args:
         contest_id (int): The ID of the contest to display.
     """
-    contest = sql.get_contest_by_id(contest_id)
-    if not contest:
+    contest_data = sql.get_contest_by_id(contest_id)
+    if not contest_data:
         abort(404)
 
     today = datetime.now().date()
-    collection_end = datetime.strptime(contest["collection_end"],
+    collection_end = datetime.strptime(contest_data["collection_end"],
                                        "%Y-%m-%d").date()
-    review_end = datetime.strptime(contest["review_end"], "%Y-%m-%d").date()
+    review_end = datetime.strptime(contest_data["review_end"],
+                                   "%Y-%m-%d").date()
 
     collection_open = today <= collection_end
     review_open = collection_end < today <= review_end
@@ -98,7 +99,7 @@ def contest(contest_id):
 
     return render_template(
         "contest.html",
-        contest=contest,
+        contest=contest_data,
         collection_open=collection_open,
         review_open=review_open,
         has_entry=has_entry,
@@ -114,13 +115,13 @@ def contests():
     per_page = config.DEFAULT_PER_PAGE
     offset = (page - 1) * per_page
 
-    contests = sql.get_contests_for_entry(limit=per_page, offset=offset)
+    contest_list = sql.get_contests_for_entry(limit=per_page, offset=offset)
     total = sql.get_entry_contest_count()
     today = date.today().isoformat()
 
     return render_template(
         "contests.html",
-        contests=contests,
+        contests=contest_list,
         page=page,
         per_page=per_page,
         total=total,
@@ -138,13 +139,13 @@ def results():
     per_page = config.DEFAULT_PER_PAGE
     offset = (page - 1) * per_page
 
-    contests = sql.get_contests_for_results(limit=per_page, offset=offset)
+    contest_list = sql.get_contests_for_results(limit=per_page, offset=offset)
     total = sql.get_results_contest_count()
     today = date.today().isoformat()
 
     key = request.args.get("key")
     visible_contests = [
-        c for c in contests if c["public_results"]
+        c for c in contest_list if c["public_results"]
         or (key and c["private_key"] == key)
     ]
 
@@ -170,12 +171,12 @@ def reviews():
     per_page = config.DEFAULT_PER_PAGE
     offset = (page - 1) * per_page
 
-    contests = sql.get_contests_for_review(limit=per_page, offset=offset)
+    contest_list = sql.get_contests_for_review(limit=per_page, offset=offset)
     total = sql.get_review_contest_count()
 
     key = request.args.get("key")
     visible_contests = [
-        c for c in contests if c["public_reviews"]
+        c for c in contest_list if c["public_reviews"]
         or (key and c["private_key"] == key)
     ]
 
@@ -205,20 +206,20 @@ def result(contest_id):
     Args:
         contest_id (int): The ID of the contest whose results are to be shown.
     """
-    contest = sql.get_contest_by_id(contest_id)
-    if not contest:
+    contest_data = sql.get_contest_by_id(contest_id)
+    if not contest_data:
         abort(404)
 
-    if not contest["public_results"]:
+    if not contest_data["public_results"]:
         private_key_param = request.args.get("key", "")
         if (not private_key_param
-           or private_key_param != contest["private_key"]):
+           or private_key_param != contest_data["private_key"]):
             flash("Tämän kilpailun tulokset eivät ole julkisia.")
             return redirect(url_for("main.results"))
 
     entries = sql.get_contest_results(contest_id)
     return render_template(
         "result.html",
-        contest=contest,
+        contest=contest_data,
         entries=entries
     )
