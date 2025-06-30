@@ -39,11 +39,15 @@ class TestUserCreationAndDeletion:
 
     def test_delete_user(self, monkeypatch):
         """Test the delete_user function."""
-        mock_execute = MagicMock()
+        # Mock the cursor object to control the rowcount
+        mock_cursor = MagicMock()
+        mock_cursor.rowcount = 1
+        mock_execute = MagicMock(return_value=mock_cursor)
         monkeypatch.setattr(db, "execute", mock_execute)
 
-        users.delete_user(1)
+        success = users.delete_user(1)
 
+        assert success is True
         mock_execute.assert_called_with("DELETE FROM users WHERE id = ?", [1])
 
 
@@ -149,11 +153,14 @@ class TestUserUpdates:
 
     def test_update_user(self, monkeypatch):
         """Test the update_user function."""
-        mock_execute = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.rowcount = 1
+        mock_execute = MagicMock(return_value=mock_cursor)
         monkeypatch.setattr(db, "execute", mock_execute)
 
-        users.update_user(1, "New Name", "new@email.com", 1)
+        success = users.update_user(1, "New Name", "new@email.com", 1)
 
+        assert success is True
         # Update the query to match the exact formatting in users.py
         expected_query = ("UPDATE users SET name = ?, username = ?, "
                           "super_user = ?\n                WHERE id = ?")
@@ -162,21 +169,27 @@ class TestUserUpdates:
 
     def test_update_user_name(self, monkeypatch):
         """Test the update_user_name function."""
-        mock_execute = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.rowcount = 1
+        mock_execute = MagicMock(return_value=mock_cursor)
         monkeypatch.setattr(db, "execute", mock_execute)
 
-        users.update_user_name(1, "Just The Name")
+        success = users.update_user_name(1, "Just The Name")
 
+        assert success is True
         mock_execute.assert_called_with(
             "UPDATE users SET name = ? WHERE id = ?", ["Just The Name", 1])
 
     def test_update_user_password(self, monkeypatch):
         """Test the update_user_password function."""
-        mock_execute = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.rowcount = 1
+        mock_execute = MagicMock(return_value=mock_cursor)
         monkeypatch.setattr(db, "execute", mock_execute)
 
-        users.update_user_password(1, "new_password")
+        success = users.update_user_password(1, "new_password")
 
+        assert success is True
         assert mock_execute.call_args[0][0] == ("UPDATE users SET "
                                                 "password_hash = ? WHERE "
                                                 "id = ?")

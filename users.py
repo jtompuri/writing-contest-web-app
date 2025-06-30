@@ -24,6 +24,23 @@ import db
 from sql import build_paginated_query
 
 
+def _build_user_filter_query(base_query, name_search=None,
+                             username_search=None, super_user=None):
+    """Builds the WHERE clause and parameters for user filtering."""
+    query = base_query
+    params = []
+    if name_search:
+        query += " AND name LIKE ?"
+        params.append(f"%{name_search}%")
+    if username_search:
+        query += " AND username LIKE ?"
+        params.append(f"%{username_search}%")
+    if super_user in ("0", "1"):
+        query += " AND super_user = ?"
+        params.append(int(super_user))
+    return query, params
+
+
 def create_user(name, username, password, is_super):
     """
     Create a new user.
@@ -80,17 +97,10 @@ def get_all_users(limit=None, offset=None, name_search=None,
     Returns:
         list: A list of users.
     """
-    query = "SELECT * FROM users WHERE 1=1"
-    params = []
-    if name_search:
-        query += " AND name LIKE ?"
-        params.append(f"%{name_search}%")
-    if username_search:
-        query += " AND username LIKE ?"
-        params.append(f"%{username_search}%")
-    if super_user in ("0", "1"):
-        query += " AND super_user = ?"
-        params.append(int(super_user))
+    query, params = _build_user_filter_query(
+        "SELECT * FROM users WHERE 1=1",
+        name_search, username_search, super_user
+    )
     query += " ORDER BY id ASC"
     query, params = build_paginated_query(query, params, limit, offset)
     return db.query(query, params)
@@ -110,17 +120,10 @@ def get_user_count(name_search=None, username_search=None, super_user=None):
     Returns:
         int: The total number of users.
     """
-    query = "SELECT COUNT(*) FROM users WHERE 1=1"
-    params = []
-    if name_search:
-        query += " AND name LIKE ?"
-        params.append(f"%{name_search}%")
-    if username_search:
-        query += " AND username LIKE ?"
-        params.append(f"%{username_search}%")
-    if super_user in ("0", "1"):
-        query += " AND super_user = ?"
-        params.append(int(super_user))
+    query, params = _build_user_filter_query(
+        "SELECT COUNT(*) FROM users WHERE 1=1",
+        name_search, username_search, super_user
+    )
     result = db.query(query, params)
     return result[0][0] if result else 0
 
@@ -148,11 +151,12 @@ def update_user(user_id, name, username, is_super):
         is_super (bool or int): Whether the user is a super user.
 
     Returns:
-        None
+        bool: True if a user was updated, False otherwise.
     """
     query = """UPDATE users SET name = ?, username = ?, super_user = ?
                 WHERE id = ?"""
-    db.execute(query, [name, username, is_super, user_id])
+    result = db.execute(query, [name, username, is_super, user_id])
+    return result.rowcount > 0
 
 
 def update_user_name(user_id, name):
@@ -164,10 +168,11 @@ def update_user_name(user_id, name):
         name (str): The new name.
 
     Returns:
-        None
+        bool: True if a user was updated, False otherwise.
     """
     query = "UPDATE users SET name = ? WHERE id = ?"
-    db.execute(query, [name, user_id])
+    result = db.execute(query, [name, user_id])
+    return result.rowcount > 0
 
 
 def update_user_password(user_id, password):
@@ -179,11 +184,12 @@ def update_user_password(user_id, password):
         password (str): The new password (plain text).
 
     Returns:
-        None
+        bool: True if a user was updated, False otherwise.
     """
     password_hash = generate_password_hash(password)
     query = "UPDATE users SET password_hash = ? WHERE id = ?"
-    db.execute(query, [password_hash, user_id])
+    result = db.execute(query, [password_hash, user_id])
+    return result.rowcount > 0
 
 
 def delete_user(user_id):
@@ -194,10 +200,11 @@ def delete_user(user_id):
         user_id (int): The ID of the user to delete.
 
     Returns:
-        None
+        bool: True if a user was deleted, False otherwise.
     """
     query = "DELETE FROM users WHERE id = ?"
-    db.execute(query, [user_id])
+    result = db.execute(query, [user_id])
+    return result.rowcount > 0
 
 
 def is_super_user(user_id):
