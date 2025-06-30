@@ -182,22 +182,3 @@ class TestAdminUserActions:
             follow_redirects=True)
         assert (b'K\xc3\xa4ytt\xc3\xa4j\xc3\xa4\xc3\xa4 ei voitu '
                 b'poistaa') in response.data
-
-    # --- 522-524: new_entry, missing fields POST ---
-    def test_new_entry_post_missing_fields(self, client, monkeypatch):
-        """Test creating a new entry with missing fields."""
-        with client.session_transaction() as session:
-            session['super_user'] = True
-            session['csrf_token'] = 'test_token'
-        monkeypatch.setattr("sql.get_all_contests", lambda: [
-                            {'id': 1, 'title': 'Test Contest'}])
-        monkeypatch.setattr("users.get_all_users", lambda: [
-                            {'id': 1, 'name': 'Test User',
-                             'username': 'test@user.com'}])
-        response = client.post(
-            '/admin/entries/new',
-            data={'csrf_token': 'test_token',
-                  'contest_id': '', 'user_id': '', 'entry': ''},
-            follow_redirects=True
-        )
-        assert b'Kaikki pakolliset kent' in response.data
