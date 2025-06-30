@@ -332,11 +332,12 @@ def review(contest_id):
     Args:
         contest_id (int): The ID of the contest to review.
     """
-    # Add this check to enforce the user flow
-    if request.referrer is None or url_for(
-            "main.contest", contest_id=contest_id) not in request.referrer:
+    # Add this check to enforce the user flow, but only for GET requests
+    if (request.method == "GET" and 
+        (request.referrer is None or url_for(
+            "main.contest", contest_id=contest_id) not in request.referrer)):
         flash("Käytä kilpailun sivulla olevaa linkkiä päästäksesi"
-              "arviointiin.")
+              " arviointiin.")
         return redirect(url_for("main.contest", contest_id=contest_id))
 
     if not session.get("user_id"):
