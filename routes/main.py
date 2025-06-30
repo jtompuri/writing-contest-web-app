@@ -199,7 +199,7 @@ def reviews():
     )
 
 
-@main_bp.route("/result/<int:contest_id>")
+@main_bp.route("/results/result/<int:contest_id>")
 def result(contest_id):
     """Renders the detailed results page for a single contest.
 

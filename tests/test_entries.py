@@ -453,12 +453,12 @@ class TestEntryViewing:
 
     def test_result_view_valid(self, client):
         """Test that a valid result page can be viewed."""
-        response = client.get('/result/1')
+        response = client.get('/results/result/1')
         assert response.status_code in (200, 404)
 
     def test_result_view_invalid(self, client):
         """Test that viewing an invalid result page returns a 404."""
-        response = client.get('/result/999999')
+        response = client.get('/results/result/999999')
         assert response.status_code == 404
 
     def test_entry_view_contest_not_found(self, client, monkeypatch):

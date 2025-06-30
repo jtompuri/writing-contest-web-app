@@ -405,7 +405,7 @@ class TestMainCoverage:
         monkeypatch.setattr("sql.get_contest_by_id",
                             lambda contest_id: mock_contest)
 
-        response = client.get('/result/1', follow_redirects=True)
+        response = client.get('/results/result/1', follow_redirects=True)
         assert response.status_code == 200
         assert 'Tämän kilpailun tulokset eivät ole julkisia.'.encode(
             'utf-8') in response.data
@@ -418,7 +418,7 @@ class TestMainCoverage:
         monkeypatch.setattr("sql.get_contest_by_id",
                             lambda contest_id: mock_contest)
 
-        response = client.get('/result/1?key=wrongkey', follow_redirects=True)
+        response = client.get('/results/result/1?key=wrongkey', follow_redirects=True)
         assert response.status_code == 200
         assert 'Tämän kilpailun tulokset eivät ole julkisia.'.encode(
             'utf-8') in response.data
@@ -433,7 +433,7 @@ class TestMainCoverage:
         # Mock results to render page
         monkeypatch.setattr("sql.get_contest_results", lambda contest_id: [])
 
-        response = client.get('/result/1?key=secret')
+        response = client.get('/results/result/1?key=secret')
         assert response.status_code == 200
         assert 'Tämän kilpailun tulokset eivät ole julkisia.'.encode(
             'utf-8') not in response.data
