@@ -24,6 +24,7 @@ def _handle_add_entry_post(contest, collection_open, review_open):
     check_csrf()
     action = request.form.get("action")
     entry_text = sanitize_input(request.form.get("entry", ""))
+    source = request.form.get("source", "contest")
 
     if not entry_text:
         flash("Kilpailutyö ei saa olla tyhjä.")
@@ -36,7 +37,8 @@ def _handle_add_entry_post(contest, collection_open, review_open):
             contest=contest,
             entry=entry_text,
             collection_open=collection_open,
-            review_open=review_open
+            review_open=review_open,
+            source=source
         )
 
     if action == "submit":
