@@ -16,8 +16,7 @@ Arviointivaihe päättyy {{ contest.review_end | format_date }}.
 </em></p>
 
 {% if not collection_open and not review_open and contest.public_results %}
-<form action="{{ url_for('entries.add_entry', contest_id=contest.id) }}" method="post" style="margin-top: 2rem;">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+<form action="{{ url_for('main.result', contest_id=contest.id) }}" method="get" style="margin-top: 2rem;">
     <button type="submit" class="btn btn-primary" aria-label="Näytä kilpailun tulokset">
         Näytä kilpailun tulokset
     </button>
