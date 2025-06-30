@@ -5,8 +5,8 @@ import users
 import db
 
 
-class TestUserFunctions:
-    """Tests for the user management functions in users.py."""
+class TestUserCreationAndDeletion:
+    """Tests for creating and deleting users."""
 
     def test_create_user_success(self, monkeypatch):
         """Test successful user creation."""
@@ -36,6 +36,19 @@ class TestUserFunctions:
 
         # The function now returns None on failure
         assert result is None
+
+    def test_delete_user(self, monkeypatch):
+        """Test the delete_user function."""
+        mock_execute = MagicMock()
+        monkeypatch.setattr(db, "execute", mock_execute)
+
+        users.delete_user(1)
+
+        mock_execute.assert_called_with("DELETE FROM users WHERE id = ?", [1])
+
+
+class TestUserQuerying:
+    """Tests for querying and retrieving user data."""
 
     def test_get_user_found(self, monkeypatch):
         """Test retrieving a user that exists."""
@@ -78,6 +91,10 @@ class TestUserFunctions:
         expected_params = ["%Admin%", "%admin@test.com%", 1, 10, 5]
         mock_query.assert_called_with(expected_query, expected_params)
 
+
+class TestUserCounts:
+    """Tests for functions that count users."""
+
     def test_get_user_count_success(self, monkeypatch):
         """Test get_user_count when users exist."""
         monkeypatch.setattr(db, "query", lambda *args: [[5]])
@@ -113,6 +130,22 @@ class TestUserFunctions:
         count = users.get_super_user_count()
 
         assert count == 2
+
+    def test_get_user_count_with_username_search(self, monkeypatch):
+        """Test get_user_count with username_search filter."""
+        mock_query = MagicMock(return_value=[[3]])
+        monkeypatch.setattr(db, "query", mock_query)
+
+        users.get_user_count(username_search="testuser")
+
+        expected_query = ("SELECT COUNT(*) FROM users WHERE 1=1 AND "
+                          "username LIKE ?")
+        expected_params = ["%testuser%"]
+        mock_query.assert_called_with(expected_query, expected_params)
+
+
+class TestUserUpdates:
+    """Tests for updating user information."""
 
     def test_update_user(self, monkeypatch):
         """Test the update_user function."""
@@ -151,26 +184,9 @@ class TestUserFunctions:
         # Check that the password was hashed using the new default method
         assert mock_execute.call_args[0][1][0].startswith("scrypt:")
 
-    def test_delete_user(self, monkeypatch):
-        """Test the delete_user function."""
-        mock_execute = MagicMock()
-        monkeypatch.setattr(db, "execute", mock_execute)
 
-        users.delete_user(1)
-
-        mock_execute.assert_called_with("DELETE FROM users WHERE id = ?", [1])
-
-    def test_get_user_count_with_username_search(self, monkeypatch):
-        """Test get_user_count with username_search filter."""
-        mock_query = MagicMock(return_value=[[3]])
-        monkeypatch.setattr(db, "query", mock_query)
-
-        users.get_user_count(username_search="testuser")
-
-        expected_query = ("SELECT COUNT(*) FROM users WHERE 1=1 AND "
-                          "username LIKE ?")
-        expected_params = ["%testuser%"]
-        mock_query.assert_called_with(expected_query, expected_params)
+class TestUserAuthAndPermissions:
+    """Tests for user authentication and permission checks."""
 
     def test_is_super_user(self, monkeypatch):
         """Test is_super_user for a super user."""

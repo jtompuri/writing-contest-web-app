@@ -5,10 +5,9 @@ import sql
 import db
 
 
-class TestSqlFunctions:
-    """Tests for the database interaction functions in sql.py."""
+class TestContestSQL:
+    """Tests for contest-related SQL functions."""
 
-    # Contest CRUD
     def test_get_all_contests_with_all_filters(self, monkeypatch):
         """Verifies that get_all_contests constructs the correct SQL query and
         parameters when all filters are applied.
@@ -71,7 +70,6 @@ class TestSqlFunctions:
         sql.create_contest(contest_data)
         assert mock_execute.called
 
-    # Contest Listings
     @pytest.mark.parametrize("func", [
         sql.get_contests_for_entry,
         sql.get_contests_for_review,
@@ -105,7 +103,6 @@ class TestSqlFunctions:
         # Check that the parameters list contains the correct values
         assert params == [10, 5]
 
-    # Contest Counts
     def test_get_contest_count_with_search(self, monkeypatch):
         """Tests get_contest_count with a title search filter."""
         monkeypatch.setattr(db, "query", lambda *a: [[5]])
@@ -142,7 +139,10 @@ class TestSqlFunctions:
         mock_query.return_value = []
         assert func() == 0
 
-    # Entry CRUD
+
+class TestEntrySQL:
+    """Tests for entry-related SQL functions."""
+
     def test_create_entry(self, monkeypatch):
         """Tests that create_entry constructs the correct INSERT SQL
         statement."""
@@ -190,7 +190,6 @@ class TestSqlFunctions:
         mock_execute.assert_called_with(
             "DELETE FROM entries WHERE id = ?", [1])
 
-    # Entry Helpers
     def test_entry_exists(self, monkeypatch):
         """Tests that entry_exists correctly identifies if an entry exists."""
         monkeypatch.setattr(db, "query", lambda *a: [1])
@@ -221,7 +220,19 @@ class TestSqlFunctions:
         monkeypatch.setattr(db, "query", lambda *a: [])
         assert sql.get_user_entry_for_contest(1, 1) is None
 
-    # Review CRUD
+    def test_get_user_entry_count(self, monkeypatch):
+        """Tests that get_user_entry_count returns the correct count and
+        handles empty results.
+        """
+        monkeypatch.setattr(db, "query", lambda *a: [{"count": 3}])
+        assert sql.get_user_entry_count(1) == 3
+        monkeypatch.setattr(db, "query", lambda *a: [])
+        assert sql.get_user_entry_count(1) == 0
+
+
+class TestReviewSQL:
+    """Tests for review-related SQL functions."""
+
     def test_add_review(self, monkeypatch):
         """Tests that add_review calls the underlying database execute
         method."""
@@ -263,7 +274,10 @@ class TestSqlFunctions:
         reviews = sql.get_user_reviews_for_contest(1, 1)
         assert reviews == {10: 5, 12: 3}
 
-    # Class Helpers
+
+class TestClassAndResultsSQL:
+    """Tests for class and results-related SQL functions."""
+
     def test_get_all_classes(self, monkeypatch):
         """Tests that get_all_classes constructs the correct SELECT SQL
         statement.
@@ -279,7 +293,6 @@ class TestSqlFunctions:
         monkeypatch.setattr(db, "query", lambda *a: [])
         assert sql.get_class_by_id(999) is None
 
-    # Results and Stats
     def test_get_contest_results(self, monkeypatch):
         """Tests that get_contest_results orders the results by points."""
         mock_query = MagicMock()
@@ -295,12 +308,3 @@ class TestSqlFunctions:
         monkeypatch.setattr(db, "query", mock_query)
         sql.get_user_entries_with_results(1)
         assert "RANK() OVER" in mock_query.call_args[0][0]
-
-    def test_get_user_entry_count(self, monkeypatch):
-        """Tests that get_user_entry_count returns the correct count and
-        handles empty results.
-        """
-        monkeypatch.setattr(db, "query", lambda *a: [{"count": 3}])
-        assert sql.get_user_entry_count(1) == 3
-        monkeypatch.setattr(db, "query", lambda *a: [])
-        assert sql.get_user_entry_count(1) == 0
