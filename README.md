@@ -214,7 +214,6 @@ Arvostelusivulla mainitut toteutetut vaatimukset:
 - Käyttäjä voi luoda, muokata ja poistaa tunnuksen. ✅
 - Käyttäjä voi kirjautua sisään sovellukseen. ✅
 - Käyttäjä näkee sovellukseen lisätyt kilpailut. ✅
-- Käyttäjä pystyy etsimään kilpailuja hakusanalla.
 - Käyttäjä voi lisätä, muokata ja poistaa oman tekstin. ✅
 - Tekstin muokkaus ja poisto on sallittu vain kilpailun keräysvaiheessa. ✅
 - Käyttäjä voi arvioida muiden kilpailutöitä antamalla pistemäärän 1-5. ✅
